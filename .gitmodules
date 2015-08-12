@@ -1,0 +1,6 @@
+[submodule "3rd/laudio"]
+	path = 3rd/laudio
+	url = git@github.com:lvshaco/laudio.git
+[submodule "3rd/lsocket"]
+	path = 3rd/lsocket
+	url = git@github.com:lvshaco/lsocket.git
