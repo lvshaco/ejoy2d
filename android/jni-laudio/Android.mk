@@ -6,18 +6,11 @@ LOCAL_MODULE    := laudio
 #LOCAL_ARM_MODE  := arm
 LOCAL_CFLAGS 	:= -DLUA_COMPAT_APIINTCASTS
 
-#LOCAL_C_INCLUDES:= \
-	#$(LOCAL_PATH)/../../3rd/laudio/src \
-	#$(LOCAL_PATH)/../../3rd/laudio/dep/openal/include \
-	#$(LOCAL_PATH)/../../3rd/laudio/dep/alut/include \
-	#$(LOCAL_PATH)/../../3rd/laudio/dep/mpg123/src \
-	#$(LOCAL_PATH)/../../lua
-
 LOCAL_C_INCLUDES:= \
 	$(LOCAL_PATH)/../../3rd/laudio/src \
 	$(LOCAL_PATH)/../../3rd/laudio/dep/openal-soft-android/include \
 	$(LOCAL_PATH)/../../3rd/laudio/dep/alut/include \
-	$(LOCAL_PATH)/../../3rd/laudio/dep/mpg123/src \
+	$(LOCAL_PATH)/../../3rd/laudio/dep/mpg123-android \
 	$(LOCAL_PATH)/../../lua
 
 LOCAL_SRC_FILES = \
