@@ -5,7 +5,7 @@
 #include "render.h"
 
 #include <stdint.h>
-#include <lua.h>
+#include "lua.h"
 
 #define PROGRAM_DEFAULT -1
 #define PROGRAM_PICTURE 0

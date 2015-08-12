@@ -299,15 +299,73 @@ static int load_aux (lua_State *L, int status, int envidx) {
   }
 }
 
+/* 
+** srcpack 
+ **/
+#include "srcpack.h"
+
+static int readable (const char *filename) {
+  FILE *f = fopen(filename, "r");  /* try to open file */
+  if (f == NULL) return 0;  /* open failed */
+  fclose(f);
+  return 1;
+}
+
+#if !defined (LUA_PATH_SEP)
+#define LUA_PATH_SEP		";"
+#endif
+
+static const char *pushnexttemplate (lua_State *L, const char *path) {
+  const char *l;
+  while (*path == *LUA_PATH_SEP) path++;  /* skip separators */
+  if (*path == '\0') return NULL;  /* no more templates */
+  l = strchr(path, *LUA_PATH_SEP);  /* find next separator */
+  if (l == NULL) l = path + strlen(path);
+  lua_pushlstring(L, path, l - path);  /* template */
+  return l;
+}
 
 static int luaB_loadfile (lua_State *L) {
   const char *fname = luaL_optstring(L, 1, NULL);
   const char *mode = luaL_optstring(L, 2, NULL);
   int env = (!lua_isnone(L, 3) ? 3 : 0);  /* 'env' index or 0 if no 'env' */
-  int status = luaL_loadfilex(L, fname, mode);
-  return load_aux(L, status, env);
+  if (readable(fname)) {
+    int status = luaL_loadfilex(L, fname, mode);
+    return load_aux(L, status, env);
+  } else {
+    const char *path = NULL;
+    int top = lua_gettop(L);
+    lua_getfield(L, LUA_REGISTRYINDEX, "_LOADED"); /* load */
+    lua_getfield(L, -1, "package"); /* load package */
+    if (lua_istable(L, -1)) {
+      lua_getfield(L, -1, "packpath"); /* load package packpath */
+      if (lua_isstring(L, -1)) {
+        path = lua_tostring(L, -1);
+      }
+    }
+    lua_settop(L, top);
+    int status;
+    if (path) {
+      while ((path = pushnexttemplate(L, path)) != NULL) {
+        const char *pack = lua_tostring(L,-1);
+        char *body, *dec;
+        size_t size;
+        body = sp_unpack(pack, fname, &dec, &size);
+        lua_pop(L,1);
+        if (body == NULL) {
+          continue;
+        }
+        status = luaL_loadbuffer(L, dec, size, fname);
+        free(body);
+        return load_aux(L, status, env);
+      }
+    }
+    status = LUA_ERRERR;
+    lua_pushfstring(L, "cannot open %s: no found in pack", fname);
+    return load_aux(L, status, env);
+  }
 }
-
+/* srcpack end */
 
 /*
 ** {======================================================

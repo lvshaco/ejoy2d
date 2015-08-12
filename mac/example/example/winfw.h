@@ -10,7 +10,7 @@
 
 void ejoy2d_win_init();
 void ejoy2d_win_frame();
-void ejoy2d_win_update();
+void ejoy2d_win_update(float s);
 void ejoy2d_win_touch(int x, int y,int touch);
 
 #endif

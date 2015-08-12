@@ -1,7 +1,7 @@
 #include "screen.h"
 #include "render.h"
 #include "spritepack.h"
-
+#include "platform_print.h"
 struct screen {
 	int width;
 	int height;
@@ -114,4 +114,6 @@ bool screen_is_poly_invisible(const float* points,int len,int stride)
 	return invisible;
 }
 
+int screen_width() { return SCREEN.width; }
+int screen_height() { return SCREEN.height; }
 

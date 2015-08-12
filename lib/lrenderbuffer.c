@@ -2,8 +2,8 @@
 #include "renderbuffer.h"
 #include "shader.h"
 
-#include <lua.h>
-#include <lauxlib.h>
+#include "lua.h"
+#include "lauxlib.h"
 
 
 static int

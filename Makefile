@@ -1,6 +1,6 @@
 .PHONY : mingw ej2d linux undefined
 
-CFLAGS = -g -Wall -Ilib -Ilib/render -Ilua -D EJOY2D_OS=$(OS)
+CFLAGS = -g -Wall -Ilib -Ilib/render -Ilua -I3rd/freetype/include -I3rd/laudio/depinc -D EJOY2D_OS=$(OS) -D LUA_COMPAT_APIINTCASTS
 LDFLAGS :=
 
 RENDER := \
@@ -65,8 +65,20 @@ lua/ltm.c \
 lua/lundump.c \
 lua/lutf8lib.c \
 lua/lvm.c \
-lua/lzio.c
+lua/lzio.c \
+lua/srcpack.c
 
+ASSETSRC := 3rd/lasset/lasset.c
+
+SOCKETSRC := \
+3rd/lsocket/src/lsocket.c \
+3rd/lsocket/src/lsocketbuffer.c \
+3rd/lsocket/src/psocket.c \
+3rd/lsocket/src/socket.c
+
+AUDIOSRC := \
+3rd/laudio/src/laudio.c \
+3rd/laudio/src/audio_decoder.c
 
 UNAME=$(shell uname)
 SYS=$(if $(filter Linux%,$(UNAME)),linux,\
@@ -85,7 +97,7 @@ undefined:
 mingw : OS := WINDOWS
 mingw : TARGET := ej2d.exe
 mingw : CFLAGS += -I/usr/include
-mingw : LDFLAGS += -L/usr/bin -lgdi32 -lglew32 -lopengl32
+mingw : LDFLAGS += -L/usr/bin -lgdi32 -lglew32 -lopengl32 -lws2_32
 mingw : SRC += mingw/window.c mingw/winfw.c mingw/winfont.c
 
 mingw : $(SRC) ej2d
@@ -111,14 +123,15 @@ linux : $(SRC) ej2d
 
 macosx : OS := MACOSX
 macosx : TARGET := ej2d
-macosx : CFLAGS += -I/usr/X11R6/include -I/usr/include $(shell freetype-config --cflags) -D __MACOSX
-macosx : LDFLAGS += -L/usr/X11R6/lib  -lGLEW -lGL -lX11 -lfreetype -lm -ldl
+macosx : CFLAGS += -I/usr/X11R6/include -I/usr/include -I/usr/local/include $(shell freetype-config --cflags) -D __MACOSX
+macosx : LDFLAGS += -L/usr/X11R6/lib -L/usr/local/lib -lGLEW -lGL -lX11 -lfreetype -lm -ldl -lalut -lmpg123 -Wl,-undefined,dynamic_lookup
+
 macosx : SRC += posix/window.c posix/winfw.c posix/winfont.c
 
 macosx : $(SRC) ej2d
 
 ej2d :
-	gcc $(CFLAGS) -o $(TARGET) $(SRC) $(LUASRC) $(LDFLAGS)
+	gcc $(CFLAGS) -o $(TARGET) $(SRC) $(LUASRC) $(ASSETSRC) $(SOCKETSRC) $(AUDIOSRC) $(LDFLAGS)
 
 clean :
 	-rm -f ej2d.exe

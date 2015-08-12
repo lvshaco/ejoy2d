@@ -37,7 +37,8 @@ function ejoy2d.start(callback)
 	fw.EJOY2D_MESSAGE = assert(callback.message)
   	fw.EJOY2D_HANDLE_ERROR = assert(callback.handle_error)
   	fw.EJOY2D_RESUME = assert(callback.on_resume)
-		fw.EJOY2D_PAUSE = assert(callback.on_pause)
+	fw.EJOY2D_PAUSE = assert(callback.on_pause)
+    fw.EJOY2D_RESIZE = callback.on_resize or function(w,h) end
 	fw.inject()
 end
 
@@ -49,4 +50,11 @@ function ejoy2d.define_shader(args)
 	return shader.define(args)
 end
 
+ejoy2d.screen = fw.screen
+ejoy2d.elapsed = 0
+--if OS=='ANDROID' then
+    --fw.AssetDir = "files/"
+--else
+    --fw.AssetDir = fw.WorkDir
+--end
 return ejoy2d

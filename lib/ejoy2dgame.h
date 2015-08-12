@@ -1,7 +1,7 @@
 #ifndef EJOY_2D_LUASTATE_H
 #define EJOY_2D_LUASTATE_H
 
-#include <lua.h>
+#include "lua.h"
 
 struct game {
 	lua_State *L;
@@ -27,6 +27,7 @@ void
 ejoy2d_game_message(struct game* G,int id_, const char* state, const char* data, lua_Number n);
 void ejoy2d_game_pause(struct game* G);
 void ejoy2d_game_resume(struct game* G);
+void ejoy2d_game_resize(struct game* G, int w, int h);
 
 void
 ejoy2d_call_lua(lua_State *L, int n, int r);

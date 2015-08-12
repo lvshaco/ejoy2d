@@ -1,9 +1,10 @@
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
 #include <assert.h>
 #include <stdlib.h>
 
+#include "platform_print.h"
 #include "ejoy2dgame.h"
 #include "fault.h"
 #include "shader.h"
@@ -15,6 +16,8 @@
 #include "label.h"
 #include "particle.h"
 #include "lrenderbuffer.h"
+#include "screen.h"
+#include "scissor.h"
 #include "lgeometry.h"
 
 //#define LOGIC_FRAME 30
@@ -28,6 +31,7 @@
 #define EJOY_HANDLE_ERROR "EJOY2D_HANDLE_ERROR"
 #define EJOY_RESUME "EJOY2D_RESUME"
 #define EJOY_PAUSE "EJOY2D_PAUSE"
+#define EJOY_RESIZE "EJOY2D_RESIZE"
 
 #define TRACEBACK_FUNCTION 1
 #define UPDATE_FUNCTION 2
@@ -55,6 +59,7 @@ linject(lua_State *L) {
 		EJOY_HANDLE_ERROR,
 		EJOY_RESUME,
 		EJOY_PAUSE,
+        EJOY_RESIZE,
 	};
 	int i;
 	for (i=0;i<sizeof(ejoy_callback)/sizeof(ejoy_callback[0]);i++) {
@@ -68,9 +73,24 @@ linject(lua_State *L) {
 }
 
 static int
+lscreen(lua_State *L) {
+    lua_pushnumber(L, screen_width());
+    lua_pushnumber(L, screen_height());
+	return 2;
+}
+
+static int
+lscissor_pop(lua_State *L) {
+    scissor_pop();
+    return 0;
+}
+
+static int
 ejoy2d_framework(lua_State *L) {
 	luaL_Reg l[] = {
 		{ "inject", linject },
+        { "screen", lscreen },
+        { "scissor_pop", lscissor_pop },
 		{ NULL, NULL },
 	};
 	luaL_newlibtable(L, l);
@@ -78,6 +98,23 @@ ejoy2d_framework(lua_State *L) {
 	luaL_setfuncs(L,l,1);
 	return 1;
 }
+
+static int
+llog(lua_State *L) {
+    pf_log("%s", luaL_checkstring(L,1));
+    return 0;
+}
+
+static int
+ejoy2d_log(lua_State *L) {
+	luaL_Reg l[] = {
+		{ "log", llog },
+		{ NULL, NULL },
+	};
+	luaL_newlib(L, l);
+	return 1;
+}
+
 
 static void
 checkluaversion(lua_State *L) {
@@ -96,6 +133,18 @@ checkluaversion(lua_State *L) {
 #define _OS_STRING(name) STR_VALUE(name)
 #define OS_STRING _OS_STRING(EJOY2D_OS)
 #endif
+
+static char __PATH[256];
+
+void
+asset_path_set(const char *path) {
+    snprintf(__PATH, sizeof(__PATH), "%s", path);
+}
+
+const char *
+asset_path_get() {
+    return __PATH;
+}
 
 lua_State *
 ejoy2d_lua_init() {
@@ -120,12 +169,14 @@ ejoy2d_init(lua_State *L) {
 	luaL_requiref(L, "ejoy2d.renderbuffer", ejoy2d_renderbuffer, 0);
 	luaL_requiref(L, "ejoy2d.matrix.c", ejoy2d_matrix, 0);
 	luaL_requiref(L, "ejoy2d.particle.c", ejoy2d_particle, 0);
+    luaL_requiref(L, "ejoy2d.log.c", ejoy2d_log, 0);
 	luaL_requiref(L, "ejoy2d.geometry.c", ejoy2d_geometry, 0);
 
 	lua_settop(L,0);
-
 	shader_init();
 	label_load();
+
+    asset_path_set(".");
 }
 
 struct game *
@@ -194,8 +245,9 @@ ejoy2d_game_start(struct game *G) {
 	lua_getfield(L,LUA_REGISTRYINDEX, EJOY_UPDATE);
 	lua_getfield(L,LUA_REGISTRYINDEX, EJOY_DRAWFRAME);
 	lua_getfield(L,LUA_REGISTRYINDEX, EJOY_MESSAGE);
-  lua_getfield(L,LUA_REGISTRYINDEX, EJOY_RESUME);
+    lua_getfield(L,LUA_REGISTRYINDEX, EJOY_RESUME);
 	lua_getfield(L, LUA_REGISTRYINDEX, EJOY_PAUSE);
+    lua_getfield(L, LUA_REGISTRYINDEX, EJOY_RESIZE);
 }
 
 
@@ -276,7 +328,10 @@ ejoy2d_game_update(struct game *G, float time) {
 	} else {
 		G->real_time += time;
 	}
+    static int i=0;
 	while (G->logic_time < G->real_time) {
+        //fprintf(stderr, "-----%d\n",i%30);
+        i++;
 		logic_frame(G->L);
 		G->logic_time += 1.0f/LOGIC_FRAME;
 	}
@@ -352,3 +407,12 @@ ejoy2d_game_pause(struct game* G) {
 	lua_settop(L, TOP_FUNCTION);
 }
 
+void
+ejoy2d_game_resize(struct game* G, int w, int h) {
+    lua_State *L = G->L;
+	lua_getfield(L, LUA_REGISTRYINDEX, EJOY_RESIZE);
+    lua_pushnumber(L, w);
+    lua_pushnumber(L, h);
+	call(L, 2, 0);
+	lua_settop(L, TOP_FUNCTION);
+}

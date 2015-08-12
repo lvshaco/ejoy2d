@@ -1,5 +1,5 @@
-#include <lua.h>
-#include <lauxlib.h>
+#include "lua.h"
+#include "lauxlib.h"
 #include <string.h>
 
 #include "shader.h"

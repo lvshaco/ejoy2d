@@ -4,7 +4,7 @@
 #include "spritepack.h"
 #include "matrix.h"
 
-#include <lua.h>
+#include "lua.h"
 #include <stdint.h>
 #include <stdbool.h>
 

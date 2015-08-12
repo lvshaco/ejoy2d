@@ -4,7 +4,7 @@
 #include "screen.h"
 #include "winfw.h"
 
-#include <lauxlib.h>
+#include "lauxlib.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -96,8 +96,8 @@ ejoy2d_win_init(int argc, char *argv[]) {
 }
 
 void
-ejoy2d_win_update() {
-	ejoy2d_game_update(G->game, 0.01f);
+ejoy2d_win_update(float s) {
+	ejoy2d_game_update(G->game, s);
 }
 
 void

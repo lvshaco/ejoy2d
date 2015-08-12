@@ -525,6 +525,136 @@ static int searcher_preload (lua_State *L) {
   return 1;
 }
 
+/*
+** srcpack
+ */
+#include "srcpack.h"
+
+static struct sp_entry *
+ispacked(struct sp_entryv *v, const char *filename) {
+  size_t sz = strlen(filename);
+  int i;
+  for (i=0; i<v->c; ++i) {
+    struct sp_entry *e = &v->v[i];
+    if (e->nsz==sz &&
+        !memcmp(filename, e->name, sz)) {
+      return e;
+    }
+  }
+  return NULL;
+}
+
+static struct sp_entry *
+searchpack(lua_State *L, struct sp_entryv *v,
+        const char *name,
+        const char *path,
+        const char *sep,
+        const char *dirsep) {
+  int top = lua_gettop(L);
+  if (*sep != '\0')  /* non-empty separator? */
+    name = luaL_gsub(L, name, sep, dirsep);  /* replace it by 'dirsep' */
+  while ((path = pushnexttemplate(L, path)) != NULL) {
+    const char *filename = luaL_gsub(L, lua_tostring(L, -1),
+                                     LUA_PATH_MARK, name);
+    struct sp_entry *e = ispacked(v, filename);
+    if (e)  {/* does file exist and is readable? */
+      lua_settop(L, top);
+      return e; /* return that sp_entry */
+    }
+    lua_pop(L,2);
+  }
+  lua_settop(L,top); 
+  return NULL;  /* not found */
+}
+
+static char *
+loadpack(lua_State *L, 
+    const char *ppath, 
+    const char *lpath, 
+    const char *name, 
+    char **p, size_t *sz) {
+  luaL_Buffer msg;  /* to build error message */
+  luaL_buffinit(L, &msg);
+  
+  char *body = NULL;
+  while ((ppath = pushnexttemplate(L, ppath)) != NULL) {
+    const char *pack = lua_tostring(L,-1);
+    FILE *fp = fopen(pack, "r");
+    if (fp == NULL) {
+      lua_pushfstring(L, "\n\tno pack " LUA_QS, pack);
+      goto skip;
+    }
+    struct sp_entryv v;
+    sp_entryv_init(&v);
+    if (sp_lentryv(fp, &v)) {
+      fclose(fp);
+      lua_pushfstring(L, "\n\tillegal pack " LUA_QS, pack);
+      goto skip;
+    }
+    struct sp_entry *e;
+    e = searchpack(L, &v, name, lpath, ".", LUA_LSUBSEP);
+    if (e == NULL) {
+      sp_entryv_fini(&v);
+      fclose(fp);
+      lua_pushfstring(L, "\n\tno in pack " LUA_QS, pack);
+      goto skip;
+    }
+    body = malloc(e->bodysz);
+    fseek(fp, e->offset, SEEK_SET);
+    fread(body, e->bodysz, 1, fp);
+    size_t size;
+    char *dec = sp_decrypt(body, e->bodysz, &size);
+    if (dec == NULL) {
+      free(body);
+      sp_entryv_fini(&v);
+      fclose(fp);
+      lua_pushfstring(L, "\n\tdecrypt fail pack " LUA_QS, pack);
+      luaL_addvalue(&msg);
+      lua_pop(L,1);
+      break;
+    } 
+    lua_pop(L,1);
+    lua_pushstring(L, e->name);
+    sp_entryv_fini(&v);
+    fclose(fp);
+    *p = dec;
+    *sz = size;
+    return body;
+skip:
+    luaL_addvalue(&msg);
+    lua_pop(L,1);
+    continue;
+  }
+  luaL_pushresult(&msg);
+  return NULL;
+}
+
+static int searcher_Pack (lua_State *L) {
+    const char *name = luaL_checkstring(L,1); 
+    lua_getfield(L, lua_upvalueindex(1), "packpath");
+    const char *ppath = lua_tostring(L, -1);
+    if (ppath == NULL) {
+        lua_pop(L,1);
+        return 0;
+    }
+    lua_getfield(L, lua_upvalueindex(1), "path");
+    const char *lpath = lua_tostring(L, -1);
+    if (lpath == NULL) {
+        lua_pop(L,2);
+        return 0;
+    }
+    lua_pop(L,2);
+    char *buf;
+    size_t sz;
+    char *p = loadpack(L, ppath, lpath, name, &buf, &sz);
+    if (p == NULL)
+        return 1;
+    const char *fname = lua_tostring(L, -1);
+    int status = luaL_loadbuffer(L, buf, sz, fname);
+    free(p);
+    return checkload(L, status==LUA_OK, fname);
+}
+/* srcpack end */
 
 static void findloader (lua_State *L, const char *name) {
   int i;
@@ -727,7 +857,7 @@ static const luaL_Reg ll_funcs[] = {
 
 static void createsearcherstable (lua_State *L) {
   static const lua_CFunction searchers[] =
-    {searcher_preload, searcher_Lua, searcher_C, searcher_Croot, NULL};
+    {searcher_preload, searcher_Pack, searcher_Lua, searcher_C, searcher_Croot, NULL};
   int i;
   /* create 'searchers' table */
   lua_createtable(L, sizeof(searchers)/sizeof(searchers[0]) - 1, 0);

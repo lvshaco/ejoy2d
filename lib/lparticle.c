@@ -2,8 +2,8 @@
 #include "particle.h"
 #include "spritepack.h"
 
-#include <lua.h>
-#include <lauxlib.h>
+#include "lua.h"
+#include "lauxlib.h"
 #include <string.h>
 
 

@@ -182,11 +182,17 @@ main(int argc, char *argv[]) {
                 break;
             }
         }
-
         uint32_t current = _gettime();
-        if (current - timestamp >= UPDATE_INTERVAL) {
+        if (current < timestamp) {
             timestamp = current;
-            ejoy2d_win_update();
+            continue;
+        }
+        uint32_t elapsed = current - timestamp;
+        if (elapsed >= UPDATE_INTERVAL) {
+            if (elapsed > UPDATE_INTERVAL*10)
+                elapsed = UPDATE_INTERVAL*10;
+            timestamp = current;
+            ejoy2d_win_update(elapsed*0.01f);
             update_frame();
         } else {
             usleep(1000);

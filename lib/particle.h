@@ -1,7 +1,7 @@
 #ifndef ejoy_2d_particle_h
 #define ejoy_2d_particle_h
 
-#include <lua.h>
+#include "lua.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>

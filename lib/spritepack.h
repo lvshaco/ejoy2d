@@ -1,7 +1,7 @@
 #ifndef EJOY_2D_SPRITE_PACK_H
 #define EJOY_2D_SPRITE_PACK_H
 
-#include <lua.h>
+#include "lua.h"
 #include <stdint.h>
 
 #define TYPE_EMPTY 0

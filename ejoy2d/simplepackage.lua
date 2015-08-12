@@ -1,9 +1,15 @@
 -- It's a simple sprite package warpper, use your own asset format instead.
 
 local ejoy2d = require "ejoy2d"
+local fw = require "ejoy2d.framework"
 local ppm = require "ejoy2d.ppm"
 local pack = require "ejoy2d.spritepack"
 local sprite = require "ejoy2d.sprite"
+local logger = require "ejoy2d.logger"
+local asset
+if OS == "ANDROID" then
+    asset = require "asset.c"
+end
 
 -- This limit defined in texture.c
 local MAX_TEXTURE = 128
@@ -18,7 +24,16 @@ local function require_tex(filename)
 	local tex = #textures
 	assert(tex < MAX_TEXTURE)
 	table.insert(textures, filename)
-	ppm.texture(tex,filename)
+    if OS == "ANDROID" then
+        logger.log("open asset:",filename)
+        local p1,l1,a1=assert(asset.open(filename..'.ppm'))
+        local p2,l2,a2=assert(asset.open(filename..'.pgm'))
+        ppm.texture(tex,p1,l1,p2,l2)
+        asset.close(a1)
+        asset.close(a2)
+    else
+        ppm.texture(tex,filename)
+    end
 	return tex
 end
 
@@ -37,8 +52,7 @@ function spack.preload(packname)
 	end
 	local p = {}
 	local filename = realname(packname)
-	p.meta = assert(pack.pack(dofile(filename .. ".lua")))
-
+	p.meta = assert(pack.pack(dofile(fw.WorkDir..filename .. ".lua")))
 	p.tex = {}
 	for i=1,p.meta.texture do
 		p.tex[i] = require_tex(filename .. "." .. i)

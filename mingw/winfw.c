@@ -47,11 +47,21 @@ traceback(lua_State *L) {
 	return 1;
 }
 
+extern int luaopen_socket_c(lua_State *L);
+extern int luaopen_socketbuffer_c(lua_State *L);
+extern int luaopen_audio_c(lua_State *L);
+
 void
 ejoy2d_win_init(int argc, char *argv[]) {
 	G = create_game();
-	screen_init(WIDTH,HEIGHT,1.0f);
+	//screen_init(WIDTH,HEIGHT,1.0f);
 	lua_State *L = ejoy2d_game_lua(G->game);
+    int top = lua_gettop(L);
+    luaL_requiref(L, "socket.c", luaopen_socket_c, 0);
+    luaL_requiref(L, "socketbuffer.c", luaopen_socketbuffer_c, 0);
+    luaL_requiref(L, "audio.c", luaopen_audio_c, 0);
+    lua_settop(L, top);
+
 	lua_pushcfunction(L, traceback);
 	int tb = lua_gettop(L);
 	int err = luaL_loadstring(L, startscript);
@@ -63,28 +73,28 @@ ejoy2d_win_init(int argc, char *argv[]) {
 	char modname[1024];
 
 	int sz = GetModuleFileNameA(0,  modname, 1024);
-
 	lua_pushlstring(L, modname, sz);
 
 	int i;
 	for (i=1;i<argc;i++) {
 		lua_pushstring(L, argv[i]);
 	}
-
+    screen_init(WIDTH,HEIGHT,1.0f);
 	err = lua_pcall(L, argc, 0, tb);
 	if (err) {
 		const char *msg = lua_tostring(L,-1);
 		fault("%s", msg);
 	}
 
-	lua_pop(L,1);
-
+	lua_pop(L,1); 
 	ejoy2d_game_start(G->game);
+
+    //ejoy2d_win_resize(WIDTH,HEIGHT);
 }
 
 void
-ejoy2d_win_update() {
-	ejoy2d_game_update(G->game, 0.01f);
+ejoy2d_win_update(float s) {
+	ejoy2d_game_update(G->game, s);
 }
 
 void
@@ -111,4 +121,10 @@ ejoy2d_win_touch(int x, int y,int touch) {
 	int id = 0;
 	ejoy2d_game_touch(G->game, id, x,y,touch);
 }
-
+void
+ejoy2d_win_resize(int w, int h) {
+    if (G && G->game) {
+        screen_init(w,h,1.0f);
+        ejoy2d_game_resize(G->game, w, h);
+    }
+}

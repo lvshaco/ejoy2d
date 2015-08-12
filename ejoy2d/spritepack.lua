@@ -319,7 +319,7 @@ function spritepack.init( name, texture, meta )
 end
 
 function spritepack.query( packname, name )
-	local p = assert(pack_pool[packname], "Load package first")
+	local p = assert(pack_pool[packname], "Load package first:"..packname)
 	local id
 	if type(name) == "number" then
 		id = name

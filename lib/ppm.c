@@ -3,8 +3,8 @@
 #include "array.h"
 #include "render.h"
 
-#include <lua.h>
-#include <lauxlib.h>
+#include "lua.h"
+#include "lauxlib.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -42,6 +42,30 @@ readline(FILE *f, char *buffer) {
 	}
 }
 
+static char *
+readline_2(char **p, int *l) {
+    char *t = *p;
+    int i=0;
+    for (;;) {
+        int start=i;
+        for (; i<*l; ++i) {
+            if (t[i]=='\n') {
+                i++;
+                break;
+            }
+        }
+        if (i==start) {
+            *l=0;
+            return NULL;
+        }
+        if (t[start]!='#') {
+            *l-=i;
+            *p+=i;
+            return &t[start];
+        }
+    }
+}
+
 static int
 ppm_header(FILE *f, struct ppm *ppm) {
 	char tmp[LINEMAX];
@@ -60,6 +84,26 @@ ppm_header(FILE *f, struct ppm *ppm) {
 		return 0;
 	sscanf(line, "%d", &(ppm->depth));
 	return 1;
+}
+
+static int
+ppm_header_2(char **p, int *l, struct ppm *ppm) {
+    char *line = readline_2(p,l);
+	if (line == NULL)
+		return 0;
+	char c = 0;
+	sscanf(line, "P%c", &c);
+	ppm->type = c;
+	line = readline_2(p,l);
+	if (line == NULL)
+		return 0;
+	sscanf(line, "%d %d", &(ppm->width), &(ppm->height));
+	line = readline_2(p,l);
+	if (line == NULL)
+		return 0;
+	sscanf(line, "%d", &(ppm->depth));
+	return 1;
+
 }
 
 static int
@@ -113,6 +157,84 @@ ppm_data(struct ppm *ppm, FILE *f, int id, int skip) {
 	default:
 		return 0;
 	}
+	return 1;
+}
+
+static int
+ppm_data_2(struct ppm *ppm, uint8_t **p, int *l, int id, int skip) {
+	int i;
+	int n = ppm->width * ppm->height;
+	uint8_t * buffer = ppm->buffer + skip;
+	uint8_t * tmp = *p;
+	int step = ppm->step;
+	switch(id) {
+	case '6':	// RGB binary
+		for (i=0;i<n;i++) {
+			buffer[i*step+0] = tmp[i*3+0];
+			buffer[i*step+1] = tmp[i*3+1];
+			buffer[i*step+2] = tmp[i*3+2];
+		}
+        *l-=3*n;
+        *p+=3*n;
+		break;
+	case '5':	// ALPHA binary
+		for (i=0;i<n;i++) {
+			buffer[i*step] = tmp[i];
+		}
+        *l-=n;
+        *p+=n;
+		break;
+	default:
+		return 0;
+	}
+	return 1;
+}
+
+static int
+loadppm_from_stream(char *rgb, int lrgb, char *alpha, int lalpha, struct ppm *ppm) {
+    ppm->buffer = NULL;
+	ppm->step = 0;
+	int rgb_id = 0;
+	int alpha_id = 0;
+	if (rgb) {
+		if (!ppm_header_2(&rgb, &lrgb, ppm)) {
+			return 0;
+		}
+		rgb_id = ppm->type;
+		ppm->step += 3;
+	}
+	if (alpha) {
+		if (rgb == NULL) {
+			if (!ppm_header_2(&alpha, &lalpha, ppm)) {
+				return 0;
+			}
+			alpha_id = ppm->type;
+		} else {
+			struct ppm pgm;
+			if (!ppm_header_2(&alpha, &lalpha, &pgm)) {
+				return 0;
+			}
+			if (ppm->depth != pgm.depth || ppm->width != pgm.width || ppm->height != pgm.height) {
+				return 0;
+			}
+			alpha_id = pgm.type;
+		}
+		ppm->step += 1;
+	}
+	ppm->buffer = (uint8_t *)malloc(ppm->height * ppm->width * ppm->step);
+	if (rgb) {
+		if (!ppm_data_2(ppm, (uint8_t**)&rgb, &lrgb, rgb_id, 0))
+			return 0;
+	}
+	if (alpha) {
+		int skip = 0;
+		if (rgb) {
+			skip = 3;
+		}
+		if (!ppm_data_2(ppm, (uint8_t**)&alpha, &lalpha, alpha_id, skip)) 
+			return 0;
+	}
+
 	return 1;
 }
 
@@ -227,34 +349,51 @@ loadppm(lua_State *L) {
 
 static int
 loadtexture(lua_State *L) {
-	int id = (int)luaL_checkinteger(L,1);
-	size_t sz = 0;
-	const char * filename = luaL_checklstring(L, 2, &sz);
-	ARRAY(char, tmp, sz + 5);
-	sprintf(tmp, "%s.ppm", filename);
-	FILE *rgb = fopen(tmp, "rb");
-	sprintf(tmp, "%s.pgm", filename);
-	FILE *alpha = fopen(tmp, "rb");
-	if (rgb == NULL && alpha == NULL) {
-		return luaL_error(L, "Can't open %s(.ppm/.pgm)", filename);
-	}
-	struct ppm ppm;
+    int top = lua_gettop(L);
+    struct ppm ppm;
+    int id = (int)luaL_checkinteger(L,1);
+    if (top==2) {
+        size_t sz = 0;
+        const char * filename = luaL_checklstring(L, 2, &sz);
+        ARRAY(char, tmp, sz + 5);
+        sprintf(tmp, "%s.ppm", filename);
+        FILE *rgb = fopen(tmp, "rb");
+        sprintf(tmp, "%s.pgm", filename);
+        FILE *alpha = fopen(tmp, "rb");
+        if (rgb == NULL && alpha == NULL) {
+            return luaL_error(L, "Can't open %s(.ppm/.pgm)", filename);
+        }
+        
+        int ok = loadppm_from_file(rgb, alpha, &ppm);
 
-	int ok = loadppm_from_file(rgb, alpha, &ppm);
-
-	if (rgb) {
-		fclose(rgb);
-	}
-	if (alpha) {
-		fclose(alpha);
-	}
-	if (!ok) {
-		if (ppm.buffer) {
-			free(ppm.buffer);
-		}
-		luaL_error(L, "Invalid file %s", filename);
-	}
-
+        if (rgb) {
+            fclose(rgb);
+        }
+        if (alpha) {
+            fclose(alpha);
+        }
+        if (!ok) {
+            if (ppm.buffer) {
+                free(ppm.buffer);
+            }
+            luaL_error(L, "Invalid file %s", filename);
+        }
+    } else { 
+        luaL_checktype(L,2,LUA_TLIGHTUSERDATA);
+        char *rgb = (char*)lua_touserdata(L,2);
+        int lrgb = luaL_checkinteger(L,3);
+        luaL_checktype(L,4,LUA_TLIGHTUSERDATA);
+        char *alpha = (char*)lua_touserdata(L,4);
+        int lalpha = luaL_checkinteger(L,5);
+        int ok = loadppm_from_stream(rgb, lrgb, alpha, lalpha, &ppm);
+        if (!ok) {
+            if (ppm.buffer) {
+                free(ppm.buffer);
+            }
+            luaL_error(L, "loadppm_from_stream fail");
+        }
+    }
+	
 	int type = 0;
 	if (ppm.depth == 255) {
 		if (ppm.step == 4) {

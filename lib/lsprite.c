@@ -8,8 +8,8 @@
 #include "render.h"
 #include "texture.h"
 
-#include <lua.h>
-#include <lauxlib.h>
+#include "lua.h"
+#include "lauxlib.h"
 
 #define SRT_X 1
 #define SRT_Y 2
