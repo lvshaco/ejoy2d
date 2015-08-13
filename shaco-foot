@@ -22,12 +22,16 @@ fork() {
         echo "#!/bin/bash" >> shaco-foot
         echo 'cd ejoy2d && ./shaco-foot "$@" && cd ..' >> shaco-foot
         chmod +x shaco-foot
+        git add shaco-foot
     fi
-    mv ejoy2d/android/AndroidManifest.xml .
-    mv ejoy2d/android/MyActivity.java .
-    git add shaco-foot
-    git add AndroidManifest.xml
-    git add MyActivity.java
+    if [ ! -e AndroidManifest.xml ]; then
+        mv ejoy2d/android/AndroidManifest.xml .
+        git add AndroidManifest.xml
+    fi
+    if [ ! -e MyActivity.java ]; then
+        mv ejoy2d/android/MyActivity.java .
+        git add MyActivity.java
+    fi
     git commit -a -m "shaco-foot fork"
     git push origin master
     cd ../..
