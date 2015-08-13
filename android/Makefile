@@ -1,6 +1,9 @@
-.PHONY : default update build pack install dist all clean cleanall dump tojava tonative
+.PHONY : default update build pack install dist clean cleanall dump
 
-name=jack
+path=$(shell pwd)
+wl=$(subst /, ,$(path))
+wn=$(shell echo $$(($(words $(wl))-2)))
+name=$(word $(wn),$(wl))
 
 default: dist
 
@@ -17,37 +20,31 @@ endif
 update:
 	$(ANDROID) update project -p . -n $(name) --target android-16
 build:
-	ndk-build NDK_BUILD=1 NDK_MODULE_PATH=`pwd`
+	ndk-build NDK_BUILD=1 NDK_MODULE_PATH=$(path)
 pack:
 	rm -rf assets/files/*
 	mkdir -pv assets
 	cp -r ../ejoy2d assets/files
 	cp -r ../util assets/files
-	cp -r ../$(name) assets/files
+	cp ../../*.lua assets/files
+	cp -r ../../asset assets/files
 	ant debug
 install:
-	adb uninstall com.example.$(name)
+	adb uninstall com.lvshaco.$(name)
 	adb install bin/$(name)-debug.apk
 
-dist: build pack install
-all: update dist
+dist: update build pack install
 
 clean:
 	rm -rf bin gen 
 cleanall: clean
-	rm -rf libs obj
-	rm -f build.xml proguard-project.txt
+	ndk-build clean NDK_MODULE_PATH=$(path)
+	rm -f build.xml proguard-project.txt local.properties
+	rm -f .dump.log
+	rm -rf assets
 
 dump:
 	echo "*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***" > .dump.log
 	adb logcat -d -s DEBUG >> .dump.log
 	ndk-stack -sym obj/local/armeabi -dump .dump.log
 	rm -f .dump.log
-
-tojava: cleanall
-	cp AndroidManifest.xml.java AndroidManifest.xml
-	cp jni/Android.mk.java jni/Android.mk
-
-tonative: cleanall
-	cp AndroidManifest.xml.native AndroidManifest.xml
-	cp jni/Android.mk.native jni/Android.mk
