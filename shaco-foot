@@ -24,14 +24,15 @@ fork() {
     git add AndroidManifest.xml
     git commit -a -m "shaco-foot fork"
     git push origin master
+    cd ../..
     echo [fork] $1 ok
 }
 
 an() {
     if [ "$1" == "update" ]; then
-        cp AndroidManifest.xml ejoy2d/android
+        cp ../AndroidManifest.xml android
     fi
-    cd ejoy2d/android && make $@
+    cd android && make $@
 }
 
 USAGE="Usage:./shaco-foot
