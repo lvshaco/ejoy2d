@@ -33,7 +33,7 @@ fork() {
 }
 
 an() {
-    if [ "$1" == "update" ]; then
+    if [ $# -eq 0 ] || [ "$1" == "update" ]; then
         cp ../AndroidManifest.xml android
     fi
     cd android && make $@
