@@ -9,11 +9,4 @@ if __name__ == "__main__":
     f.write(s) 
     f.close()
 
-
-    f = open("src/com/example/testej2d/MyActivity.java.def", "r")
-    s = f.read()
-    s = s.replace("XXX.lua", "%s.lua"%name)
-    f.close()
-    f = open("MyActivity.java", "w")
-    f.write(s)
-    f.close()
+    os.system("cp src/com/example/testej2d/MyActivity.java.def MyActivity.java")
