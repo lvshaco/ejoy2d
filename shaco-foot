@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+fork() {
+    echo [fork] $1 ...
+    mkdir -v ../$1
+    echo [fork] $1 ok
+}
+
+an() {
+    shift
+    cd android && make $@
+}
+
+case "$1" in
+fork) shift; fork "$@";;
+android) shift; an "$@";;
+*) echo $USAGE;;
+esac
