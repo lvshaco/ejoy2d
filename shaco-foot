@@ -1,18 +1,25 @@
-#!/bin/bash -e
+#!/bin/bash 
 
 fork() {
     echo [fork] $1 ...
     local ppath=../$1
     mkdir -v $ppath
+    if [ $? -eq 1 ]; then
+        printf "* Fork dangerous, is exited already, continue [Y/N]:"
+        read YES
+        if [ "$YES" != "Y" ] && [ "$YES" != "y" ]; then
+            exit 1
+        fi
+    fi
     cd $ppath
-    cp -r ../ejoy2d . 
+    cp -rf ../ejoy2d . 
     cd ejoy2d/android && make create && cd ../..
     git init
     git remote add origin git@git.oschina.net:lvshaco/$1.git
     git pull origin master
     git submodule add git@github.com:lvshaco/ejoy2d.git
     cp ejoy2d/shaco-foot .   
-    cp ejoy2d/android/AndroidManifest.xml .
+    mv ejoy2d/android/AndroidManifest.xml .
     git add shaco-foot
     git add AndroidManifest.xml
     git commit -a -m "shaco-foot fork"
