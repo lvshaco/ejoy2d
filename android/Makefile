@@ -1,4 +1,4 @@
-.PHONY : default update build pack install dist clean cleanall dump
+.PHONY : default create update build pack install dist clean cleanall dump
 
 path=$(shell pwd)
 wl=$(subst /, ,$(path))
@@ -18,7 +18,7 @@ else
 endif
 
 create:
-	lua create.lua $(name)
+	python create.py $(name)
 
 update:
 	$(ANDROID) update project -p . -n $(name) --target android-16
@@ -42,7 +42,7 @@ clean:
 	rm -rf bin gen 
 cleanall: clean
 	ndk-build clean NDK_MODULE_PATH=$(path)
-	rm -f AndroidManifest.xml
+	rm -f AndroidManifest.xml MyActivity.java
 	rm -f build.xml proguard-project.txt local.properties
 	rm -f .dump.log
 	rm -rf assets

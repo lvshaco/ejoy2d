@@ -24,8 +24,10 @@ fork() {
         chmod +x shaco-foot
     fi
     mv ejoy2d/android/AndroidManifest.xml .
+    mv ejoy2d/android/MyActivity.java .
     git add shaco-foot
     git add AndroidManifest.xml
+    git add MyActivity.java
     git commit -a -m "shaco-foot fork"
     git push origin master
     cd ../..
@@ -35,6 +37,7 @@ fork() {
 an() {
     if [ $# -eq 0 ] || [ "$1" == "update" ]; then
         cp ../AndroidManifest.xml android
+        cp ../MyActivity.java android/src/com/example/testej2d
     fi
     cd android && make $@
 }
