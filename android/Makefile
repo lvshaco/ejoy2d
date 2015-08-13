@@ -42,6 +42,7 @@ clean:
 	rm -rf bin gen 
 cleanall: clean
 	ndk-build clean NDK_MODULE_PATH=$(path)
+	rm -f AndroidManifest.xml
 	rm -f build.xml proguard-project.txt local.properties
 	rm -f .dump.log
 	rm -rf assets
