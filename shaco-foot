@@ -18,7 +18,11 @@ fork() {
     git remote add origin git@git.oschina.net:lvshaco/$1.git
     git pull origin master
     git submodule add git@github.com:lvshaco/ejoy2d.git
-    cp ejoy2d/shaco-foot .   
+    if [ ! -e shaco-foot ]; then
+        echo "#!/bin/bash" >> shaco-foot
+        echo 'cd ejoy2d && ./shaco-foot "$@" && cd ..' >> shaco-foot
+        chmod +x shaco-foot
+    fi
     mv ejoy2d/android/AndroidManifest.xml .
     git add shaco-foot
     git add AndroidManifest.xml
