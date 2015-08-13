@@ -28,9 +28,7 @@ fork() {
 }
 
 an() {
-    shift
-    if [ $1 == "update" ]; then
-        echo test
+    if [ "$1" == "update" ]; then
         cp AndroidManifest.xml ejoy2d/android
     fi
     cd ejoy2d/android && make $@
