@@ -1,4 +1,5 @@
 import sys
+import os
 if __name__ == "__main__":
     name = sys.argv[1] 
     f = open("AndroidManifest.xml.def", "r")
