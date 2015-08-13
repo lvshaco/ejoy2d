@@ -17,6 +17,9 @@ else
 	ANDROID="android"
 endif
 
+create:
+	lua create.lua $(name)
+
 update:
 	$(ANDROID) update project -p . -n $(name) --target android-16
 build:
