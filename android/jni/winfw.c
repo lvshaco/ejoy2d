@@ -110,10 +110,10 @@ ejoy2d_win_init(int w, int h, float scale, const char *path, const char *mainlua
     uint32_t t1 = _gettime();
     asset_extract("ejoy2d", path, ".lua");
     asset_extract("util", path, ".lua");
-    asset_extract("examples", path, ".lua");
-    asset_extract("examples/asset", path, ".lua");
-    asset_extract("examples/asset", path, ".mp3");
-    asset_extract("examples/asset", path, ".wav");
+    asset_extract("", path, ".lua");
+    asset_extract("asset", path, ".lua");
+    asset_extract("asset", path, ".mp3");
+    asset_extract("asset", path, ".wav");
     uint32_t t2 = _gettime();
     pf_log("c copy use time:%d",t2-t1);
 

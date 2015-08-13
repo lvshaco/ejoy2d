@@ -516,7 +516,7 @@ class DemoRenderer implements GLSurfaceView.Renderer {
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) { 
         Log.e("ejoy2d", mEntryfile);
 
-		nativeInit(mEntryfile, "examples/test.lua");
+		nativeInit(mEntryfile, "XXX.lua");
 	}
 
 	public void onSurfaceChanged(GL10 gl, int w, int h) {

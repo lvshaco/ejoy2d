@@ -25,15 +25,23 @@ endswith(const char *fname, const char *ext, size_t extlen) {
 int
 asset_extract(const char *assetdir, const char *topath, const char *ext) {
     char fromdir[PATH_MAX];
-    snprintf(fromdir, sizeof(fromdir), "files/%s", assetdir);
+    if (assetdir[0] == '\0') {
+        strcpy(fromdir, "files");
+    } else {
+        snprintf(fromdir, sizeof(fromdir), "files/%s", assetdir);
+    }
     AAssetDir *dir = AAssetManager_openDir(__A, fromdir);
     if (dir == NULL) {
-        pf_log("asset %s no found", fromdir);
+        pf_log("[!no asset dir] %s", fromdir);
         return 1;
     }
     char buf[2048];
     char todir[PATH_MAX];
-    snprintf(todir, sizeof(todir), "%s/%s", topath, assetdir);
+    if (assetdir[0] == '\0') {
+        strcpy(todir, topath);
+    } else {
+        snprintf(todir, sizeof(todir), "%s/%s", topath, assetdir);
+    }
     mkdir(todir, 0770);
 
     size_t extlen = strlen(ext);
@@ -48,7 +56,6 @@ asset_extract(const char *assetdir, const char *topath, const char *ext) {
             pf_log("%s -> %s", fromfile, tofile);
             AAsset *asset = AAssetManager_open(__A, fromfile, 2);
             if (asset) {
-                pf_log("-- %s -> %s", fromfile, tofile);
                 FILE *fp = fopen(tofile, "w+");
                 if (fp == NULL) {
                     pf_log("asset extract fail: %s", tofile);
@@ -59,6 +66,8 @@ asset_extract(const char *assetdir, const char *topath, const char *ext) {
                 }
                 fclose(fp);
                 AAsset_close(asset);
+            } else {
+                pf_log("[!no asset] %s", fromfile);
             }
         }
     }
