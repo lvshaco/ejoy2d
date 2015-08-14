@@ -10,7 +10,7 @@ else
 	target=ui
 endif
 
-path=../../$(name)
+path?=../../$(name)
 
 all: $(target)
 undefined:
@@ -19,14 +19,14 @@ undefined:
 packcsd:
 	cd uipack && \
 	python uipack.py -c \
-		$(path)/ui/cocosstudio/ui_$(name) \
+		$(path)/ui/cocosstudio/image \
 		$(path)/ui/cocosstudio/ \
 		$(path)/asset
 
 packimage:
 	cd uipack && \
 	python uipack.py -i \
-		$(path)/ui/cocosstudio/ui_$(name) \
+		$(path)/ui/cocosstudio/image \
 		$(path)/ui/cocosstudio/ \
 		$(path)/asset
 
