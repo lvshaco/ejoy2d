@@ -2,7 +2,11 @@
 
 #python run.py -i jack -x
 	#cp output/jack.lua output/jack.1.ppm output/jack.1.pgm ~/ejoy2d/jack/asset
-name=
+
+path=$(shell pwd)
+wl=$(subst /, ,$(path))
+wn=$(shell echo $$(($(words $(wl))-2)))
+name=$(word $(wn),$(wl))
 
 ifeq ($(name),)
 	target=undefined
@@ -10,7 +14,7 @@ else
 	target=ui
 endif
 
-path?=../../$(name)
+path?=../../..
 
 all: $(target)
 undefined:
