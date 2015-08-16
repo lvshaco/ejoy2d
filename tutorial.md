@@ -7,9 +7,9 @@
 
 ## android
 
-1. **MyActivity.java**: the default android start script is main.lua, you can change the config, just replace the string `main.lua` to other in MyActivity.java
-2. **AndroidManifest.xml**: alter it will change android application behavior
-3. **./shaco-foot android**: deploy
+1. `MyActivity.java`: the default android start script is main.lua, you can change the config, just replace the string `main.lua` to other in MyActivity.java
+2. `AndroidManifest.xml`: alter it will change android application behavior
+3. `./shaco-foot android` to deploy
 
 ## ui
 #### use cocosstudio to edit ui, it export csd file
@@ -24,3 +24,10 @@
 - label:  name endswith `[E]` the font has edge
 - listview: name endswith `[number]` the number is item show count
 
+#### pack ui
+`./shaco-foot tool uipack`, it will generate:
+
+- project/asset/image.*.ppm
+- project/asset/image.*.pgm
+- project/asset/image.lua
+- project/asset/image_uc.lua
