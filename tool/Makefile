@@ -3,8 +3,8 @@
 #python run.py -i jack -x
 	#cp output/jack.lua output/jack.1.ppm output/jack.1.pgm ~/ejoy2d/jack/asset
 
-path=$(shell pwd)
-wl=$(subst /, ,$(path))
+pa=$(shell pwd)
+wl=$(subst /, ,$(pa))
 wn=$(shell echo $$(($(words $(wl))-2)))
 name=$(word $(wn),$(wl))
 

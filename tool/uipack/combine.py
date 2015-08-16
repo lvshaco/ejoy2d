@@ -53,7 +53,10 @@ def fill_id(ani_l, img_l):
                         # add color
                         line = '{index=%d,mat={1024,0,0,1024,%d,%d}}'%(i,tranx,trany)
                     frames.append(line)
-                    cs[i] = pic and pic['id'] or -1
+                    if pic:
+                        cs[i] = pic['id']
+                    else:
+                        cs[i] = -1
                 for i in range(len(frames)):
                     f = frames[i]
                     if textid == -1:

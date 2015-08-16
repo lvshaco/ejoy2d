@@ -46,6 +46,10 @@ an() {
     cd android && make $@
 }
 
+tool() {
+    cd tool && make $@
+}
+
 USAGE="Usage:./shaco-foot
     * fork       project_name
     * android    op\n"
@@ -53,5 +57,6 @@ USAGE="Usage:./shaco-foot
 case "$1" in
 fork) shift; fork "$@";;
 android) shift; an "$@";;
+tool) shift; tool "$@";;
 *) printf "$USAGE";;
 esac

@@ -316,7 +316,7 @@ def _child(node,d, addself):
            child.nodeName == "Children":
             for obj in child.childNodes:
                 if obj.nodeType == obj.ELEMENT_NODE and \
-                   obj.nodeName == "NodeObjectData":
+                   obj.nodeName == "AbstractNodeData":
                        sd = _control(obj)
                        assert(sd)
                        # 编辑器y轴方向向上的
@@ -372,10 +372,10 @@ def _root(dom):
         return root, 1 # scene, layer
     else: 
         child = _uniquechild(root, "Children")
-        n = _childnodecnt(child, "NodeObjectData")
+        n = _childnodecnt(child, "AbstractNodeData")
         assert n>0, "No child node"
         if n==1:
-            sprite = _childnodefirst(child, "NodeObjectData")
+            sprite = _childnodefirst(child, "AbstractNodeData")
             if _AV(sprite,'ctype')=='SpriteObjectData':
                 return sprite, 3 # node, sprite as the container
             else:
