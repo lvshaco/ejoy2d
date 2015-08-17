@@ -50,6 +50,10 @@ tool() {
     cd tool && make $@
 }
 
+imagepack() {
+    cd tool/uipack && python imagepack.py $@
+}
+
 USAGE="Usage:./shaco-foot
     * fork       project_name
     * android    op\n"
@@ -58,5 +62,6 @@ case "$1" in
 fork) shift; fork "$@";;
 android) shift; an "$@";;
 tool) shift; tool "$@";;
+imagepack) shift; imagepack "$@";;
 *) printf "$USAGE";;
 esac
