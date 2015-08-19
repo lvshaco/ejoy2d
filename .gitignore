@@ -7,3 +7,6 @@ ej2d.dSYM/*
 *.ilk
 mac/example/example.xcodeproj/xcuserdata
 mac/example/example.xcodeproj/project.xcworkspace/xcuserdata
+cscope.*
+tags
+.*.swp
