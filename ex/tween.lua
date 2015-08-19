@@ -293,7 +293,6 @@ function tween.new(from, to, duration, easing)
         __duration = duration,
         __clock = 0,
         __easing = easing,
-        __effect = effect,
     }, {__index = mt})
 end
 

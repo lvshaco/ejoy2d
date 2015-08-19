@@ -1,6 +1,5 @@
 local ej = require "ejoy2d"
-local sprite = require "ejoy2d.sprite"
-local layout = require "util.layout"
+local layout = require "ex.layout"
 
 local spritex = {}
 spritex.__index = spritex
@@ -17,7 +16,7 @@ end
 function spritex.init(class, packname, name)
     local spr
     if packname then
-        spr = assert(sprite.new(packname, name))
+        spr = assert(ej.sprite(packname, name))
     else
         spr = name
     end
@@ -168,7 +167,7 @@ function spritex:action_time()
     end
 end
 
--- touch event
+-- touch 
 function spritex:touch_enable(b)
     local old = self.__touch_enable
     self.__touch_enable = b
@@ -264,12 +263,10 @@ function spritex:update()
                 end_frame = true
             end
         end
-        if end_frame then
-            if self.__maxloop > 0 then
-                self.__curloop = self.__curloop + 1
-                if self.__curloop >= self.__maxloop then
-                    self.__frame_run = false
-                end
+        if end_frame and self.__maxloop > 0 then
+            self.__curloop = self.__curloop + 1
+            if self.__curloop >= self.__maxloop then
+                self.__frame_run = false
             end
         end
     end
@@ -285,6 +282,7 @@ function spritex:update()
     __calculate_matrix(self)
 end
 
+-- draw
 function spritex:draw()
     self.__sprite:draw()
 end
