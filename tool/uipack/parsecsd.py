@@ -237,6 +237,10 @@ def _checkbox(node, d):
     if dis == 'CheckBox_Disable.png': dis = ""
     l.append(dis)
     l.append(text_id)
+    l.append(_IMAGE(node,'NodeNormalFileData'))
+    dis = _IMAGE(node,'NodeDisableFileData')
+    if dis == 'CheckBoxNode_Disable.png': dis = ""
+    l.append(dis)
     d['component'] = l
     d['text'] = text
     d['touch'] = True

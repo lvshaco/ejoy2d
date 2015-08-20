@@ -42,9 +42,6 @@ def fill_id(ani_l, img_l):
                     if not pic: break
                     screen = pic['screen']
                     pw,ph = screen[0]*2+screen[2], screen[1]*2+screen[3]
-                    if w==0 and h==0:
-                        w,h=pw,ph
-                        v['w'],v['h']=w,h
                     if pw==w and ph==h:
                         line = '%d'%i
                     else:

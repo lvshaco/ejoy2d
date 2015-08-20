@@ -36,7 +36,7 @@ function spritex.init(class, packname, name)
         __scaley = 1,
         __anchorx = 0.5,
         __anchory = 0.5,
-        __matrix_dirty = false,
+        __matrix_dirty = true, 
         __xlayout = nil,
         __ylayout = nil,
         __maxloop = nil,
@@ -253,23 +253,21 @@ end
 -- __touchout
 
 function spritex:__ontouch(what,x,y)
-    local hit = self.__sprite:test(x,y,srt)
-    if hit then
-        if what == 'BEGIN' then
+    if what == 'BEGIN' then
+        local hit = self.__sprite:test(x,y)
+        if hit then
             self.__touchstate = 'down' 
             return self:__ontouchdown(x,y)
-        elseif what == 'END' then
-            if self.__touchstate == 'down' then 
-                self.__touchstate = 'none' 
-                return self:__ontouchup(x,y)
-            end
         end
-    else
-        if what == 'MOVE' then
-            if self.__touchstate == 'down' then
-                self.__touchstate = 'none' 
-                return self:__ontouchout(x,y)
-            end
+    elseif what == 'END' then
+        if self.__touchstate == 'down' then 
+            self.__touchstate = 'none' 
+            return self:__ontouchup(x,y)
+        end
+    elseif what == 'MOVE' then
+        if self.__touchstate == 'down' then
+            self.__touchstate = 'none' 
+            return self:__ontouchout(x,y)
         end
     end
 end

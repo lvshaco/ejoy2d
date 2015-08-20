@@ -9,19 +9,23 @@ local coco = require "ex.coco"
 local layer = require "ex.layer"
 local tween = require "ex.tween"
 local action = require "ex.action"
-local listview = require "ui.listview"
+
+local label = require "ui.label"
 local button = require "ui.button"
+local checkbox = require "ui.checkbox"
+local listview = require "ui.listview"
 
 local t1 = os.time()
 pack.load {
     pattern = fw.WorkDir..[[examples/asset/?]],
-    "image"
+    "uiimage"
 }
 local t2 = os.time()
 logger.log("pack.load use time:"..(t2-t1))
 logger.log(fw.WorkDir)
 
-layout.init(1024, 740, "H")
+local sw, sh = ej.screen()
+layout.init(sw, sh, "H")
 
 local function frame2ms(x)
     return x*1000/30
@@ -33,7 +37,7 @@ local T = {}
 function T.showui()
     local max = 0.8
     local min = 0.78
-    sx = spritex.new('image','effect_active_char.png')
+    sx = spritex.new('uiimage','effect_active_char.png')
     local x = layout.pointx(0.5)
     local y = layout.pointy(0.5)
     sx:ps(x,y)
@@ -50,6 +54,27 @@ function T.showui()
     L:add(2, sx)
 end
 
+function T.button()
+    local l1 = label.new('uiimage', 'node_Text_1')
+    l1:text('label')
+    l1:pos(100, 50)
+    
+    local b1 = button.new('uiimage', 'node_Button_1')
+    b1:text('btn1')
+    b1:pos(100,100)
+    b1:touch_event('down', function(self,x,y)
+        l1:text('btn1 down')
+    end)
+    b1:touch_event('up', function(self,x,y)
+        l1:text('btn1 up')
+    end)
+
+    local c1 = checkbox.new('uiimage', 'node_CheckBox_1')
+    c1:pos(150, 100)
+    L:add(2,b1)
+    L:add(2,l1)
+end
+
 for i=1,10 do
     T['test'..i] = function() end
 end
@@ -60,24 +85,25 @@ local function init()
     L:bind(2, {}, ipairs, layer.UPDATE|layer.DRAW|layer.TOUCH)
     L:bind(3, coco:new(), ipairs, layer.UPDATE|layer.TOUCHLAST)
 
-    local lv = listview.new('image', 'node_ListView_1', 11)
-    lv:anchorpoint(1,0.5)
-    lv:pos(layout.pointx(1),layout.pointy(0.5))
-    lv:scale(0.5)
-    lv:gap(3)
-    local function __up(self,x,y)
-        L:clr(2)
-        local name = self:get_text()
-        T[name]()
-    end
-    local item 
-    for k, v in pairs(T) do
-        item = button.new('image', 'node_Button_1')
-        item:text(k)
-        item:touch_event('up', __up)
-        lv:insert(item)
-    end
-    L:add(1,lv)
+    T.button()
+    --local lv = listview.new('uiimage', 'node_ListView_1', 11)
+    --lv:anchorpoint(1,0.5)
+    --lv:pos(layout.pointx(1),layout.pointy(0.5))
+    --lv:scale(0.5)
+    --lv:gap(3)
+    --local function __up(self,x,y)
+    --    L:clr(2)
+    --    local name = self:get_text()
+    --    T[name]()
+    --end
+    --local item 
+    --for k, v in pairs(T) do
+    --    item = button.new('uiimage', 'node_Button_1')
+    --    item:text(k)
+    --    item:touch_event('up', __up)
+    --    lv:insert(item)
+    --end
+    --L:add(1,lv)
 end
 
 init()

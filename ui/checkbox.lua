@@ -3,6 +3,7 @@ local control = require "ui.control"
 local checkbox = control.new()
 checkbox.__index = checkbox
 
+-- state cordinary to sprite frame
 local NORMAL = 0
 local HIGHLIGHT = 1
 local DISABLE = 2
@@ -10,6 +11,7 @@ local DISABLE = 2
 function checkbox.new(packname, spr)
     local self = control.init(checkbox, packname, spr)
     self.__selected = false
+    return self
 end
 
 function checkbox:get_selected()
