@@ -10,3 +10,5 @@ mac/example/example.xcodeproj/project.xcworkspace/xcuserdata
 cscope.*
 tags
 .*.swp
+*.pyc
+tool/uipack/__tmp_image
