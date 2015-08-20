@@ -197,6 +197,8 @@ local function outinbounce(t, b, c, d)
   return inbounce((t * 2) - d, b + c / 2, c / 2, d)
 end
 
+local tween = {}
+
 tween.easing = {
   linear        = linear,
   inquad        = inquad,       outquad         = outquad, 

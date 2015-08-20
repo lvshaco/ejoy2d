@@ -27,7 +27,6 @@ def _picture(v):
 
 if __name__ == "__main__":
     usage = "usage: %s imgdir outdir"
-    print (sys.argv)
     if len(sys.argv) != 3:
         print (usage%sys.argv[0])
         sys.exit(1)

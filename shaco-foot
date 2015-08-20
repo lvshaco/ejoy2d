@@ -56,7 +56,10 @@ imagepack() {
 
 USAGE="Usage:./shaco-foot
     * fork       project_name
-    * android    op\n"
+    * android    op
+    * tool       op
+    * imagepack
+\n"
 
 case "$1" in
 fork) shift; fork "$@";;

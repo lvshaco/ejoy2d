@@ -10,6 +10,7 @@ local DISABLE = 2
 
 function button.new(packname, spr)
     local self = control.init(button, packname, spr)
+    return self
 end
 
 function button:text(text)

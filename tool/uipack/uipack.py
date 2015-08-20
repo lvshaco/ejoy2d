@@ -26,7 +26,7 @@ if __name__ == "__main__":
     imgdir = argv[0]
     csddir = argv[1]
     outdir = argv[2]
-    packname = getdirbase(imgdir)
+    packname = 'ui'..getdirbase(imgdir)
     tmpdir = '__tmp_'+packname
 
     if not os.path.isdir(outdir):

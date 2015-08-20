@@ -1,5 +1,5 @@
-local tbl = require "util.tbl"
 local ipairs = ipairs
+local pairs = pairs
 
 local UPDATE = 1
 local DRAW = 2

@@ -1,4 +1,4 @@
-local control = require "util.control"
+local control = require "ui.control"
 local layout = require "ex.layout"
 
 local listview = control.new()

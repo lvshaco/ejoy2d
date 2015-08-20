@@ -1,6 +1,6 @@
 local ej = require "ejoy2d"
 local layout = {
-    SCALE = false,
+    SCALE = 1,
     W = 1024,
     H = 768,
 }

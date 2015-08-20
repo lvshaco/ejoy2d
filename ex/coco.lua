@@ -1,6 +1,3 @@
-local socket = require "util.socket"
-local tbl = require "util.tbl"
-
 local coco = {}
 coco.__index = coco
 

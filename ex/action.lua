@@ -150,7 +150,7 @@ end
 function action.scale(tw)
     local self = __new(tw)
     self.__effect = function(v, sx)
-        sx:scale(v, v)
+        sx:scale(v)
     end
     return self
 end
@@ -158,7 +158,7 @@ end
 function action.scalexy(tw)
     local self = __new(tw)
     self.__effect = function(v, sx)
-        sx:scale(v.scalex, v.scaley)
+        sx:scalexy(v.scalex, v.scaley)
     end
     return self
 end

@@ -1,5 +1,7 @@
 local ej = require "ejoy2d"
 local layout = require "ex.layout"
+local matrix = require "ejoy2d.matrix"
+local matrix_c = require "ejoy2d.matrix.c"
 local setmetatable = setmetatable
 local assert = assert
 
@@ -29,6 +31,7 @@ function spritex.init(class, packname, name)
         __h = y2-y,
         __x = 0,
         __y = 0,
+        __rot = nil,
         __scalex = 1,
         __scaley = 1,
         __anchorx = 0.5,
@@ -82,7 +85,7 @@ function spritex:anchorpoint(x, y)
     end
 end
 
-function spritex:position(x, y)
+function spritex:pos(x, y)
     if x and x ~= self.__x then
         self.__x = x
         self.__matrix_dirty = true
@@ -93,7 +96,18 @@ function spritex:position(x, y)
     end 
 end
 
-function spritex:scale(scalex, scaley)
+function spritex:rot(rot)
+    if rot ~= self.__rot then
+        self.__rot = rot
+        self.__matrix_dirty = true
+    end
+end
+
+function spritex:scale(scale)
+    self:scalexy(scale, scale)
+end
+
+function spritex:scalexy(scalex, scaley)
     if scalex and scalex ~= self.__scalex then
         self.__scalex = scalex
         self.__matrix_dirty = true
@@ -115,11 +129,15 @@ local function __calculate_matrix(self)
     
     local lscale = layout.SCALE 
     self.__sprite:ps(x, y)
-    self.__sprite:sr(self.__scalex*lscale, self.__scaley*lscale, self.__rot)
+    if self.__rot then
+        self.__sprite:sr(self.__scalex*lscale, self.__scaley*lscale, self.__rot)
+    else
+        self.__sprite:sr(self.__scalex*lscale, self.__scaley*lscale)
+    end
     if self.__anchorx ~= 0 or self.__anchory ~= 0 then
-        self.__sprite.matrix:lmul(
-        matrix{x=-(self.__w*self.__anchorx),
-               y=-(self.__h*self.__anchroy)})
+        matrix_c.lmul(self.__sprite.matrix,
+            matrix{x=-(self.__w*self.__anchorx),
+                   y=-(self.__h*self.__anchory)})
     end
     self.__matrix_dirty = false
 end
@@ -263,7 +281,7 @@ function spritex:touch(what,x,y)
 end
 
 -- update
-function spritex:update()
+function spritex:update(dt)
     if self.__frame_run then
         local spr = self.__sprite
         local end_frame = false
@@ -288,7 +306,7 @@ function spritex:update()
         end
     end
     if self.__action then
-        if not self.__action:update(self) then
+        if not self.__action:update(dt, self) then
             if self.__action_cb then
                 self.__action_cb(self)
                 self.__action_cb = nil
