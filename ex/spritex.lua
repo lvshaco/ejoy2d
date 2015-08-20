@@ -1,5 +1,7 @@
 local ej = require "ejoy2d"
 local layout = require "ex.layout"
+local setmetatable = setmetatable
+local assert = assert
 
 local spritex = {}
 spritex.__index = spritex
@@ -40,6 +42,10 @@ function spritex.init(class, packname, name)
         __frame_reverse = nil,
         __action = nil,
         __action_cb = nil,
+        __touch_enable = nil,
+        __touchdown_cb = nil,
+        __touchup_cb = nil,
+        __touchstate = nil,
     }, class)
 end
 
@@ -169,71 +175,82 @@ end
 
 -- touch 
 function spritex:touch_enable(b)
-    local old = self.__touch_enable
+    local o = self.__touch_enable
     self.__touch_enable = b
-    return old
+    return o
 end
 
 function spritex:touch_event(type, cb)
-    local old
+    local o 
     if type == 'down' then
-        old = self.__touchdowncb
-        self.__touchdowncb = cb
-        return old
+        o = self.__touchdown_cb
+        self.__touchdown_cb = cb
+        return o
     elseif type == 'up' then 
-        old = self.__touchupcb
-        self.__touchupcb = cb
-        return old
-    else error("Control unknown event:"..type)
+        o = self.__touchup_cb
+        self.__touchup_cb = cb
+        return o
+    else error("spritex unknown touch event:"..type)
     end
 end
 
-function spritex:__ontouch_down(x,y)
-    if self.__touchdowncb then
-        self:__touchdowncb(self,x,y)
+function spritex:__ontouchdown(x,y)
+    if self.__touchdown then -- subclass implement this
+        self:__touchdown(x,y)
+        if self.__touchdown_cb then
+            self:__touchdown_cb(self,x,y)
+        end
+        return true
+    end
+    if self.__touchdown_cb then
+        self:__touchdown_cb(self,x,y)
         return true
     end
 end
 
-function spritex:__ontouch_up(x,y)
-    if self.__touchupcb then
-        self:__touchupcb(self,x,y)
+function spritex:__ontouchup(x,y)
+    if self.__touchup then -- subclass implement this
+        self:__touchup(x,y)
+        if self.__touchup_cb then
+            self:__touchup_cb(self,x,y)
+        end
+        return true
+    end
+    if self.__touchup_cb then
+        self:__touchup_cb(self,x,y)
         return true
     end
 end
 
-function spritex:__ontouch_in(x,y) end
-function spritex:__ontouch_out(x,y) end
+function spritex:__ontouchout(x,y)
+    if self.__touchout then
+        self:__touchout(x,y)
+        return true
+    end
+end
+
+-- subclass implement the under method to catch touch event
+-- __touchdown
+-- __touchup
+-- __touchout
 
 function spritex:__ontouch(what,x,y)
     local hit = self.__sprite:test(x,y,srt)
-    if what == "BEGIN" then
-        if hit then 
-            self.__touchstate = 'down'
-            if self:__ontouch_down(x,y) then
-                return 'down'
-            end
-        end
-    elseif what == "END" then
-        if hit then
+    if hit then
+        if what == 'BEGIN' then
+            self.__touchstate = 'down' 
+            return self:__ontouchdown(x,y)
+        elseif what == 'END' then
             if self.__touchstate == 'down' then 
-                self.__touchstate = nil
-                if self:__ontouch_up(x,y) then
-                    return 'up'
-                end
+                self.__touchstate = 'none' 
+                return self:__ontouchup(x,y)
             end
         end
-    elseif what == "MOVE" then
-        if hit then
-            if self:__ontouch_in(x,y) then
-                return 'in'
-            end
-        else
+    else
+        if what == 'MOVE' then
             if self.__touchstate == 'down' then
-                self.__touchstate = nil
-                if self:__ontouch_out(x,y) then
-                    return 'out'
-                end
+                self.__touchstate = 'none' 
+                return self:__ontouchout(x,y)
             end
         end
     end

@@ -1,51 +1,53 @@
-local control = require "util.control"
-local setmetatable = setmetatable
-local assert = assert
+local control = require "ui.control"
 
 local button = control.new()
 button.__index = button
 
+-- state cordinary to sprite frame
 local NORMAL = 0
 local HIGHLIGHT = 1
 local DISABLE = 2
 
-function button.new(packname, spr, text)
-    return control.init(button, packname, spr, text)
+function button.new(packname, spr)
+    local self = control.init(button, packname, spr)
+end
+
+function button:text(text)
+    if self.__sprite.label then
+        self.__sprite.label.text = text
+    end
+end
+
+function button:get_text()
+    return self.__sprite.label.text
 end
 
 local function __change_state(self, state)
     self.__sprite.frame = state
 end
 
-function button:__ondisable()
-    __change_state(self, DISABLE)
-end
-
-function button:__ontouch_down(x,y)
-    if self.__sprite.frame == NORMAL then
-        __change_state(self, HIGHLIGHT)
-        if self.__touchdowncb then
-            self:__touchdowncb(self,x,y)
+function button:__onenable(enable)
+    if enable then
+        if self.__sprite.frame == DISABLE then
+            __change_state(self, NORMAL)
         end
-        return true
-    end
-end
-
-function button:__ontouch_up(x,y)
-    if self.__sprite.frame == HIGHLIGHT then
-        __change_state(self, NORMAL)
-        if self.__touchupcb then
-            self:__touchupcb(self,x,y)
+    else
+        if self.__sprite.frame ~= DISABLE then
+            __change_state(self, DISABLE)
         end
-        return true
     end
 end
 
-function button:__ontouch_out(x,y)
-    if self.__sprite.frame == HIGHLIGHT then
-        __change_state(self, NORMAL)
-        return true
-    end
+function button:__touchdown(x,y)
+    __change_state(self, HIGHLIGHT)
+end
+
+function button:__touchup(x,y)
+    __change_state(self, NORMAL)
+end
+
+function button:__touchout(x,y)
+    __change_state(self, NORMAL)
 end
 
 return button

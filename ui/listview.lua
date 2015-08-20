@@ -1,11 +1,5 @@
 local control = require "util.control"
-local button = require "util.button"
-local layout = require "util.layout"
-local fw = require "ejoy2d.framework"
-local tbl = require "util.tbl"
-
-local setmetatable = setmetatable
-local assert = assert
+local layout = require "ex.layout"
 
 local listview = control.new()
 listview.__index = listview
@@ -33,7 +27,7 @@ function listview.new(packname, spr)
     return self
 end
 
-function listview:setgap(n)
+function listview:gap(n)
     self.__gap = n
 end
 
@@ -95,7 +89,6 @@ local function refresh_drag(self, dragy)
     if last > #self.__list then
         last = #self.__list
     end
-    --print (start, starty)
     local cnt = last-start+1
     for i=1,cnt do
         local s = self.__list[i+start-1].__sprite
@@ -129,7 +122,7 @@ function listview:__ontouch(what, x, y)
             self.__drag = y
             local item = hititem(self, hit.name)
             if item then
-                item:__ontouch_down(x,y)
+                item:__ontouchdown(x,y)
                 self.__hititem = item
             end
         end
@@ -137,7 +130,7 @@ function listview:__ontouch(what, x, y)
         if self.__drag then
             self.__drag = nil
             if self.__hititem then
-                self.__hititem:__ontouch_up(x,y)
+                self.__hititem:__ontouchup(x,y)
                 self.__hititem = nil
             end
         end
@@ -146,7 +139,7 @@ function listview:__ontouch(what, x, y)
         if self.__drag then
             local dragy = y-self.__drag
             if dragy ~= 0 then
-                dragy = layout.fixr(dragy/self.__scale)
+                dragy = dragy/self.__scale/layout.SCALE
                 if self.__draw_start==1 and
                     self.__dragoff > 0 then
                     if dragy > 0 then

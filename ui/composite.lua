@@ -78,17 +78,17 @@ function composite:__ontouch(what, x, y)
         local chit = self.__children[hit.name]
         if what == "BEGIN" then
             self.__last_touch = chit
-            return chit:__ontouch_down(x,y)
+            return chit:__ontouchdown(x,y)
         elseif what == "END" then
             self.__last_touch = nil
-            return chit:__ontouch_up(x,y)
+            return chit:__ontouchup(x,y)
         elseif what == "MOVE" then
-            return chit:__ontouch_in(x,y)
+            return chit:__on_touchin(x,y)
         end
     else
         if self.__last_touch then
             if what == "MOVE" then
-                self.__last_touch:__ontouch_out(x,y)
+                self.__last_touch:__ontouchout(x,y)
             else
                 self.__last_touch = nil
             end
