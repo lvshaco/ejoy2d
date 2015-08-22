@@ -55,29 +55,6 @@ function sliderbar:degree(x)
     end
 end
 
-function sliderbar:__ontouch(what, x, y)
-    if what=='BEGIN' then
-        local hit = self.__sprite:test(x,y)
-        if hit then
-            self.__degreebtn:__ontouchdown(x,y)
-            self.__draging = true
-            -- walk through to under degree change op
-            --return true 
-        end
-    elseif what=='END' then
-        if self.__draging then
-            self.__degreebtn:__ontouchup(x,y)
-            self.__draging = false
-            return true
-        end
-    end
-    if self.__draging then
-        local x1,_,x2,_ = self.__sprite.back:aabb(nil,true) 
-        self:degree((x-x1)*self.__range//(x2-x1))
-        return true
-    end
-end
-
 function sliderbar:touch_event(type, cb)
     if type == 'degree' then
         o = self.__degree_cb
@@ -85,6 +62,29 @@ function sliderbar:touch_event(type, cb)
         return o
     else
         error("sliderbar unknow touch event:"..type)
+    end
+end
+
+local function __click_degree(self,x)
+    local x1,_,x2,_ = self.__sprite.back:aabb(nil,true) 
+    self:degree((x-x1)*self.__range//(x2-x1))
+end
+
+function sliderbar:__touchdown(x,y)
+    self.__degreebtn:__ontouchdown(x,y)
+    __click_degree(self,x)
+end
+
+function sliderbar:__touchup(x,y)
+    if self.__touchstate == 'down' then
+        self.__degreebtn:__ontouchup(x,y)
+        self.__draging = false
+    end
+end
+
+function sliderbar:__touchmove(x,y)
+    if self.__touchstate == 'down' then
+        __click_degree(self,x)
     end
 end
 

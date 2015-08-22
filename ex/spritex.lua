@@ -213,6 +213,7 @@ function spritex:touch_event(type, cb)
 end
 
 function spritex:__ontouchdown(x,y)
+    self.__touchstate = 'down' 
     if self.__touchdown then -- subclass implement this
         self:__touchdown(x,y)
         if self.__touchdown_cb then
@@ -227,6 +228,7 @@ function spritex:__ontouchdown(x,y)
 end
 
 function spritex:__ontouchup(x,y)
+    self.__touchstate = 'none'
     if self.__touchup then -- subclass implement this
         self:__touchup(x,y)
         if self.__touchup_cb then
@@ -240,36 +242,45 @@ function spritex:__ontouchup(x,y)
     end
 end
 
---function spritex:__ontouchout(x,y)
---    if self.__touchout then
---        self:__touchout(x,y)
---        return true
---    end
---end
+function spritex:__ontouchmove(x,y)
+    if self.__touchmove then
+        self:__touchmove(x,y)
+    end
+end
+
+function spritex:__ontouchout(x,y)
+    self.__touchstate = 'none' 
+    if self.__touchout then
+        self:__touchout(x,y)
+        return true
+    end
+end
 
 -- subclass implement the under method to catch touch event
 -- __touchdown
 -- __touchup
+-- __touchmove
 -- __touchout
 
 function spritex:__ontouch(what,x,y)
     if what == 'BEGIN' then
         local hit = self.__sprite:test(x,y)
         if hit then
-            self.__touchstate = 'down' 
             return self:__ontouchdown(x,y)
         end
     elseif what == 'END' then
         if self.__touchstate == 'down' then 
-            self.__touchstate = 'none' 
             return self:__ontouchup(x,y)
         end
     elseif what == 'MOVE' then
-        if self.__touchout and self.__touchstate == 'down' then
-            local hit = self.__sprite:test(x,y)
-            if not hit then
-                self.__touchstate = 'none' 
-                return self:__touchout(x,y)
+        if self.__touchstate == 'down' then
+            if self.__touchmove then
+                return self:__ontouchmove(x,y)
+            elseif self.__touchout then
+                local hit = self.__sprite:test(x,y)
+                if not hit then
+                    return self:__ontouchout(x,y)
+                end
             end
         end
     end
