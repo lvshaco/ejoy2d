@@ -6,7 +6,7 @@ local spritex = require "ex.spritex"
 
 pack.load {
 	pattern = fw.WorkDir..[[examples/asset/?]],
-	"image",
+	"image", 'uiimage'
 }
 
 local o0 = spritex.new("image", 0)
@@ -16,6 +16,13 @@ local o3 = spritex.new("image", 0)
 local o4 = spritex.new("image", 0)
 local o5 = spritex.new("image", 0)
 local o6 = spritex.new("image", 0)
+
+local s1 = ej.sprite('uiimage', 12)
+local s2 = ej.sprite('uiimage', 12)
+local s3 = ej.sprite('uiimage', 12)
+s1:ps(0, 400)
+s2:ps(3, 408)
+s3:ps(6, 416)
 
 local w, h = o0.__w, o0.__h
 
@@ -72,6 +79,10 @@ function game.drawframe()
     o3:draw()
     o2:draw()
     o1:draw()
+    
+    s1:draw()
+    s2:draw()
+    s3:draw()
 end
 
 function game.touch(what, x, y)

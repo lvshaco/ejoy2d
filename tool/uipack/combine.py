@@ -3,6 +3,7 @@
 import os
 import sys
 from string import Template
+from parseimage import *
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -13,11 +14,13 @@ __all__ = [
 
 SCREEN_SCALE = 16
 
-def find_pic(img_l, name):
-    for v in img_l:
-        if v["export"] == name:
-            return v
-    assert False, "Cannot found picture:"+name
+def calc_mat(pw,ph, w, h):
+    if pw==w and ph==h:
+        return ''
+    else:
+        tranx = (w-pw)/2 * SCREEN_SCALE
+        trany = (h-ph)/2 * SCREEN_SCALE
+        return 'mat={1024,0,0,1024,%d,%d},'%(tranx,trany)
 
 def find_ani(ani_l, id):
     for v in ani_l:
@@ -25,65 +28,84 @@ def find_ani(ani_l, id):
             return v
     assert False, "Cannot found ani:"+id
 
+def pic_part(img_l, cs, i, v):
+    w,h=v['w'],v['h']
+    pic = imagefind(img_l, cs[i])
+    pw,ph = imagerange(pic)
+    if pw==w and ph==h:
+        s = '%d'%i
+    else:
+        tranx = (w-pw)/2 * SCREEN_SCALE
+        trany = (h-ph)/2 * SCREEN_SCALE
+        s = '{index=%d,mat={1024,0,0,1024,%d,%d}}'%(i,tranx,trany)
+    cs[i] = pic['id']
+    return s
+
+def label_part(ani_l, textid, textidx, w, h):
+    if textid == -1:
+        return None
+    else:
+        label = find_ani(ani_l, textid)
+        trany = (h-label['size'])/2 * SCREEN_SCALE
+        return '{index=%d,mat={1024,0,0,1024,0,%d}}'%(textidx,trany)
+    
 def fill_id(ani_l, img_l):
     for v in ani_l:
         if v["type"] == "animation":
             uitype = v['uitype']
             # button checkbox各个帧的修复，顺带获取compenont id
-            if uitype == 'button' or \
-               uitype == 'checkbox':
-                cs = v["component"]
+            if uitype == 'button':
+                cs = v['component']
                 w,h = v['w'],v['h']
-                frames = list()
-                textid = cs[-1]
-                textidx = cs[-2] and len(cs)-1 or len(cs)-2
+                parts = list() 
                 for i in range(len(cs)-1):
-                    pic = cs[i] and find_pic(img_l, cs[i]) or None
-                    if not pic: break
-                    screen = pic['screen']
-                    pw,ph = screen[0]*2+screen[2], screen[1]*2+screen[3]
-                    if pw==w and ph==h:
-                        line = '%d'%i
-                    else:
-                        tranx = (w-pw)/2 * SCREEN_SCALE
-                        trany = (h-ph)/2 * SCREEN_SCALE
-                        # add color
-                        line = '{index=%d,mat={1024,0,0,1024,%d,%d}}'%(i,tranx,trany)
-                    frames.append(line)
-                    if pic:
-                        cs[i] = pic['id']
-                    else:
-                        cs[i] = -1
-                for i in range(len(frames)):
-                    f = frames[i]
-                    if textid == -1:
-                        frames[i] = '{%s}'%frames[i]
-                    else:
-                        label = find_ani(ani_l, textid)
-                        trany = (h-label['size'])/2 * SCREEN_SCALE
-                        frames[i] = '{%s,{index=%d,mat={1024,0,0,1024,0,%d}}}'%\
-                        (frames[i],textidx,trany)
+                    part = pic_part(img_l, cs, i, v)
+                    parts.append(part)
+                l_part = label_part(ani_l, cs[-1], len(cs)-1, w, h)
+                l_part = l_part and ','+l_part or ''
+                frames = list()
+                frames.append('{%s%s}'%(parts[0],l_part))
+                frames.append('{%s%s}'%(parts[1],l_part))
+                if len(parts) == 3:
+                    frames.append('{%s%s}'%(parts[2],l_part))
+                v['frame'] = ',\n        '.join(frames)
+            elif uitype == 'checkbox':
+                cs = v['component']
+                w,h = v['w'],v['h']
+                parts = list() 
+                for i in range(len(cs)):
+                    part = pic_part(img_l, cs, i, v)
+                    parts.append(part)
+                frames = list()
+                if len(parts) == 3:
+                    frames.append('{%s,%s}'%(parts[0],parts[2]))
+                    frames.append('{%s,%s}'%(parts[0],parts[2]))
+                elif len(parts) == 5:
+                    frames.append('{%s,%s}'%(parts[0],parts[3]))
+                    frames.append('{%s,%s}'%(parts[1],parts[3]))
+                    frames.append('{%s,%s}'%(parts[2],parts[4]))
                 v['frame'] = ',\n        '.join(frames)
             elif uitype == 'sliderbar':
                 cs = v["component"]
                 w,h = v['w'],v['h']
-                ani = find_ani(ani_l, cs[0])
-                assert(ani)
-                #screen = pic['screen']
-                pw,ph = ani['w'],ani['h']#screen[0]*2+screen[2], screen[1]*2+screen[3]
-                if pw==w and ph==h:
-                    v['frame']=''
+                
+                back = imagefind(img_l, cs[0])
+                pw,ph = imagerange(back)
+                v['back_frame'] =  calc_mat(pw,ph,w,h)
+                
+                degree = find_ani(ani_l, cs[1])
+                v['degree_frame'] = calc_mat(w,degree['h'],w,h)
+
+                if len(cs) == 3:
+                    bar = find_ani(ani_l, cs[2])
+                    v['bar_frame'] = ',{index=2,%s}'%calc_mat(bar['w'], bar['h'], w,h)
                 else:
-                    tranx = 0#(w-pw)/2 * SCREEN_SCALE
-                    trany = (h-ph)/2 * SCREEN_SCALE
-                    # add color
-                    v['frame']='mat={1024,0,0,1024,%d,%d},'%(tranx,trany)
-                #cs[0] = pic['id'] 
+                    v['bar_frame'] = ''
             elif uitype == 'listview':
                 cs = v['component']
                 w,h = v['w'],v['h']
                 if cs[0]:
-                    pic = find_pic(img_l, cs[0]) 
+                    pic = imagefind(img_l, cs[0]) 
                     v['back'] = '{id=%d},'%pic['id']
                     cs[0] = pic['id']
                 else:
@@ -125,7 +147,7 @@ def fill_id(ani_l, img_l):
                     tranx,trany = 0,0 # layout in run
                     scalex,scaley = 1024,1024
                     if c['uitype'] == 'sprite':
-                        pic = find_pic(img_l, c['picture'])
+                        pic = imagefind(img_l, c['picture'])
                         sx = c['w']/float(pic['screen'][2])
                         sy = c['h']/float(pic['screen'][3])
                         #tranx = int(tranx*sx)
@@ -156,7 +178,7 @@ def fill_id(ani_l, img_l):
                     if type(c) == int:
                         continue
                     elif type(c) == str or type(c)==unicode:
-                        cs[i] = cs[i] and find_pic(img_l, cs[i])['id'] or -1
+                        cs[i] = cs[i] and imagefind(img_l, cs[i])['id'] or -1
                     else:
                         assert False, "Invalid animation component id:"+c
 
@@ -200,24 +222,25 @@ CHECKBOX = """
     id = $id,
     $export
     component = {
-        {id=$unchoose},
-        {id=$choose}, $disable
+        {id=$normal},
+        {id=$highlight}, $disable
+        $node, $node_disable
     },
     {
         $frame
     },
 },"""
-PROCESSBAR = """
+PROGRESSBAR = """
 {
     type = "animation",
     id = $id,
     $export
     component = {
-        {id=$bar, name="bar"},
-        {id=$pannel}, 
+        {id=$bar},
+        {id=$pannel, name="pannel"}, 
     },
     {
-        {1,0},
+        {$pannel_frame,0},
     },
 },"""
 SLIDERBAR = """
@@ -226,11 +249,11 @@ SLIDERBAR = """
     id = $id,
     $export
     component = {
-        {id=$degree, name="degree"},
-        {id=$pannel}, 
+        {id=$back, name="back"}, 
+        {id=$degree, name="degree"}, $bar
     },
     {
-        {{index=1},{index=0,$frame touch=true}},
+        {{index=0,$back_frame}$bar_frame,{index=1,$degree_frame},},
     },
 },"""
 LISTVIEW = """
@@ -265,51 +288,62 @@ def _range(v, scale):
         x,y,w,h = x*scale, y*scale, w*scale, h*scale
     return "%d,%d,%d,%d,%d,%d,%d,%d"%(x,y, x+w,y, x+w,y+h, x,y+h)
 
-def _picture(v):
+def _picture(v, ani_l):
     v['src'] = _range(v['src'], 1)
     v['screen'] = _range(v['screen'], SCREEN_SCALE)
     return Template(PICTURE).substitute(v)
-def _pannel(v):
+def _pannel(v, ani_l):
     return Template(PANNEL).substitute(v)
-def _label(v):
+def _label(v, ani_l):
     return Template(LABEL).substitute(v)
-def _button(v):
+def _button(v, ani_l):
     cs = v['component']
     v['normal'] = cs[0]
     v['highlight'] = cs[1]
-    if cs[2] >= 0:
+    if len(cs) == 4:
         v['disable'] = "{id=%d},"%cs[2]
     else:
         v['disable'] = ""
-    if cs[3] >= 0:
-        v['label'] = '{id=%d,name="label"},'%cs[3]
+    if cs[-1] >= 0:
+        v['label'] = '{id=%d,name="label"},'%cs[-1]
     else:
         v['label'] = ""
     return Template(BUTTON).substitute(v)
-def _checkbox(v):   
+def _checkbox(v, ani_l):   
     cs = v['component']
-    v['unchoose'] = cs[0]
-    v['choose'] = cs[1]
-    if cs[2] >= 0:
-        v['disable'] = "{id=%d},"%cs[2]
-    else:
-        v['disable'] = ""
+    v['normal'] = cs[0]
+    v['highlight'] = cs[1]
+    if len(cs) == 3:
+        v['disable'] = ''
+        v['node'] = '{id=%d,name="tag"}'%cs[2]
+        v['node_disable'] = ''
+    elif len(cs) == 5:
+        v['disable'] = cs[2]
+        v['node'] = '{id=%d,name="tag"}'%cs[3]
+        v['node_disable'] = '{id=%d,name="disable_tag"}'%cs[4]
     return Template(CHECKBOX).substitute(v)
-def _processbar(v):
+def _progressbar(v, ani_l):
     cs = v['component']
     v['bar'] = cs[0]
     v['pannel'] = cs[1]
-    return Template(PROCESSBAR).substitute(v)
-def _sliderbar(v):
+    pannel = find_ani(ani_l, cs[1])
+    mat = calc_mat(pannel['w'], pannel['h'], v['w'], v['h'])
+    v['pannel_frame'] = mat and '{index=1,%s}'%mat or '1'
+    return Template(PROGRESSBAR).substitute(v)
+def _sliderbar(v, ani_l):
     cs = v['component']
-    v['degree'] = cs[0]
-    v['pannel'] = cs[1]
+    v['back'] = cs[0]
+    v['degree'] = cs[1]
+    if len(cs) == 3:
+        v['bar'] = '{id=%d,name="bar"}'%cs[2]
+    else:
+        v['bar'] = ''
     return Template(SLIDERBAR).substitute(v)
-def _listview(v):
+def _listview(v, ani_l):
     cs = v['component']
     v['pannel'] = cs[1]
     return Template(LISTVIEW).substitute(v)
-def _composite(v):
+def _composite(v, ani_l):
     return Template(COMPOSITE).substitute(v)
 
 TEMPLATES = {
@@ -318,7 +352,7 @@ TEMPLATES = {
     "label":    _label,
     "button":   _button,
     "checkbox": _checkbox,
-    "processbar":_processbar,
+    "progressbar":_progressbar,
     "sliderbar":_sliderbar,
     "listview": _listview,
     "composite":_composite,
@@ -383,7 +417,7 @@ def combine(csd_l, img_l, outpath, packname):
     for v in img_l:
         if v.get('export'):
             v['export'] = 'export="%s",'%v['export']
-        value = _picture(v)
+        value = _picture(v, None)
         t.append(value)
     for ani_l in csd_l:
         for v in ani_l:
@@ -395,7 +429,7 @@ def combine(csd_l, img_l, outpath, packname):
             f = TEMPLATES[uitype]
             if v.get('export'):
                 v['export'] = 'export="%s",'%v['export']
-            value = f(v)
+            value = f(v, ani_l)
             t.append(value)
     t.append('}')
 

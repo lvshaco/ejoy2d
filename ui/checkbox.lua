@@ -10,17 +10,17 @@ local DISABLE = 2
 
 function checkbox.new(packname, spr)
     local self = control.init(checkbox, packname, spr)
-    self.__selected = false
+    self.__selected = true
     return self
-end
-
-function checkbox:get_selected()
-    return self.__selected
 end
 
 function checkbox:selected(selected)
     self.__selected = selected or false
-    self.__sprite.tag.visible = selected
+    if self.__sprite.frame ~= DISABLE then
+        self.__sprite.tag.visible = selected
+    else
+        self.__sprite.disable_tag.visible = selected
+    end
 end
 
 local function __change_state(self, state)
@@ -45,7 +45,7 @@ end
 
 function checkbox:__touchup(x,y)
     __change_state(self, NORMAL)
-    self:set_selected(not self.__selected)
+    self:selected(not self.__selected)
 end
 
 function checkbox:__touchout(x,y)

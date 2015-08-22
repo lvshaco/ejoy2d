@@ -240,12 +240,12 @@ function spritex:__ontouchup(x,y)
     end
 end
 
-function spritex:__ontouchout(x,y)
-    if self.__touchout then
-        self:__touchout(x,y)
-        return true
-    end
-end
+--function spritex:__ontouchout(x,y)
+--    if self.__touchout then
+--        self:__touchout(x,y)
+--        return true
+--    end
+--end
 
 -- subclass implement the under method to catch touch event
 -- __touchdown
@@ -265,9 +265,12 @@ function spritex:__ontouch(what,x,y)
             return self:__ontouchup(x,y)
         end
     elseif what == 'MOVE' then
-        if self.__touchstate == 'down' then
-            self.__touchstate = 'none' 
-            return self:__ontouchout(x,y)
+        if self.__touchout and self.__touchstate == 'down' then
+            local hit = self.__sprite:test(x,y)
+            if not hit then
+                self.__touchstate = 'none' 
+                return self:__touchout(x,y)
+            end
         end
     end
 end

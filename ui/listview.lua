@@ -139,7 +139,7 @@ function listview:__ontouch(what, x, y)
         if self.__drag then
             local dragy = y-self.__drag
             if dragy ~= 0 then
-                dragy = dragy/self.__scale/layout.SCALE
+                dragy = dragy/self.__scalex/layout.SCALE
                 if self.__draw_start==1 and
                     self.__dragoff > 0 then
                     if dragy > 0 then

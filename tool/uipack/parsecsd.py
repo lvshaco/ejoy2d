@@ -6,6 +6,7 @@ import os
 import sys
 import re
 from pathutil import *
+from parseimage import *
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -13,6 +14,17 @@ sys.setdefaultencoding("utf-8")
 __all__ = [
     "parsecsd",
 ]
+
+IMG_L = list()
+def calc_size(cs):
+    global IMG_L
+    wmax,hmax=0,0
+    for c in cs:
+        img = imagefind(IMG_L, c)
+        w,h=imagerange(img)
+        if w>wmax: wmax=w
+        if h>hmax: hmax=h
+    return wmax, hmax
 
 CONTROL = list()
 
@@ -27,7 +39,6 @@ def NEW(d, node, uitype, type):
     d["x"], d["y"] = x-ax*w, y-ay*h
     d["w"], d["h"] = w,h
     d["xscale"], d["yscale"] = _ScaleXY(node,"Scale")
-    # 当前只支持等比例缩放
     #assert(d['xscale'] == d['yscale'])
     d['xlayout'],d['ylayout'] = _LAYOUT(node)
     CONTROL.append(d)
@@ -115,8 +126,9 @@ def _WH(node,name):
 
 def _Size(node):
     w,h = _WH(node, 'Size')
-    xscale,yscale = _ScaleXY(node,"Scale")
-    return w*xscale, h*yscale
+    #xscale,yscale = _ScaleXY(node,"Scale")
+    #return w*xscale, h*yscale
+    return w,h
 
 def _ScaleXY(node,name):
     node = node.getElementsByTagName(name)[0]
@@ -217,8 +229,8 @@ def _button(node, d):
     l.append(_IMAGE(node,"NormalFileData"))
     l.append(_IMAGE(node,"PressedFileData"))
     dis = _IMAGE(node,"DisabledFileData")
-    if dis == 'Button_Disable.png': dis = ""
-    l.append(dis)
+    if dis != 'Button_Disable.png':
+        l.append(dis)
     l.append(text_id)
     d['component'] = l
     d['text'] = text
@@ -227,27 +239,26 @@ def _button(node, d):
     return d
 
 def _checkbox(node, d):
-    text_id = -1
-    text = ""
     d["export"] =_AV(node,"Name")
     l = list()
     l.append(_IMAGE(node,"NormalBackFileData"))
     l.append(_IMAGE(node,"PressedBackFileData"))
     dis = _IMAGE(node,"DisableBackFileData")
-    if dis == 'CheckBox_Disable.png': dis = ""
-    l.append(dis)
-    l.append(text_id)
+    if dis == 'CheckBox_Disable.png':
+        dis = None
+    else:
+        l.append(dis)
     l.append(_IMAGE(node,'NodeNormalFileData'))
-    dis = _IMAGE(node,'NodeDisableFileData')
-    if dis == 'CheckBoxNode_Disable.png': dis = ""
-    l.append(dis)
+    if dis:
+        dis = _IMAGE(node,'NodeDisableFileData')
+        assert dis != 'CheckBoxNode_Disable.png', 'Not NodeDisableFileData'
+        l.append(dis)
     d['component'] = l
-    d['text'] = text
     d['touch'] = True
     NEW(d,node,"checkbox","animation")
     return d
 
-def _processbar(node, d):
+def _progressbar(node, d):
     sd = dict()
     sd["scissor"] = True
     NEW(sd,node,"pannel","pannel")
@@ -258,30 +269,63 @@ def _processbar(node, d):
     l.append(_IMAGE(node,"ImageFileData"))
     l.append(pannel_id)
     d['component'] = l
-    NEW(d,node,"processbar","animation")
+    NEW(d,node,"progressbar","animation")
     return d
 
 def _sliderbar(node, d):
+    # button: degree
     sd = dict()
     sd["export"] = ""
     l = list()
     l.append(_IMAGE(node,"BallNormalData"))
     l.append(_IMAGE(node,"BallPressedData"))
     dis = _IMAGE(node,"BallDisabledData")
-    if dis == 'SliderNode_Disable.png': dis = ""
-    l.append(dis)
+    if True: #dis != 'SliderNode_Disable.png':
+        l.append(dis)
+    w,h = calc_size(l)
     l.append(-1) # text_id
     sd['component'] = l
     sd['touch'] = True
     NEW(sd,node,"button","animation")
-    sd['w'] = 0
-    sd['h'] = 0
+    sd['w'] = w
+    sd['h'] = h
     degree_id = _ID()
-  
+
+    # progressbar: bar
+    bar = _IMAGE(node,"ProgressBarData")
+    if False:#bar == 'Slider_PressBar.png':
+        bar_id = -1
+    else:
+        global IMG_L
+        img_bar = imagefind(IMG_L, bar)
+        w,h = imagerange(img_bar)
+
+        sd = dict()
+        sd["scissor"] = True
+        NEW(sd,node,"pannel","pannel")
+        sd['w'] = w
+        sd['h'] = h
+        pannel_id = _ID()
+
+        sd = dict()
+        sd["export"] = ""#_AV(node,"Name")
+        l = list()
+        l.append(bar)
+        l.append(pannel_id)
+        sd['component'] = l
+        NEW(sd,node,"progressbar","animation")
+        w,h = imagerange(img_bar)
+        sd['w'] = w
+        sd['h'] = h
+        bar_id = _ID()
+
+    #
     d["export"] = _AV(node,"Name")
     l = list()
-    l.append(degree_id) 
     l.append(_IMAGE(node,"BackGroundData"))
+    l.append(degree_id) 
+    if bar_id != -1:
+        l.append(bar_id)
     d['component'] = l
     NEW(d,node,"sliderbar","animation")
     return d
@@ -334,7 +378,7 @@ CONTROLS = {
     'TextFieldObjectData':  _editbox,
     'ButtonObjectData':     _button,
     'CheckBoxObjectData':   _checkbox,
-    'LoadingBarObjectData': _processbar,
+    'LoadingBarObjectData': _progressbar,
     'SliderObjectData':     _sliderbar,
     'ListViewObjectData':   _listview,
     #'ImageViewObjectData':  _image,
@@ -387,7 +431,9 @@ def _root(dom):
         else:
             return root, 2
      
-def parsecsd(cfgfile, startid):
+def parsecsd(cfgfile, startid, img_l):
+    global IMG_L
+    IMG_L = img_l
     print "[+]"+cfgfile
     csdname,_ = os.path.splitext(os.path.split(cfgfile)[-1])
     global CONTROL, ID

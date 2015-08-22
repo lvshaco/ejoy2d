@@ -13,6 +13,8 @@ local action = require "ex.action"
 local label = require "ui.label"
 local button = require "ui.button"
 local checkbox = require "ui.checkbox"
+local progressbar = require "ui.progressbar"
+local sliderbar = require "ui.sliderbar"
 local listview = require "ui.listview"
 
 local t1 = os.time()
@@ -35,23 +37,23 @@ local L
 
 local T = {}
 function T.showui()
-    local max = 0.8
-    local min = 0.78
-    sx = spritex.new('uiimage','effect_active_char.png')
-    local x = layout.pointx(0.5)
-    local y = layout.pointy(0.5)
-    sx:ps(x,y)
+    --local max = 0.8
+    --local min = 0.78
+    --sx = spritex.new('uiimage','effect_active_char.png')
+    --local x = layout.pointx(0.5)
+    --local y = layout.pointy(0.5)
+    --sx:ps(x,y)
 
-    --sx:action(actionscale.new(0.5,1.0,6000,af.linear))
-    sx:action(actionsequence.new(
-        actiongroup.new(
-            actioncolor.new(0x00ffffff,0xffffffff,F(6),af.linear),--af.linear),
-            actionscale.new(0.1,max,F(6),af.linear)--af.linear)
-        ),
-        actionscale.new(max,min,F(3),af.linear),--af.linear),
-        actionscale.new(min,max,F(3),af.linear)
-    ))
-    L:add(2, sx)
+    ----sx:action(actionscale.new(0.5,1.0,6000,af.linear))
+    --sx:action(actionsequence.new(
+    --    actiongroup.new(
+    --        actioncolor.new(0x00ffffff,0xffffffff,F(6),af.linear),--af.linear),
+    --        actionscale.new(0.1,max,F(6),af.linear)--af.linear)
+    --    ),
+    --    actionscale.new(max,min,F(3),af.linear),--af.linear),
+    --    actionscale.new(min,max,F(3),af.linear)
+    --))
+    --L:add(2, sx)
 end
 
 function T.button()
@@ -62,20 +64,49 @@ function T.button()
     local b1 = button.new('uiimage', 'node_Button_1')
     b1:text('btn1')
     b1:pos(100,100)
+    b1:scale(2)
     b1:touch_event('down', function(self,x,y)
-        l1:text('btn1 down')
+        l1:text('b1 down')
     end)
     b1:touch_event('up', function(self,x,y)
-        l1:text('btn1 up')
+        l1:text('b1 up')
     end)
 
     local c1 = checkbox.new('uiimage', 'node_CheckBox_1')
-    c1:pos(150, 100)
+    c1:pos(200, 100)
+    c1:touch_event('down', function()
+        l1:text('c1 state:'..tostring(c1.__selected))
+    end)
+
+    local p1 = progressbar.new('uiimage', 'node_LoadingBar_1', 100)
+    p1:pos(300, 300)
+    p1:scale(2)
+    p1.update = function(self)
+        p1:degree(p1.__degree+1)
+        spritex.update(p1)
+    end
+
+    local s1 = sliderbar.new('uiimage', 'node_Slider_1', 100)
+    s1:anchorpoint(0,0)
+    s1:pos(300, 400)
+    s1:scale(2)
+    s1:update()
+    --print ("==", s1.__sprite:aabb())
+    --print ("==", s1.__sprite.back:aabb())
+    --print ("==", s1.__sprite.back:world_pos())
+    --print (s1.__sprite.degree:aabb())
+    s1:touch_event('degree', function()
+        l1:text('s1 degree:'..s1.__degree)
+    end)
+    --s1:enable(false)
     L:add(2,b1)
     L:add(2,l1)
+    L:add(2,c1)
+    L:add(2,p1)
+    L:add(2,s1)
 end
 
-for i=1,10 do
+for i=1,9 do
     T['test'..i] = function() end
 end
 
@@ -85,25 +116,25 @@ local function init()
     L:bind(2, {}, ipairs, layer.UPDATE|layer.DRAW|layer.TOUCH)
     L:bind(3, coco:new(), ipairs, layer.UPDATE|layer.TOUCHLAST)
 
-    T.button()
-    --local lv = listview.new('uiimage', 'node_ListView_1', 11)
-    --lv:anchorpoint(1,0.5)
-    --lv:pos(layout.pointx(1),layout.pointy(0.5))
+    --T.button()
+    local lv = listview.new('uiimage', 'node_ListView_1', 11)
+    lv:anchorpoint(1,0.5)
+    lv:pos(layout.pointx(1),layout.pointy(0.5))
     --lv:scale(0.5)
-    --lv:gap(3)
-    --local function __up(self,x,y)
-    --    L:clr(2)
-    --    local name = self:get_text()
-    --    T[name]()
-    --end
-    --local item 
-    --for k, v in pairs(T) do
-    --    item = button.new('uiimage', 'node_Button_1')
-    --    item:text(k)
-    --    item:touch_event('up', __up)
-    --    lv:insert(item)
-    --end
-    --L:add(1,lv)
+    lv:gap(3)
+    local function __up(self,x,y)
+        L:clr(2)
+        local name = self:get_text()
+        T[name]()
+    end
+    local item 
+    for k, v in pairs(T) do
+        item = button.new('uiimage', 'node_Button_1')
+        item:text(k)
+        item:touch_event('up', __up)
+        lv:insert(item)
+    end
+    L:add(1,lv)
 end
 
 init()

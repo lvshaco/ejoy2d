@@ -43,15 +43,15 @@ an() {
         cp ../AndroidManifest.xml android
         cp ../MyActivity.java android/src/com/example/testej2d
     fi
-    cd android && make $@
+    cd android && make $@ && cd ..
 }
 
 tool() {
-    cd tool && make $@
+    cd tool && make $@ && cd ..
 }
 
 imagepack() {
-    cd tool/uipack && python imagepack.py $@
+    cd tool/uipack && python imagepack.py $@ && cd ../..
 }
 
 USAGE="Usage:./shaco-foot
@@ -66,5 +66,7 @@ fork) shift; fork "$@";;
 android) shift; an "$@";;
 tool) shift; tool "$@";;
 imagepack) shift; imagepack "$@";;
+testui) shift; tool uipack path=../../../ui; cp ../ui/asset/uiimage* examples/asset;;
+test) shift; ./ej2d examples/test_ui.lua;;
 *) printf "$USAGE";;
 esac

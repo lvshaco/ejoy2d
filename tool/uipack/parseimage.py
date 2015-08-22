@@ -10,6 +10,9 @@ __all__ = [
     "packimage",
     "png2ppm",
     "parsejson",
+    "imagefind",
+    "imagewh",
+    "imagerange"
 ]
 
 def CMD(cmd):
@@ -86,3 +89,17 @@ def parsejson(fjson, startid):
         l.append(d)
         imgid += 1
     return l
+
+def imagefind(img_l, name):
+    for v in img_l:
+        if v["export"] == name:
+            return v
+    assert False, "Cannot found image:"+name
+
+def imagerange(pic):
+    screen = pic['screen']
+    return screen[0]*2 + screen[2], screen[1]*2 + screen[3] # 包括边缘的留白
+
+def imagewh(pic):
+    screen = pic['screen']
+    return screen[2], screen[3] # 不包括边缘的留白

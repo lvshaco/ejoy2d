@@ -26,7 +26,7 @@ if __name__ == "__main__":
     imgdir = argv[0]
     csddir = argv[1]
     outdir = argv[2]
-    packname = 'ui'..getdirbase(imgdir)
+    packname = 'ui'+getdirbase(imgdir)
     tmpdir = '__tmp_'+packname
 
     if not os.path.isdir(outdir):
@@ -58,7 +58,7 @@ if __name__ == "__main__":
         files = list()
         getfiles(csddir, [".csd"], 1, files)
         for f in files:
-            c = parsecsd(f, startid)
+            c = parsecsd(f, startid, img_l)
             csd_l.append(c)
             startid += len(c) 
         combine(csd_l, img_l, outdir, packname) 
