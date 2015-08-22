@@ -115,45 +115,45 @@ local function hititem(self, name)
     end
 end
 
-function listview:__ontouch(what, x, y)
-    if what=='BEGIN' then
-        local hit = self.__sprite:test(x,y)
-        if hit and hit.name then
-            self.__drag = y
-            local item = hititem(self, hit.name)
-            if item then
-                item:__ontouchdown(x,y)
-                self.__hititem = item
-            end
-        end
-    elseif what=='END' then
-        if self.__drag then
-            self.__drag = nil
-            if self.__hititem then
-                self.__hititem:__ontouchup(x,y)
-                self.__hititem = nil
-            end
+function listview:__touchdown(x,y)
+    if hit.name then
+        self.__drag = y
+        local item = hititem(self, hit.name)
+        if item then
+            item:__ontouchdown(x,y)
+            self.__hititem = item
         end
     end
-    if what=='MOVE' then
-        if self.__drag then
-            local dragy = y-self.__drag
-            if dragy ~= 0 then
-                dragy = dragy/self.__scalex/layout.SCALE
-                if self.__draw_start==1 and
-                    self.__dragoff > 0 then
-                    if dragy > 0 then
-                        dragy = dragy*0.4
-                    end
-                elseif self.__draw_start+self.__draw_count-1 > #self.__list then
-                    if dragy < 0 then
-                        dragy = dragy*0.4
-                    end
+end
+
+function listview:__touchup(x,y)
+    if self.__drag then
+        self.__drag = nil
+        if self.__hititem then
+            self.__hititem:__ontouchup(x,y)
+            self.__hititem = nil
+        end
+    end
+end
+
+function listview:__touchmove(x, y)
+    if self.__drag then
+        local dragy = y-self.__drag
+        if dragy ~= 0 then
+            dragy = dragy/self.__scalex/layout.SCALE
+            if self.__draw_start==1 and
+                self.__dragoff > 0 then
+                if dragy > 0 then
+                    dragy = dragy*0.4
                 end
-                dragy = math.floor(dragy) 
-                refresh_drag(self, dragy)
-                self.__drag = y
+            elseif self.__draw_start+self.__draw_count-1 > #self.__list then
+                if dragy < 0 then
+                    dragy = dragy*0.4
+                end
             end
+            dragy = math.floor(dragy) 
+            refresh_drag(self, dragy)
+            self.__drag = y
         end
     end
 end
