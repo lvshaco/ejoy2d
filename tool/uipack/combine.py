@@ -134,8 +134,8 @@ def fill_id(ani_l, img_l):
                     item.append('{name="item%d"}'%(i+1))
                 v['item'] = ',\n        '.join(item)
                 v['frame'] = ',\n        '.join(frame)
-            #composite 添加component, frame
-            elif uitype == 'composite':
+            #panel 添加component, frame
+            elif uitype == 'panel':
                 assert v.has_key('children')
                 cs = v['children']
                 cl = list()
@@ -150,10 +150,10 @@ def fill_id(ani_l, img_l):
                         pic = imagefind(img_l, c['picture'])
                         sx = c['w']/float(pic['screen'][2])
                         sy = c['h']/float(pic['screen'][3])
-                        #tranx = int(tranx*sx)
-                        #trany = int(trany*sy)
-                        #scalex= int(scalex*sx) # layout in run
-                        #scaley= int(scaley*sy) # layout in run
+                        tranx = int(tranx*sx)
+                        trany = int(trany*sy)
+                        scalex= int(scalex*sx) # layout in run
+                        scaley= int(scaley*sy) # layout in run
                         id = pic['id']
                     cl.append('{id=%d,name="%s"}'%(id,c['export']))
                     touch = ""
@@ -171,7 +171,7 @@ def fill_id(ani_l, img_l):
     for v in ani_l:
         if v["type"] == "animation":
             uitype = v['uitype']
-            if uitype != "composite":
+            if uitype != "panel":
                 cs = v["component"]
                 for i in range(len(cs)):
                     c = cs[i]
@@ -269,7 +269,7 @@ LISTVIEW = """
         {$frame}
     },
 },"""
-COMPOSITE = """
+PANEL = """
 {
     type = "animation",
     id = $id,
@@ -343,8 +343,8 @@ def _listview(v, ani_l):
     cs = v['component']
     v['pannel'] = cs[1]
     return Template(LISTVIEW).substitute(v)
-def _composite(v, ani_l):
-    return Template(COMPOSITE).substitute(v)
+def _panel(v, ani_l):
+    return Template(PANEL).substitute(v)
 
 TEMPLATES = {
     "picture":  _picture,
@@ -355,7 +355,7 @@ TEMPLATES = {
     "progressbar":_progressbar,
     "sliderbar":_sliderbar,
     "listview": _listview,
-    "composite":_composite,
+    "panel":_panel,
 }
 UNEXPORT = ('sprite')
 
@@ -372,20 +372,14 @@ def cfg_dump(node, level, t):
     t1.append('%sylayout="%s"'%(tab,node['ylayout']))
     t1.append('%sw=%d'%(tab,node['w']))
     t1.append('%sh=%d'%(tab,node['h']))
-    t1.append('%sx=%d'%(tab,node['x']))
-    t1.append('%sy=%d'%(tab,node['y']))
-    t1.append('%sxscale=%f'%(tab,node['xscale']))
-    t1.append('%syscale=%f'%(tab,node['yscale']))
-    param = None
-    if uitype == 'button' or \
-       uitype == 'label': 
-        if node['text']:
-            param='"%s"'%node['text']
-    elif uitype == 'listview':
-        if node['nitem']:
-            param='%d'%node['nitem']
-    if param:
-        t1.append('%sparam=%s'%(tab,param))
+    t2 = list()
+    t2.append('pos={%d,%d}'%(node['x'],node['y']))
+    t2.append('scalexy={%f,%f}'%(node['xscale'],node['yscale']))
+    if node.get('text'):
+        t2.append('text="%s"'%(node['text']))
+    if node.get('nitem'):
+        t2.append('nitem=%d'%(node['nitem']))
+    t1.append('%sinit={%s}'%(tab,(',\n%s  '%tab).join(t2)))
     if node.has_key('children'):
         for c in node['children']:
             cfg_dump(c,level+1,t1)

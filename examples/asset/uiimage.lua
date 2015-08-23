@@ -3,7 +3,7 @@ return {
     type = "picture",
     id = 0,
     export="Button_Disable.png",
-    { tex = 1, src = {890,264,936,264,936,300,890,300}, screen = {0,0,736,0,736,576,0,576} },
+    { tex = 1, src = {868,356,914,356,914,392,868,392}, screen = {0,0,736,0,736,576,0,576} },
 },
 {
     type = "picture",
@@ -39,7 +39,7 @@ return {
     type = "picture",
     id = 6,
     export="Button_Press.png",
-    { tex = 1, src = {942,264,984,264,984,296,942,296}, screen = {32,32,704,32,704,544,32,544} },
+    { tex = 1, src = {920,352,962,352,962,384,920,384}, screen = {32,32,704,32,704,544,32,544} },
 },
 {
     type = "picture",
@@ -99,13 +99,13 @@ return {
     type = "picture",
     id = 16,
     export="CheckBox_Press.png",
-    { tex = 1, src = {914,306,950,306,950,342,914,342}, screen = {32,32,608,32,608,608,32,608} },
+    { tex = 1, src = {936,264,972,264,972,300,936,300}, screen = {32,32,608,32,608,608,32,608} },
 },
 {
     type = "picture",
     id = 17,
     export="Button_Normal.png",
-    { tex = 1, src = {868,356,914,356,914,392,868,392}, screen = {0,0,736,0,736,576,0,576} },
+    { tex = 1, src = {914,310,960,310,960,346,914,346}, screen = {0,0,736,0,736,576,0,576} },
 },
 {
     type = "picture",
@@ -140,58 +140,64 @@ return {
 {
     type = "picture",
     id = 23,
+    export="back9scale.png",
+    { tex = 1, src = {890,264,930,264,930,304,890,304}, screen = {0,0,640,0,640,640,0,640} },
+},
+{
+    type = "picture",
+    id = 24,
     export="CheckBox_Normal.png",
     { tex = 1, src = {868,310,908,310,908,350,868,350}, screen = {0,0,640,0,640,640,0,640} },
 },
 {
     type = "picture",
-    id = 24,
+    id = 25,
     export="CheckBoxNode_Disable.png",
     { tex = 1, src = {722,350,750,350,750,370,722,370}, screen = {80,160,528,160,528,480,80,480} },
 },
 {
     type = "picture",
-    id = 25,
+    id = 26,
     export="Slider_Back.png",
     { tex = 1, src = {610,386,810,386,810,400,610,400}, screen = {0,0,3200,0,3200,224,0,224} },
 },
 {
     type = "picture",
-    id = 26,
+    id = 27,
     export="CheckBoxNode_Normal.png",
     { tex = 1, src = {756,350,784,350,784,370,756,370}, screen = {80,160,528,160,528,480,80,480} },
 },
 {
     type = "picture",
-    id = 27,
+    id = 28,
     export="Sprite.png",
     { tex = 1, src = {816,342,862,342,862,388,816,388}, screen = {0,0,736,0,736,736,0,736} },
 },
 {
     type = "picture",
-    id = 28,
+    id = 29,
     export="white.png",
     { tex = 1, src = {729,376,730,376,730,377,729,377}, screen = {0,0,16,0,16,16,0,16} },
 },
 {
     type = "picture",
-    id = 29,
+    id = 30,
     export="defaultMap.png",
     { tex = 1, src = {722,210,786,210,786,274,722,274}, screen = {0,0,1024,0,1024,1024,0,1024} },
 },
 {
     type = "label",
-    id = 30,
+    id = 32,
     
     color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
 },
 {
     type = "animation", 
-    id = 31,
-    export="node_Button_1",
+    id = 33,
+    export="layer_Button_1",
     component = {
         {id=17},
-        {id=6},  {id=30,name="label"},
+        {id=6},  {id=32,name="label"},
     },
     {
         {0,{index=2,mat={1024,0,0,1024,0,176}}},
@@ -200,12 +206,12 @@ return {
 },
 {
     type = "animation",
-    id = 32,
-    export="node_CheckBox_1",
+    id = 34,
+    export="layer_CheckBox_1",
     component = {
-        {id=23},
+        {id=24},
         {id=16}, 
-        {id=26,name="tag"}, 
+        {id=27,name="tag"}, 
     },
     {
         {0,{index=2,mat={1024,0,0,1024,16,0}}},
@@ -213,42 +219,17 @@ return {
     },
 },
 {
-    type = "label",
-    id = 33,
-    
-    color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
-},
-{
-    type = "animation", 
-    id = 34,
-    export="node_Button_2",
-    component = {
-        {id=17},
-        {id=6},  {id=33,name="label"},
-    },
-    {
-        {0,{index=2,mat={1024,0,0,1024,0,176}}},
-        {1,{index=2,mat={1024,0,0,1024,0,176}}}
-    },
-},
-{
-    type = "label",
-    id = 35,
-    export="node_Text_1",
-    color=0xffffffff, align=0, size=20, width=91, height=23, noedge=true, space_w=0, space_h=0, auto_size=0
-},
-{
     type = "pannel", 
-    id = 36,
+    id = 35,
     width=200, height=14, scissor=true,
 },
 {
     type = "animation",
-    id = 37,
-    export="node_LoadingBar_1",
+    id = 36,
+    export="layer_LoadingBar_1",
     component = {
         {id=1},
-        {id=36, name="pannel"}, 
+        {id=35, name="pannel"}, 
     },
     {
         {1,0},
@@ -256,7 +237,7 @@ return {
 },
 {
     type = "animation", 
-    id = 38,
+    id = 37,
     
     component = {
         {id=2},
@@ -270,16 +251,16 @@ return {
 },
 {
     type = "pannel", 
-    id = 39,
+    id = 38,
     width=200, height=14, scissor=true,
 },
 {
     type = "animation",
-    id = 40,
+    id = 39,
     
     component = {
         {id=13},
-        {id=39, name="pannel"}, 
+        {id=38, name="pannel"}, 
     },
     {
         {1,0},
@@ -287,15 +268,21 @@ return {
 },
 {
     type = "animation",
-    id = 41,
-    export="node_Slider_1",
+    id = 40,
+    export="layer_Slider_1",
     component = {
-        {id=25, name="back"}, 
-        {id=38, name="degree"}, {id=40,name="bar"}
+        {id=26, name="back"}, 
+        {id=37, name="degree"}, {id=39,name="bar"}
     },
     {
         {{index=0,},{index=2,},{index=1,mat={1024,0,0,1024,0,-48},},},
     },
+},
+{
+    type = "label",
+    id = 41,
+    export="layer_Text_1",
+    color=0xffffffff, align=0, size=20, width=91, height=23, noedge=true, space_w=0, space_h=0, auto_size=0
 },
 {
     type = "label",
@@ -306,7 +293,7 @@ return {
 {
     type = "animation", 
     id = 43,
-    export="node_Button_3",
+    export="layer_Button_2",
     component = {
         {id=17},
         {id=6},  {id=42,name="label"},
@@ -317,16 +304,176 @@ return {
     },
 },
 {
-    type = "pannel", 
+    type = "animation",
     id = 44,
-    width=200, height=200, scissor=true,
+    export="layer",
+    component = {
+        {id=3,name="layer_Image_1"},
+        {id=33,name="layer_Button_1"},
+        {id=34,name="layer_CheckBox_1"},
+        {id=36,name="layer_LoadingBar_1"},
+        {id=40,name="layer_Slider_1"},
+        {id=41,name="layer_Text_1"},
+        {id=43,name="layer_Button_2"}
+    },
+    {
+        {{index=0},
+         {index=1,touch=true},
+         {index=2,touch=true},
+         {index=3},
+         {index=4,touch=true},
+         {index=5},
+         {index=6,touch=true}}
+    },
+},
+{
+    type = "label",
+    id = 45,
+    
+    color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
+},
+{
+    type = "animation", 
+    id = 46,
+    export="node_Button_1",
+    component = {
+        {id=17},
+        {id=6},  {id=45,name="label"},
+    },
+    {
+        {0,{index=2,mat={1024,0,0,1024,0,176}}},
+        {1,{index=2,mat={1024,0,0,1024,0,176}}}
+    },
 },
 {
     type = "animation",
-    id = 45,
+    id = 47,
+    export="node_CheckBox_1",
+    component = {
+        {id=24},
+        {id=16}, 
+        {id=27,name="tag"}, 
+    },
+    {
+        {0,{index=2,mat={1024,0,0,1024,16,0}}},
+        {0,{index=2,mat={1024,0,0,1024,16,0}}}
+    },
+},
+{
+    type = "label",
+    id = 48,
+    
+    color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
+},
+{
+    type = "animation", 
+    id = 49,
+    export="node_Button_2",
+    component = {
+        {id=17},
+        {id=6},  {id=48,name="label"},
+    },
+    {
+        {0,{index=2,mat={1024,0,0,1024,0,176}}},
+        {1,{index=2,mat={1024,0,0,1024,0,176}}}
+    },
+},
+{
+    type = "label",
+    id = 50,
+    export="node_Text_1",
+    color=0xffffffff, align=0, size=20, width=91, height=23, noedge=true, space_w=0, space_h=0, auto_size=0
+},
+{
+    type = "pannel", 
+    id = 51,
+    width=200, height=14, scissor=true,
+},
+{
+    type = "animation",
+    id = 52,
+    export="node_LoadingBar_1",
+    component = {
+        {id=1},
+        {id=51, name="pannel"}, 
+    },
+    {
+        {1,0},
+    },
+},
+{
+    type = "animation", 
+    id = 53,
+    
+    component = {
+        {id=2},
+        {id=22}, {id=11}, 
+    },
+    {
+        {0},
+        {1},
+        {2}
+    },
+},
+{
+    type = "pannel", 
+    id = 54,
+    width=200, height=14, scissor=true,
+},
+{
+    type = "animation",
+    id = 55,
+    
+    component = {
+        {id=13},
+        {id=54, name="pannel"}, 
+    },
+    {
+        {1,0},
+    },
+},
+{
+    type = "animation",
+    id = 56,
+    export="node_Slider_1",
+    component = {
+        {id=26, name="back"}, 
+        {id=53, name="degree"}, {id=55,name="bar"}
+    },
+    {
+        {{index=0,},{index=2,},{index=1,mat={1024,0,0,1024,0,-48},},},
+    },
+},
+{
+    type = "label",
+    id = 57,
+    
+    color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
+},
+{
+    type = "animation", 
+    id = 58,
+    export="node_Button_3",
+    component = {
+        {id=17},
+        {id=6},  {id=57,name="label"},
+    },
+    {
+        {0,{index=2,mat={1024,0,0,1024,0,176}}},
+        {1,{index=2,mat={1024,0,0,1024,0,176}}}
+    },
+},
+{
+    type = "pannel", 
+    id = 59,
+    width=100, height=200, scissor=true,
+},
+{
+    type = "animation",
+    id = 60,
     export="node_ListView_1",
     component = {
-        {id=3},{id=44,name="pannel"},
+        {id=3},{id=59,name="pannel"},
         {name="item1"},
         {name="item2"},
         {name="item3"},
@@ -339,7 +486,7 @@ return {
         {name="item10"}
     },
     {
-        {{index=0,mat={1024,0,0,1024,0,-1600}},
+        {{index=0,mat={1024,0,0,1024,-800,-1600}},
         {index=1,touch=true},
         {index=2,touch=true},
         {index=3,touch=true},
@@ -351,5 +498,186 @@ return {
         {index=9,touch=true},
         {index=10,touch=true},
         {index=11,touch=true}}
+    },
+},
+{
+    type = "label",
+    id = 63,
+    
+    color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
+},
+{
+    type = "animation", 
+    id = 64,
+    export="win_Button_1",
+    component = {
+        {id=17},
+        {id=6},  {id=63,name="label"},
+    },
+    {
+        {0,{index=2,mat={1024,0,0,1024,0,176}}},
+        {1,{index=2,mat={1024,0,0,1024,0,176}}}
+    },
+},
+{
+    type = "animation",
+    id = 65,
+    export="win_CheckBox_1",
+    component = {
+        {id=24},
+        {id=16}, 
+        {id=27,name="tag"}, 
+    },
+    {
+        {0,{index=2,mat={1024,0,0,1024,16,0}}},
+        {0,{index=2,mat={1024,0,0,1024,16,0}}}
+    },
+},
+{
+    type = "pannel", 
+    id = 66,
+    width=200, height=14, scissor=true,
+},
+{
+    type = "animation",
+    id = 67,
+    export="win_LoadingBar_1",
+    component = {
+        {id=1},
+        {id=66, name="pannel"}, 
+    },
+    {
+        {1,0},
+    },
+},
+{
+    type = "animation", 
+    id = 68,
+    
+    component = {
+        {id=2},
+        {id=22}, {id=11}, 
+    },
+    {
+        {0},
+        {1},
+        {2}
+    },
+},
+{
+    type = "pannel", 
+    id = 69,
+    width=200, height=14, scissor=true,
+},
+{
+    type = "animation",
+    id = 70,
+    
+    component = {
+        {id=13},
+        {id=69, name="pannel"}, 
+    },
+    {
+        {1,0},
+    },
+},
+{
+    type = "animation",
+    id = 71,
+    export="win_Slider_1",
+    component = {
+        {id=26, name="back"}, 
+        {id=68, name="degree"}, {id=70,name="bar"}
+    },
+    {
+        {{index=0,},{index=2,},{index=1,mat={1024,0,0,1024,0,-48},},},
+    },
+},
+{
+    type = "label",
+    id = 72,
+    export="win_Text_1",
+    color=0xffffffff, align=0, size=20, width=91, height=23, noedge=true, space_w=0, space_h=0, auto_size=0
+},
+{
+    type = "label",
+    id = 73,
+    
+    color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
+},
+{
+    type = "animation", 
+    id = 74,
+    export="win_Button_2",
+    component = {
+        {id=17},
+        {id=6},  {id=73,name="label"},
+    },
+    {
+        {0,{index=2,mat={1024,0,0,1024,0,176}}},
+        {1,{index=2,mat={1024,0,0,1024,0,176}}}
+    },
+},
+{
+    type = "label",
+    id = 75,
+    
+    color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
+},
+{
+    type = "animation", 
+    id = 76,
+    export="win_Button_3",
+    component = {
+        {id=17},
+        {id=6},  {id=75,name="label"},
+    },
+    {
+        {0,{index=2,mat={1024,0,0,1024,0,176}}},
+        {1,{index=2,mat={1024,0,0,1024,0,176}}}
+    },
+},
+{
+    type = "animation",
+    id = 77,
+    export="win",
+    component = {
+        {id=3,name="win_Panel_1"},
+        {id=64,name="win_Button_1"},
+        {id=65,name="win_CheckBox_1"},
+        {id=67,name="win_LoadingBar_1"},
+        {id=71,name="win_Slider_1"},
+        {id=72,name="win_Text_1"},
+        {id=74,name="win_Button_2"},
+        {id=76,name="win_Button_3"}
+    },
+    {
+        {{index=0,touch=true},
+         {index=1,touch=true},
+         {index=2,touch=true},
+         {index=3},
+         {index=4,touch=true},
+         {index=5},
+         {index=6,touch=true},
+         {index=7,touch=true}}
+    },
+},
+{
+    type = "label",
+    id = 79,
+    export="win9scale_Text_1",
+    color=0xffffffff, align=0, size=20, width=91, height=23, noedge=true, space_w=0, space_h=0, auto_size=0
+},
+{
+    type = "animation",
+    id = 80,
+    export="win9scale",
+    component = {
+        {id=23,name="win9scale_Panel_2"},
+        {id=79,name="win9scale_Text_1"}
+    },
+    {
+        {{index=0,touch=true,mat={5120,0,0,7680,0,0}},
+         {index=1}}
     },
 },}

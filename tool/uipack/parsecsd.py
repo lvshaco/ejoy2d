@@ -41,6 +41,7 @@ def NEW(d, node, uitype, type):
     d["xscale"], d["yscale"] = _ScaleXY(node,"Scale")
     #assert(d['xscale'] == d['yscale'])
     d['xlayout'],d['ylayout'] = _LAYOUT(node)
+    d['touch'] = _TOUCH(node)
     CONTROL.append(d)
 
 def _open(cfgfile):
@@ -85,6 +86,10 @@ def _AF(node, attr, default=0):
 
 def _AI(node, attr, default=0):
     return int(_AF(node, attr, default))
+
+def _TOUCH(node):
+    enable = _AV(node, 'TouchEnable')
+    return enable == 'True'
 
 def _ALIGN(node):
     t = _AV(node,"HorizontalAlignmentType")
@@ -171,14 +176,17 @@ def _LEAVE(node):
     del STACK[-1]
 
 #################################################
-def _sprite(node, d):
-    # 作为animation的组件存在，不单独存在，直接引用对应的picture
+def _panel(node, d):
     w,h=_Size(node)
-    name = _AV(node,'Name')
-    if name[-3:]=='[T]':
-        name = name[:-3]
-        d['touch'] = True
-    d["export"] = name
+    d["export"] =_AV(node,'Name')
+    #d["color"] = _ARGB(node,"CColor")
+    d['picture'] = _IMAGE(node, 'FileData')
+    NEW(d, node, "panel", "panel")
+    return d
+
+def _image(node, d):
+    w,h=_Size(node)
+    d["export"] =_AV(node,'Name')
     #d["color"] = _ARGB(node,"CColor")
     d['picture'] = _IMAGE(node, 'FileData')
     NEW(d, node, "sprite", "sprite")
@@ -234,7 +242,6 @@ def _button(node, d):
     l.append(text_id)
     d['component'] = l
     d['text'] = text
-    d['touch'] = True
     NEW(d,node,"button","animation")
     return d
 
@@ -254,7 +261,6 @@ def _checkbox(node, d):
         assert dis != 'CheckBoxNode_Disable.png', 'Not NodeDisableFileData'
         l.append(dis)
     d['component'] = l
-    d['touch'] = True
     NEW(d,node,"checkbox","animation")
     return d
 
@@ -285,7 +291,6 @@ def _sliderbar(node, d):
     w,h = calc_size(l)
     l.append(-1) # text_id
     sd['component'] = l
-    sd['touch'] = True
     NEW(sd,node,"button","animation")
     sd['w'] = w
     sd['h'] = h
@@ -335,7 +340,6 @@ def _listview(node, d):
     sd["scissor"] = True
     NEW(sd,node,"pannel","pannel")
     pannel_id = _ID()
-  
     name = _AV(node,"Name")
     if name[-1]==']':
         pos = name.rfind('[')
@@ -355,7 +359,7 @@ def _listview(node, d):
 def _child(node,d, addself):
     if addself:
         sd = dict()
-        _sprite(node, sd)
+        _image(node, sd)
         _addchild(d, sd)
         sd['x'], sd['y'] = 0,0
     _ENTER(node,d)
@@ -381,8 +385,8 @@ CONTROLS = {
     'LoadingBarObjectData': _progressbar,
     'SliderObjectData':     _sliderbar,
     'ListViewObjectData':   _listview,
-    #'ImageViewObjectData':  _image,
-    'SpriteObjectData':     _sprite,
+    'ImageViewObjectData':  _image,
+    'PanelObjectData':      _panel,
 }
 def _control(node):
     d = dict()
@@ -423,9 +427,9 @@ def _root(dom):
         n = _childnodecnt(child, "AbstractNodeData")
         assert n>0, "No child node"
         if n==1:
-            sprite = _childnodefirst(child, "AbstractNodeData")
-            if _AV(sprite,'ctype')=='SpriteObjectData':
-                return sprite, 3 # node, sprite as the container
+            panel = _childnodefirst(child, "AbstractNodeData")
+            if _AV(panel,'ctype')=='PanelObjectData':
+                return panel, 3 # node, panel as the container
             else:
                 return root, 2   # node, kinds of independent control
         else:
@@ -441,8 +445,9 @@ def parsecsd(cfgfile, startid, img_l):
     ID = -1
     dom = _open(cfgfile)
     root, rtype = _root(dom)
+    #print( 'root type:', rtype)
     d = dict()
-    NEW(d, root, "composite", "animation")
+    NEW(d, root, "panel", "animation")
     ID = startid-1
     CONTROL = list()
     if rtype == 1:

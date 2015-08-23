@@ -29,7 +29,7 @@ function sliderbar:update()
 end
 
 function sliderbar.new(packname, spr, range)
-    local self = control.init(sliderbar, packname, spr)
+    local self = control.construct(sliderbar, packname, spr)
     range = range or 100
     self.__range = range
     local x1,_,x2,_ = self.__sprite.back:aabb()

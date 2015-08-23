@@ -20,7 +20,6 @@
 
 #### control type
 
-- sprite: name endswith `[T]` support touch event
 - label:  name endswith `[E]` the font has edge
 - listview: name endswith `[number]` the number is item show count
 

@@ -1,3 +1,8 @@
+--[[
+all spritex will scale with layout.SCALE,
+this would let spritex cordinary with the design.
+]]
+
 local ej = require "ejoy2d"
 local layout = {
     SCALE = 1,

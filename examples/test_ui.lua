@@ -9,13 +9,15 @@ local coco = require "ex.coco"
 local layer = require "ex.layer"
 local tween = require "ex.tween"
 local action = require "ex.action"
-
 local label = require "ui.label"
 local button = require "ui.button"
 local checkbox = require "ui.checkbox"
 local progressbar = require "ui.progressbar"
 local sliderbar = require "ui.sliderbar"
 local listview = require "ui.listview"
+local panel = require "ui.panel"
+local composite = require "ui.composite"
+local uiimage_uc = require "examples.asset.uiimage_uc"
 
 local t1 = os.time()
 pack.load {
@@ -81,15 +83,17 @@ function T.button()
     local p1 = progressbar.new('uiimage', 'node_LoadingBar_1', 100)
     p1:pos(300, 300)
     p1:scale(2)
+    --p1:rot(180)
     p1.update = function(self)
         p1:degree(p1.__degree+1)
         spritex.update(p1)
     end
 
     local s1 = sliderbar.new('uiimage', 'node_Slider_1', 100)
-    s1:anchorpoint(0,0)
+    --s1:anchorpoint(0,0)
     s1:pos(300, 400)
     s1:scale(2)
+    --s1:rot(180)
     s1:update()
     --print ("==", s1.__sprite:aabb())
     --print ("==", s1.__sprite.back:aabb())
@@ -106,7 +110,26 @@ function T.button()
     L:add(2,s1)
 end
 
-for i=1,9 do
+function T.panel()
+    local c1 = panel.new('uiimage', uiimage_uc.win)
+    c1:pos(100,100)
+    --c1:scale(2)
+    c1:child('Button_1'):touch_event('up', function()
+        c1:resize(ej.screen())
+        c1:pos(0,0)
+    end)
+    L:add(2,c1)
+end
+
+function T.test()
+    local b1 = button.new('uiimage', 'node_Button_1')
+    b1:anchorpoint(1,0)
+    b1:pos(10,10)
+    b1:scale(2)
+    L:add(2,b1)
+end
+
+for i=1,7 do
     T['test'..i] = function() end
 end
 
@@ -119,8 +142,8 @@ local function init()
     --T.button()
     local lv = listview.new('uiimage', 'node_ListView_1', 11)
     lv:anchorpoint(1,0.5)
-    lv:pos(layout.pointx(1),layout.pointy(0.5))
-    --lv:scale(0.5)
+    lv:pos(layout.pointx(1),layout.pointy(0.8))
+    lv:scale(1.5)
     lv:gap(3)
     local function __up(self,x,y)
         L:clr(2)

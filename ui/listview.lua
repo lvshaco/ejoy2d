@@ -1,11 +1,10 @@
 local control = require "ui.control"
-local layout = require "ex.layout"
 
 local listview = control.new()
 listview.__index = listview
 
 function listview.new(packname, spr)
-    local self = control.init(listview, packname, spr)
+    local self = control.construct(listview, packname, spr)
     self.__list = {}
     self.__hititem = nil
     
@@ -70,12 +69,10 @@ local function refresh_drag(self, dragy)
     self.__dragoff = self.__dragoff + dragy 
     local gap = self.__gap
     local offy = self.__dragoff
-    local start, starty
-    for i=1, #self.__list do
-        local s = self.__list[i].__sprite
-        --s:ps(0, offy)
-        local _,y1,_,y2 = s:aabb()
-        offy = offy+(y2-y1)+gap
+    local start, starty, sx
+    for i=1, #self.__list do -- todo half find
+        sx = self.__list[i]
+        offy = offy+(sx.__h)+gap
         if offy<0 then
             start = i+1
             starty = offy
@@ -91,11 +88,10 @@ local function refresh_drag(self, dragy)
     end
     local cnt = last-start+1
     for i=1,cnt do
-        local s = self.__list[i+start-1].__sprite
-        local _,y1,_,y2 = s:aabb()
-        s:ps(0, starty)
-        self.__sprite['item'..i] = s
-        starty = starty+y2-y1+gap
+        sx = self.__list[i+start-1]
+        sx.__sprite:ps(0, starty)
+        self.__sprite['item'..i] = sx.__sprite
+        starty = starty+sx.__h+gap
     end
     for i=cnt+1,self.__draw_count do
         self.__sprite['item'..i] = self.__listold[i]
@@ -115,7 +111,7 @@ local function hititem(self, name)
     end
 end
 
-function listview:__touchdown(x,y)
+function listview:__touchdown(x,y,hit)
     if hit.name then
         self.__drag = y
         local item = hititem(self, hit.name)
@@ -140,7 +136,8 @@ function listview:__touchmove(x, y)
     if self.__drag then
         local dragy = y-self.__drag
         if dragy ~= 0 then
-            dragy = dragy/self.__scalex/layout.SCALE
+            local scale = self:real_wh()/self.__w
+            dragy = dragy/scale
             if self.__draw_start==1 and
                 self.__dragoff > 0 then
                 if dragy > 0 then

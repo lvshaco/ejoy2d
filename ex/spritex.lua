@@ -14,10 +14,10 @@ function spritex.metanew()
 end
 
 function spritex.new(packname, name)
-    return spritex.init(spritex, packname, name)
+    return spritex.construct(spritex, packname, name)
 end
 
-function spritex.init(class, packname, name)
+function spritex.construct(class, packname, name)
     local spr
     if packname then
         spr = assert(ej.sprite(packname, name))
@@ -50,6 +50,16 @@ function spritex.init(class, packname, name)
         __touchup_cb = nil,
         __touchstate = nil,
     }, class)
+end
+
+function spritex:init(cfg)
+    for k, v in pairs(cfg) do
+        if type(v) == 'table' then
+            self[k](self, table.unpack(v))
+        else
+            self[k](self, v)
+        end
+    end
 end
 
 -- matrix
@@ -116,6 +126,11 @@ function spritex:scalexy(scalex, scaley)
         self.__scaley = scaley
         self.__matrix_dirty = true
     end
+end
+
+function spritex:real_wh()
+    local x1,y1,x2,y2 = self.__sprite:aabb(nil,true)
+    return x2-x1, y2-y1
 end
 
 local function __calculate_matrix(self)
@@ -191,6 +206,11 @@ function spritex:action_time()
     end
 end
 
+-- util
+function spritex:visible(b)
+    self.__sprite.visible = b or false
+end
+
 -- touch 
 function spritex:touch_enable(b)
     local o = self.__touch_enable
@@ -212,10 +232,10 @@ function spritex:touch_event(type, cb)
     end
 end
 
-function spritex:__ontouchdown(x,y)
+function spritex:__ontouchdown(x,y,hit)
     self.__touchstate = 'down' 
     if self.__touchdown then -- subclass implement this
-        self:__touchdown(x,y)
+        self:__touchdown(x,y,hit)
         if self.__touchdown_cb then
             self:__touchdown_cb(self,x,y)
         end
@@ -266,7 +286,7 @@ function spritex:__ontouch(what,x,y)
     if what == 'BEGIN' then
         local hit = self.__sprite:test(x,y)
         if hit then
-            return self:__ontouchdown(x,y)
+            return self:__ontouchdown(x,y,hit)
         end
     elseif what == 'END' then
         if self.__touchstate == 'down' then 

@@ -9,8 +9,8 @@ function control.new()
     return setmetatable({}, control)
 end
 
-function control.init(class, packname, spr)
-    local self = spritex.init(class, packname, spr)
+function control.construct(class, packname, spr)
+    local self = spritex.construct(class, packname, spr)
     self.__touch_enable = true
     return self
 end

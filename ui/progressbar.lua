@@ -18,7 +18,7 @@ local function __degree(self, x)
 end
 
 function progressbar.new(packname, spr, range)
-    local self = control.init(progressbar, packname, spr)
+    local self = control.construct(progressbar, packname, spr)
     range = range or 100
     self.__range = range
 

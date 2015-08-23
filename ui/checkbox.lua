@@ -9,7 +9,7 @@ local HIGHLIGHT = 1
 local DISABLE = 2
 
 function checkbox.new(packname, spr)
-    local self = control.init(checkbox, packname, spr)
+    local self = control.construct(checkbox, packname, spr)
     self.__selected = true
     return self
 end

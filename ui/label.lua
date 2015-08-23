@@ -4,7 +4,7 @@ local label = control.new()
 label.__index = label
 
 function label.new(packname, spr, text)
-    local self = control.init(label, packname, spr, "")
+    local self = control.construct(label, packname, spr, "")
     if text then
         self.__sprite.text = text
     end
