@@ -207,7 +207,7 @@ win={
     h=36,
     init={pos={10,10},
       scalexy={1.000000,1.000000},
-      text="b1"}
+      text="Button"}
   },
   {
     uitype="checkbox",
@@ -259,7 +259,7 @@ win={
     h=36,
     init={pos={144,10},
       scalexy={1.000000,1.000000},
-      text="B2"}
+      text="Button"}
   },
   {
     uitype="button",
@@ -270,7 +270,7 @@ win={
     h=36,
     init={pos={77,10},
       scalexy={1.000000,1.000000},
-      text="B3"}
+      text="Button"}
   }
 },
 win9scale={

@@ -42,6 +42,7 @@ def NEW(d, node, uitype, type):
     #assert(d['xscale'] == d['yscale'])
     d['xlayout'],d['ylayout'] = _LAYOUT(node)
     d['touch'] = _TOUCH(node)
+    _SCALE9(d,node)
     CONTROL.append(d)
 
 def _open(cfgfile):
@@ -156,6 +157,15 @@ def _IMAGE(node, name):
     else:
         return ""
 
+def _SCALE9(d,node):
+    yes = _AV(node,'Scale9Enable')
+    if yes == 'True':
+        d['scale9'] = True
+        d['scale9x'] = _AI(node,'Scale9OriginX','') # use default '' to report error
+        d['scale9y'] = _AI(node,'Scale9OriginY','')
+        d['scale9w'] = _AI(node,'Scale9Width','')
+        d['scale9h'] = _AI(node,'Scale9Height','')
+
 ##################################################
 STACK = list()
     
@@ -181,7 +191,7 @@ def _panel(node, d):
     d["export"] =_AV(node,'Name')
     #d["color"] = _ARGB(node,"CColor")
     d['picture'] = _IMAGE(node, 'FileData')
-    NEW(d, node, "panel", "panel")
+    NEW(d, node, "panel", "animation")
     return d
 
 def _image(node, d):

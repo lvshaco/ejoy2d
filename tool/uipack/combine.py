@@ -140,9 +140,9 @@ def fill_id(ani_l, img_l):
                 cs = v['children']
                 cl = list()
                 fl = list()
+                #print ("+++++++++", 'pannel:cs:', len(cs), v)
                 for i in range(len(cs)):
                     c = cs[i]
-                    id = c['id']
                     #tranx,trany = c['x']*SCREEN_SCALE, c['y']*SCREEN_SCALE
                     tranx,trany = 0,0 # layout in run
                     scalex,scaley = 1024,1024
@@ -155,6 +155,8 @@ def fill_id(ani_l, img_l):
                         scalex= int(scalex*sx) # layout in run
                         scaley= int(scaley*sy) # layout in run
                         id = pic['id']
+                    else:
+                        id = c['id']
                     cl.append('{id=%d,name="%s"}'%(id,c['export']))
                     touch = ""
                     if c.get('touch'):

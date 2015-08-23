@@ -16,13 +16,12 @@ local progressbar = require "ui.progressbar"
 local sliderbar = require "ui.sliderbar"
 local listview = require "ui.listview"
 local panel = require "ui.panel"
-local composite = require "ui.composite"
 local uiimage_uc = require "examples.asset.uiimage_uc"
 
 local t1 = os.time()
 pack.load {
     pattern = fw.WorkDir..[[examples/asset/?]],
-    "uiimage"
+    "uiimage", "image"
 }
 local t2 = os.time()
 logger.log("pack.load use time:"..(t2-t1))
@@ -122,11 +121,9 @@ function T.panel()
 end
 
 function T.test()
-    local b1 = button.new('uiimage', 'node_Button_1')
-    b1:anchorpoint(1,0)
-    b1:pos(10,10)
-    b1:scale(2)
-    L:add(2,b1)
+    local s = spritex.new('image',0)
+    s:anchorpoint(0,0)
+    L:add(2,s)
 end
 
 for i=1,7 do
