@@ -193,7 +193,7 @@ def _panel(node, d):
     d["export"] =_AV(node,'Name')
     #d["color"] = _ARGB(node,"CColor")
     NEW(d, node, "panel")
-    d['x'], d['y'] = 0,0 # force pos to zero
+    #d['x'], d['y'] = 0,0 # force pos to zero
     sd = dict()
     if _imagex(node, sd, 'FileData', '_bg'): # panel no background
         sd['x'], sd['y'] = 0,0 # force pos to zero
@@ -483,11 +483,10 @@ def _root(dom):
             return root, 2
      
 def parsecsd(cfgfile, startid, img_l):
-    global IMG_L
+    global IMG_L,CONTROL,ID
     IMG_L = img_l
     print "[+]"+cfgfile
     csdname,_ = os.path.splitext(os.path.split(cfgfile)[-1])
-    global CONTROL,ID
     CONTROL = list()
     ID=startid
     dom = _open(cfgfile)
@@ -507,9 +506,4 @@ def parsecsd(cfgfile, startid, img_l):
         _child(root,d)
     elif rtype == 3:
         d = _control(root)
-    # export name add prefix csdname_
-    for c in CONTROL:
-        if c.get('export'):
-            c['export'] = '%s_%s'%(csdname, c['export'])
-    #d['export'] = csdname
-    return CONTROL
+    return {'name':csdname, 'l':CONTROL}

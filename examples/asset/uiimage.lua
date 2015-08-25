@@ -667,14 +667,15 @@ return {
     id = 105,
     export="win_Panel_1",
     component = {
-        {id=3,name="win_Panel_1_bg"},
-        {id=107,name="win_Button_1"},
-        {id=117,name="win_CheckBox_1"},
-        {id=118,name="win_LoadingBar_1"},
-        {id=121,name="win_Slider_1"},
-        {id=130,name="win_Text_1"},
-        {id=131,name="win_Button_2"},
-        {id=136,name="win_Button_3"}
+        {id=103,name="Panel_1_bg"},
+        {id=107,name="Button_1"},
+        {id=117,name="CheckBox_1"},
+        {id=118,name="LoadingBar_1"},
+        {id=121,name="Slider_1"},
+        {id=130,name="Text_1"},
+        {id=131,name="Button_2"},
+        {id=136,name="Button_3"},
+        {id=141,name="Panel_2"}
     },
     {
         {{index=0,touch=true},
@@ -684,7 +685,8 @@ return {
         {index=4,touch=true},
         {index=5},
         {index=6,touch=true},
-        {index=7,touch=true}}
+        {index=7,touch=true},
+        {index=8,touch=true}}
     },
 },
 {
@@ -841,9 +843,9 @@ return {
 {
     type = "animation",
     id = 141,
-    export="win9scale_Panel_2",
+    export="win_Panel_2",
     component = {
-        {id=103,name="win9scale_Panel_2_bg"}
+        {id=103,name="Panel_2_bg"}
     },
     {
         {{index=0,touch=true}}
@@ -852,12 +854,23 @@ return {
 {
     type = "animation",
     id = 143,
+    export="win9scale_Panel_2",
+    component = {
+        {id=103,name="Panel_2_bg"}
+    },
+    {
+        {{index=0,touch=true}}
+    },
+},
+{
+    type = "animation",
+    id = 145,
     export="winnoback_Panel_1",
     component = {
-        {id=144,name="winnoback_Button_1"},
-        {id=149,name="winnoback_Button_2"},
-        {id=154,name="winnoback_Button_3"},
-        {id=159,name="winnoback_Button_4"}
+        {id=146,name="Button_1"},
+        {id=151,name="Button_2"},
+        {id=156,name="Button_3"},
+        {id=161,name="Button_4"}
     },
     {
         {{index=0,touch=true},
@@ -868,13 +881,13 @@ return {
 },
 {
     type = "animation",
-    id = 144,
+    id = 146,
     export="winnoback_Button_1",
     component = {
         {id=69},
         {id=70},
         {id=71},
-        {id=148,name="label"}
+        {id=150,name="label"}
     },
     {
         {0,{index=3,mat={1024,0,0,1024,0,176}}},
@@ -884,19 +897,19 @@ return {
 },
 {
     type = "label",
-    id = 148,
+    id = 150,
     
     color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
 },
 {
     type = "animation",
-    id = 149,
+    id = 151,
     export="winnoback_Button_2",
     component = {
         {id=69},
         {id=70},
         {id=71},
-        {id=153,name="label"}
+        {id=155,name="label"}
     },
     {
         {0,{index=3,mat={1024,0,0,1024,0,176}}},
@@ -906,19 +919,19 @@ return {
 },
 {
     type = "label",
-    id = 153,
+    id = 155,
     
     color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
 },
 {
     type = "animation",
-    id = 154,
+    id = 156,
     export="winnoback_Button_3",
     component = {
         {id=69},
         {id=70},
         {id=71},
-        {id=158,name="label"}
+        {id=160,name="label"}
     },
     {
         {0,{index=3,mat={1024,0,0,1024,0,176}}},
@@ -928,19 +941,19 @@ return {
 },
 {
     type = "label",
-    id = 158,
+    id = 160,
     
     color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
 },
 {
     type = "animation",
-    id = 159,
+    id = 161,
     export="winnoback_Button_4",
     component = {
         {id=69},
         {id=70},
         {id=71},
-        {id=163,name="label"}
+        {id=165,name="label"}
     },
     {
         {0,{index=3,mat={1024,0,0,1024,0,176}}},
@@ -950,7 +963,7 @@ return {
 },
 {
     type = "label",
-    id = 163,
+    id = 165,
     
     color=0xff414146, align=2, size=14, width=46, height=14, noedge=true, space_w=0, space_h=0, auto_size=0
 },}

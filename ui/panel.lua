@@ -19,7 +19,10 @@ function panel.new(packname, spr)
 end
 
 local function __set_layout(c, cfg)
-    local pos = cfg.init.pos
+    local pos
+    if cfg.init then
+        pos = cfg.init.pos
+    end
     c.__layoutx = cfg.xlayout
     c.__layouty = cfg.ylayout
     if pos then
@@ -53,7 +56,9 @@ function panel:init(cfg)
             if sub.init0 then
                 c:init(sub.init0)
             end
-            c:init(sub.init)
+            if sub.init then
+                c:init(sub.init)
+            end
         end
         children[name] = c
         __set_layout(c, sub)
@@ -62,7 +67,9 @@ function panel:init(cfg)
     self.__export = cfg.export
     self.__children = children
 
-    control.init(self, cfg.init)
+    if cfg.init then
+        control.init(self, cfg.init)
+    end
     __set_layout(self, cfg)
     self:anchorpoint(0,0) -- todo: it is suitable ?
 end
@@ -138,7 +145,7 @@ function panel:update()
 end
 
 function panel:child(name)
-    return self.__children[self.__export..'_'..name]
+    return self.__children[name]
 end
 
 return panel

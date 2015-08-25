@@ -60,5 +60,5 @@ if __name__ == "__main__":
         for f in files:
             c = parsecsd(f, startid, img_l)
             csd_l.append(c)
-            startid += len(c) 
+            startid += len(c['l']) 
         combine(csd_l, img_l, outdir, packname) 

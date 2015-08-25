@@ -110,7 +110,7 @@ function T.button()
 end
 
 function T.panel()
-    local c1 = panel.new('uiimage', uiimage_uc.win)
+    local c1 = panel.new('uiimage', uiimage_uc.win_Panel_1)
     c1:pos(100,100)
     --c1:scale(2)
     c1:child('Button_1'):touch_event('up', function()
@@ -173,26 +173,27 @@ local function init()
     L:bind(2, {}, ipairs, layer.UPDATE|layer.DRAW|layer.TOUCH)
     L:bind(3, coco:new(), ipairs, layer.UPDATE|layer.TOUCHLAST)
 
-    local lv = listview.new('uiimage', 'node_ListView_1', 11)
-    lv:reset_scale9(100,200)
-    lv:anchorpoint(1,0.5)
-    lv:pos(layout.pointx(1),layout.pointy(0.8))
-    lv:scale(1.5)
-    lv:gap(3)
-    local function __up(self,x,y)
-        L:clr(2)
-        local name = self:get_text()
-        T[name]()
-    end
-    local item 
-    for k, v in pairs(T) do
-        item = button.new('uiimage', 'node_Button_1')
-        item:reset_scale9(80,36)
-        item:text(k)
-        item:touch_event('up', __up)
-        lv:insert(item)
-    end
-    L:add(1,lv)
+    T.panel()
+    --local lv = listview.new('uiimage', 'node_ListView_1', 11)
+    --lv:reset_scale9(100,200)
+    --lv:anchorpoint(1,0.5)
+    --lv:pos(layout.pointx(1),layout.pointy(0.8))
+    --lv:scale(1.5)
+    --lv:gap(3)
+    --local function __up(self,x,y)
+    --    L:clr(2)
+    --    local name = self:get_text()
+    --    T[name]()
+    --end
+    --local item 
+    --for k, v in pairs(T) do
+    --    item = button.new('uiimage', 'node_Button_1')
+    --    item:reset_scale9(80,36)
+    --    item:text(k)
+    --    item:touch_event('up', __up)
+    --    lv:insert(item)
+    --end
+    --L:add(1,lv)
 end
 
 init()

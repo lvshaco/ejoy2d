@@ -14,33 +14,6 @@ __all__ = [
 
 SCREEN_SCALE = 16
 
-def calc_mat(pw,ph, w, h):
-    if pw==w and ph==h:
-        return ''
-    else:
-        tranx = (w-pw)/2 * SCREEN_SCALE
-        trany = (h-ph)/2 * SCREEN_SCALE
-        return 'mat={1024,0,0,1024,%d,%d},'%(tranx,trany)
-
-#def find_ani(ani_l, id):
-#    for v in ani_l:
-#        if v['id'] == id:
-#            return v
-#    assert False, "Cannot found ani:"+id
-
-#def pic_part(img_l, cs, i, v):
-#    w,h=v['w'],v['h']
-#    pic = imagefind(img_l, cs[i])
-#    pw,ph = imagerange(pic)
-#    if pw==w and ph==h:
-#        s = '%d'%i
-#    else:
-#        tranx = (w-pw)/2 * SCREEN_SCALE
-#        trany = (h-ph)/2 * SCREEN_SCALE
-#        s = '{index=%d,mat={1024,0,0,1024,%d,%d}}'%(i,tranx,trany)
-#    cs[i] = pic['id']
-#    return s
-
 def image_part(c, i, w, h):
     if c['picture'].get('scale9_id'):
         return '%d'%i
@@ -66,11 +39,8 @@ def label_part(c, i, w, h):
     trany = (h-c['size'])/2 * SCREEN_SCALE
     return '{index=%d,mat={1024,0,0,1024,0,%d}}'%(i,trany)
   
-def c_is_image(c):
-    return c['uitype'] == 'sprite'
-
 def _id(c):
-    if c_is_image(c):
+    if c['uitype'] == 'sprite':
         pic = c['picture']
         sid = pic.get('scale9_id')
         if sid:
@@ -249,7 +219,7 @@ def _listview(v, ani_l):
     w,h = v['w'],v['h']
     cl = list()
     fl = list()
-    if c_is_image(cs[0]):
+    if cs[0]['uitype'] == 'sprite':
         cl.append('{id=%d,name="bg"}'%_id(cs[0]))
         fl.append(image_part(cs[0], 0, w,h))
         start_index=1
@@ -302,13 +272,17 @@ TEMPLATES = {
     "sprite":_sprite,
 }
 
-def cfg_dump(node, level, t):
+def cfg_dump(csd, node, level, t):
     uitype = node['uitype']
     tabp = level*'  '
     tab=tabp+'  '
     t1 = list()
     t1.append('%suitype="%s"'%(tab,uitype))
-    t1.append('%sexport="%s", --%d'%(tab,node['export'],_id(node)))
+    if level == 0 and uitype == 'panel': # top level panel prefix csdname_
+        export = '%s_%s'%(csd['name'], node['export'])
+    else:
+        export = node['export']
+    t1.append('%sexport="%s", --%d'%(tab,export,_id(node)))
     if node.get('screen'):
         t1.append('%sscreen=true'%(tab))
     t1.append('%sxlayout="%s"'%(tab,node['xlayout']))
@@ -319,7 +293,9 @@ def cfg_dump(node, level, t):
     t3 = list()
     if node.get('scale9enable'):
         t3.append('reset_scale9={%d,%d}'%(node['w'],node['h']))
-    t1.append('%sinit0={%s}'%(tab,(',\n%s  '%tab).join(t3)))
+    if t3:
+        t1.append('%sinit0={%s}'%(tab,(',\n%s  '%tab).join(t3)))
+
     t2 = list()
     if node['x']!=0 or node['y']!=0:
         t2.append('pos={%d,%d}'%(node['x'],node['y']))
@@ -329,11 +305,13 @@ def cfg_dump(node, level, t):
         t2.append('text="%s"'%(node['text']))
     if node.get('nitem'):
         t2.append('nitem=%d'%(node['nitem']))
-    t1.append('%sinit={%s}'%(tab,(',\n%s  '%tab).join(t2)))
+    if t2: 
+        t1.append('%sinit={%s}'%(tab,(',\n%s  '%tab).join(t2)))
+
     if uitype == 'panel': # now just need panel 
         if node.has_key('children'):
             for c in node['children']:
-                cfg_dump(c,level+1,t1)
+                cfg_dump(csd, c,level+1,t1)
     t.append('%s{\n%s\n%s}'%(tabp,',\n'.join(t1),tabp))
 
 def combine(csd_l, img_l, outpath, packname):
@@ -341,21 +319,21 @@ def combine(csd_l, img_l, outpath, packname):
         print "None to combine"
     
     diff = len(img_l)
-    for ani_l in csd_l: 
-        build_scale9(ani_l, img_l)
+    for csd in csd_l: 
+        build_scale9(csd['l'], img_l)
     diff = len(img_l)-diff
-    for ani_l in csd_l:
-        fix_aniid(ani_l, diff)
+    for csd in csd_l:
+        fix_aniid(csd['l'], diff)
 
     fcfg = os.path.join(outpath, packname+"_uc.lua") 
     print '[=]'+fcfg
     t = list()
-    for ani_l in csd_l:
-        ani = ani_l[0]
+    for csd in csd_l:
+        ani = csd['l'][0]
         #if not com.get('noexport'):
         assert ani['uitype'] == 'panel'
-        cfg_dump(ani,0,t)
-        t[-1] = "%s=%s"%(ani['export'], t[-1])
+        cfg_dump(csd, ani,0,t)
+        t[-1] = "%s_%s=%s"%(csd['name'], ani['export'], t[-1])
     f = open(fcfg, 'w')
     f.write('return {\n')
     f.write('export="%s",\n'%packname)
@@ -371,7 +349,8 @@ def combine(csd_l, img_l, outpath, packname):
         value = _picture(v, None)
         t.append(value)
 
-    for ani_l in csd_l:
+    for csd in csd_l:
+        ani_l = csd['l']
         for v in ani_l:
             if v.get('noexport'): continue
             uitype = v["uitype"]
@@ -379,7 +358,7 @@ def combine(csd_l, img_l, outpath, packname):
                     "Unknown uitype:%s(id=%d, export=%s)"%(uitype,v['id'],v['export'])
             f = TEMPLATES[uitype]
             if v.get('export'):
-                v['export'] = 'export="%s",'%v['export']
+                v['export'] = 'export="%s_%s",'%(csd['name'],v['export'])
             value = f(v, ani_l)
             if value:
                 t.append(value)
