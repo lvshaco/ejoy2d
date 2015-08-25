@@ -28,13 +28,12 @@ def calc_size(*cs):
 
 CONTROL = list()
 
-def NEW(d, node, uitype, type):
+def NEW(d, node, uitype):
     global CONTROL
     x,y = _XY(node,"Position")
     ax,ay = _ScaleXY(node,"AnchorPoint")
     w,h = _Size(node)
     d["uitype"] = uitype
-    d["type"] = type
     d["id"] = _GENID() 
     d["x"], d["y"] = x-ax*w, y-ay*h
     d["w"], d["h"] = w,h
@@ -193,7 +192,7 @@ def _LEAVE(node):
 def _panel(node, d):
     d["export"] =_AV(node,'Name')
     #d["color"] = _ARGB(node,"CColor")
-    NEW(d, node, "panel", "animation")
+    NEW(d, node, "panel")
     d['x'], d['y'] = 0,0 # force pos to zero
     sd = dict()
     if _imagex(node, sd, 'FileData', '_bg'): # panel no background
@@ -217,7 +216,7 @@ def _image(node, d, field='FileData'):
     if pic:
         d['picture'] = imagefind(IMG_L, pic)
         _SCALE9(d, node)
-        NEW(d, node, 'sprite', 'sprite')
+        NEW(d, node, 'sprite')
         return d
 
 def _label(node, d):
@@ -234,14 +233,14 @@ def _label(node, d):
     d["space_w"] = 0
     d["space_h"] = 0
     d["text"] = _AV(node,"LabelText")
-    NEW(d, node, "label", "label")
+    NEW(d, node, "label")
     return d
 
 def _editbox(node, d):
     pass
 
 def _button(node, d):
-    NEW(d,node,"button","animation")
+    NEW(d,node,"button")
 
     d["export"] = _AV(node,"Name")
 
@@ -271,7 +270,7 @@ def _button(node, d):
         sd["space_w"] = 0
         sd["space_h"] = 0
         sd["text"] = text
-        NEW(sd, node, "label", "label")
+        NEW(sd, node, "label")
         # label高度直接改为字体大小，否则会在点击中触发到此label
         sd['h'] = sd['size']
         _addchild(d,sd)
@@ -309,11 +308,11 @@ def _checkbox(node, d):
             _addchild(d, sd)
         d['hasnode'] = True
     d['state'] = state
-    NEW(d,node,"checkbox","animation")
+    NEW(d,node,"checkbox")
     return d
 
 def _progressbar(node, d):
-    NEW(d,node,"progressbar","animation")
+    NEW(d,node,"progressbar")
     
     d["export"] = _AV(node,"Name")
 
@@ -323,12 +322,12 @@ def _progressbar(node, d):
 
     sd = dict()
     sd["scissor"] = True
-    NEW(sd,node,"pannel","pannel")
+    NEW(sd,node,"pannel")
     _addchild(d, sd)
     return d
 
 def _sliderbar(node, d):
-    NEW(d,node,"sliderbar","animation")
+    NEW(d,node,"sliderbar")
     d["export"] = _AV(node,"Name")
 
     # back
@@ -347,11 +346,11 @@ def _sliderbar(node, d):
 
         sd2 = dict()
         sd2["scissor"] = True
-        NEW(sd2,node,"pannel","pannel")
+        NEW(sd2,node,"pannel")
         sd2['w'], sd2['h'] = w,h
         _addchild(sd, sd2)
 
-        NEW(sd,node,"progressbar","animation")
+        NEW(sd,node,"progressbar")
         sd['w'] = w
         sd['h'] = h
         _addchild(d, sd)
@@ -376,14 +375,14 @@ def _sliderbar(node, d):
         state = 2
     sd['state'] = state
     w,h = calc_size(sd1, sd2, sd3)
-    NEW(sd,node,"button","animation")
+    NEW(sd,node,"button")
     sd['w'] = w
     sd['h'] = h
     _addchild(d, sd)
     return d
 
 def _listview(node, d):
-    NEW(d,node,"listview","animation")
+    NEW(d,node,"listview")
 
     name = _AV(node,"Name")
     if name[-1]==']':
@@ -401,7 +400,7 @@ def _listview(node, d):
 
     sd = dict()
     sd["scissor"] = True
-    NEW(sd,node,"pannel","pannel")
+    NEW(sd,node,"pannel")
     _addchild(d, sd)
    
     if _scale9_enable(node):
@@ -496,13 +495,13 @@ def parsecsd(cfgfile, startid, img_l):
     #print( 'root type:', rtype)
     if rtype == 1:
         d = dict()
-        NEW(d, root, "panel", "animation")
+        NEW(d, root, "panel")
         d['screen'] = True
         d['export'] = csdname
         _child(root,d)
     elif rtype == 2:
         d = dict()
-        NEW(d, root, "panel", "animation")
+        NEW(d, root, "panel")
         d["noexport"] = True
         d['export'] = csdname
         _child(root,d)

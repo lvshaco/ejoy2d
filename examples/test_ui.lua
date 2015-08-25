@@ -174,6 +174,7 @@ local function init()
     L:bind(3, coco:new(), ipairs, layer.UPDATE|layer.TOUCHLAST)
 
     local lv = listview.new('uiimage', 'node_ListView_1', 11)
+    lv:reset_scale9(100,200)
     lv:anchorpoint(1,0.5)
     lv:pos(layout.pointx(1),layout.pointy(0.8))
     lv:scale(1.5)
@@ -186,6 +187,7 @@ local function init()
     local item 
     for k, v in pairs(T) do
         item = button.new('uiimage', 'node_Button_1')
+        item:reset_scale9(80,36)
         item:text(k)
         item:touch_event('up', __up)
         lv:insert(item)
