@@ -157,9 +157,13 @@ def _IMAGE(node, name):
     else:
         return ""
 
-def _SCALE9(d,node):
+def _scale9_enable(node):
     yes = _AV(node,'Scale9Enable')
-    if yes == 'True':
+    return yes == 'True'
+
+def _SCALE9(d,node):
+    if _scale9_enable(node):
+        d['scale9enable'] = True
         d['scale9x'] = _AI(node,'Scale9OriginX','') # use default '' to report error
         d['scale9y'] = _AI(node,'Scale9OriginY','')
         d['scale9w'] = _AI(node,'Scale9Width','')
@@ -212,10 +216,8 @@ def _image(node, d, field='FileData'):
     pic = _IMAGE(node, field)
     if pic:
         d['picture'] = imagefind(IMG_L, pic)
-        if _SCALE9(d, node):
-            NEW(d, node, "scale9", "animation")
-        else:
-            NEW(d, node, 'sprite', 'sprite')
+        _SCALE9(d, node)
+        NEW(d, node, 'sprite', 'sprite')
         return d
 
 def _label(node, d):
@@ -276,6 +278,8 @@ def _button(node, d):
 
         d['text'] = text
     d['state'] = state
+    if _scale9_enable(node):
+        d['scale9enable'] = True
     return d
 
 def _checkbox(node, d):
@@ -399,6 +403,9 @@ def _listview(node, d):
     sd["scissor"] = True
     NEW(sd,node,"pannel","pannel")
     _addchild(d, sd)
+   
+    if _scale9_enable(node):
+        d['scale9enable'] = True
     return d
 
 def _child(node,d):

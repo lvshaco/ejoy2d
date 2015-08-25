@@ -1,92 +1,8 @@
 return {
 export="uiimage",
-layer_layer={
-  uitype="panel",
-  export="layer_layer", --67,
-  screen=true,
-  xlayout="l",
-  ylayout="t",
-  w=200,
-  h=400,
-  init0={},
-  init={},
-  {
-    uitype="sprite",
-    export="layer_Image_1", --3,
-    xlayout="l",
-    ylayout="t",
-    w=200,
-    h=400,
-    init0={},
-    init={}
-  },
-  {
-    uitype="button",
-    export="layer_Button_1", --69,
-    xlayout="l",
-    ylayout="t",
-    w=46,
-    h=36,
-    init0={},
-    init={pos={10,10},
-      text="Button"}
-  },
-  {
-    uitype="checkbox",
-    export="layer_CheckBox_1", --79,
-    xlayout="l",
-    ylayout="t",
-    w=40,
-    h=40,
-    init0={},
-    init={pos={76,99}}
-  },
-  {
-    uitype="progressbar",
-    export="layer_LoadingBar_1", --80,
-    xlayout="l",
-    ylayout="t",
-    w=200,
-    h=14,
-    init0={},
-    init={pos={-1,176}}
-  },
-  {
-    uitype="sliderbar",
-    export="layer_Slider_1", --83,
-    xlayout="l",
-    ylayout="t",
-    w=200,
-    h=14,
-    init0={},
-    init={pos={0,219}}
-  },
-  {
-    uitype="label",
-    export="layer_Text_1", --92,
-    xlayout="l",
-    ylayout="t",
-    w=91,
-    h=23,
-    init0={},
-    init={pos={30,255},
-      text="Text Label"}
-  },
-  {
-    uitype="button",
-    export="layer_Button_2", --93,
-    xlayout="r",
-    ylayout="t",
-    w=46,
-    h=36,
-    init0={},
-    init={pos={144,10},
-      text="Button"}
-  }
-},
 node_node={
   uitype="panel",
-  export="node_node", --98,
+  export="node_node", --67,
   xlayout="l",
   ylayout="t",
   w=0,
@@ -95,18 +11,18 @@ node_node={
   init={pos={-244,117}},
   {
     uitype="button",
-    export="node_Button_1", --99,
+    export="node_Button_1", --68,
     xlayout="l",
     ylayout="t",
     w=46,
     h=36,
-    init0={},
+    init0={reset_scale9={46,36}},
     init={pos={-290,-153},
       text="Button_1"}
   },
   {
     uitype="checkbox",
-    export="node_CheckBox_1", --109,
+    export="node_CheckBox_1", --78,
     xlayout="l",
     ylayout="t",
     w=40,
@@ -116,18 +32,18 @@ node_node={
   },
   {
     uitype="button",
-    export="node_Button_2", --110,
+    export="node_Button_2", --79,
     xlayout="l",
     ylayout="t",
     w=46,
     h=36,
-    init0={},
+    init0={reset_scale9={46,36}},
     init={pos={-255,-77},
       text="Button"}
   },
   {
     uitype="label",
-    export="node_Text_1", --115,
+    export="node_Text_1", --84,
     xlayout="l",
     ylayout="t",
     w=91,
@@ -138,7 +54,7 @@ node_node={
   },
   {
     uitype="progressbar",
-    export="node_LoadingBar_1", --116,
+    export="node_LoadingBar_1", --85,
     xlayout="l",
     ylayout="t",
     w=200,
@@ -148,7 +64,7 @@ node_node={
   },
   {
     uitype="sliderbar",
-    export="node_Slider_1", --119,
+    export="node_Slider_1", --88,
     xlayout="l",
     ylayout="t",
     w=200,
@@ -158,51 +74,30 @@ node_node={
   },
   {
     uitype="button",
-    export="node_Button_3", --128,
+    export="node_Button_3", --97,
     xlayout="l",
     ylayout="t",
     w=46,
     h=36,
-    init0={},
+    init0={reset_scale9={46,36}},
     init={pos={-18,-29},
       text="Button"}
   },
   {
     uitype="listview",
-    export="node_ListView_1", --133,
+    export="node_ListView_1", --102,
     xlayout="l",
     ylayout="t",
     w=100,
     h=200,
-    init0={},
+    init0={reset_scale9={100,200}},
     init={pos={-226,80},
       nitem=10}
   }
 },
-nodescale9_nodescale9={
-  uitype="panel",
-  export="nodescale9_nodescale9", --136,
-  xlayout="l",
-  ylayout="t",
-  w=0,
-  h=0,
-  init0={},
-  init={pos={2,-2}},
-  {
-    uitype="button",
-    export="nodescale9_Button_1", --137,
-    xlayout="l",
-    ylayout="t",
-    w=46,
-    h=36,
-    init0={},
-    init={pos={-21,-16},
-      text="Button"}
-  }
-},
 win_Panel_1={
   uitype="panel",
-  export="win_Panel_1", --142,
+  export="win_Panel_1", --105,
   xlayout="l",
   ylayout="t",
   w=200,
@@ -221,18 +116,18 @@ win_Panel_1={
   },
   {
     uitype="button",
-    export="win_Button_1", --144,
+    export="win_Button_1", --107,
     xlayout="l",
     ylayout="t",
     w=46,
     h=36,
-    init0={},
+    init0={reset_scale9={46,36}},
     init={pos={10,10},
       text="B1"}
   },
   {
     uitype="checkbox",
-    export="win_CheckBox_1", --154,
+    export="win_CheckBox_1", --117,
     xlayout="l",
     ylayout="t",
     w=40,
@@ -242,7 +137,7 @@ win_Panel_1={
   },
   {
     uitype="progressbar",
-    export="win_LoadingBar_1", --155,
+    export="win_LoadingBar_1", --118,
     xlayout="l",
     ylayout="t",
     w=200,
@@ -252,7 +147,7 @@ win_Panel_1={
   },
   {
     uitype="sliderbar",
-    export="win_Slider_1", --158,
+    export="win_Slider_1", --121,
     xlayout="l",
     ylayout="t",
     w=200,
@@ -262,7 +157,7 @@ win_Panel_1={
   },
   {
     uitype="label",
-    export="win_Text_1", --167,
+    export="win_Text_1", --130,
     xlayout="l",
     ylayout="t",
     w=91,
@@ -273,30 +168,30 @@ win_Panel_1={
   },
   {
     uitype="button",
-    export="win_Button_2", --168,
+    export="win_Button_2", --131,
     xlayout="r",
     ylayout="t",
     w=46,
     h=36,
-    init0={},
+    init0={reset_scale9={46,36}},
     init={pos={144,10},
       text="B2"}
   },
   {
     uitype="button",
-    export="win_Button_3", --173,
+    export="win_Button_3", --136,
     xlayout="c",
     ylayout="t",
     w=46,
     h=36,
-    init0={},
+    init0={reset_scale9={46,36}},
     init={pos={77,10},
       text="B3"}
   }
 },
 win9scale_Panel_2={
   uitype="panel",
-  export="win9scale_Panel_2", --178,
+  export="win9scale_Panel_2", --141,
   xlayout="l",
   ylayout="t",
   w=200,
@@ -305,7 +200,7 @@ win9scale_Panel_2={
   init={},
   {
     uitype="sprite",
-    export="win9scale_Panel_2_bg", --134,
+    export="win9scale_Panel_2_bg", --103,
     xlayout="l",
     ylayout="t",
     w=200,
@@ -316,7 +211,7 @@ win9scale_Panel_2={
 },
 winnoback_Panel_1={
   uitype="panel",
-  export="winnoback_Panel_1", --180,
+  export="winnoback_Panel_1", --143,
   xlayout="l",
   ylayout="t",
   w=200,
@@ -325,44 +220,44 @@ winnoback_Panel_1={
   init={},
   {
     uitype="button",
-    export="winnoback_Button_1", --181,
+    export="winnoback_Button_1", --144,
     xlayout="l",
     ylayout="b",
     w=46,
     h=36,
-    init0={},
+    init0={reset_scale9={46,36}},
     init={pos={1,164},
       text="B1"}
   },
   {
     uitype="button",
-    export="winnoback_Button_2", --186,
+    export="winnoback_Button_2", --149,
     xlayout="l",
     ylayout="t",
     w=46,
     h=36,
-    init0={},
+    init0={reset_scale9={46,36}},
     init={text="B2"}
   },
   {
     uitype="button",
-    export="winnoback_Button_3", --191,
+    export="winnoback_Button_3", --154,
     xlayout="r",
     ylayout="t",
     w=46,
     h=36,
-    init0={},
+    init0={reset_scale9={46,36}},
     init={pos={154,0},
       text="B3"}
   },
   {
     uitype="button",
-    export="winnoback_Button_4", --196,
+    export="winnoback_Button_4", --159,
     xlayout="r",
     ylayout="b",
     w=46,
     h=36,
-    init0={},
+    init0={reset_scale9={46,36}},
     init={pos={154,164},
       text="B4"}
   }

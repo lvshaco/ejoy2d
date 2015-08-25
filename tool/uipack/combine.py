@@ -67,7 +67,7 @@ def label_part(c, i, w, h):
     return '{index=%d,mat={1024,0,0,1024,0,%d}}'%(i,trany)
   
 def c_is_image(c):
-    return c['uitype'] == 'scale9' or c['uitype'] == 'sprite'
+    return c['uitype'] == 'sprite'
 
 def _id(c):
     if c_is_image(c):
@@ -80,18 +80,9 @@ def _id(c):
     else:
         return c['id']
 
-def dump_scale9(ani_l):
-    print ("-------------------------------")
-    for v in ani_l:
-        uitype = v['uitype']
-        if uitype == 'scale9':
-            print ("++", id(v), v)
-    print ("-------------------------------")
-
 def build_scale9(ani_l, img_l):
     for v in ani_l:
-        uitype = v['uitype']
-        if uitype == 'scale9':
+        if v['uitype'] == 'sprite' and v.get('scale9enable'):
             pic = v['picture']
             if pic.get('scale9_id'):
                 v['noexport'] = True # don't export repeat
@@ -104,7 +95,7 @@ def build_scale9(ani_l, img_l):
 def fix_aniid(ani_l, diff):
     for v in ani_l:
         v['id'] = v['id']+diff
-        if v['uitype'] == 'scale9':
+        if v['uitype'] == 'sprite' and v.get('scale9enable'):
             if not v.get('noexport'):
                 v['picture']['scale9_id'] = v['id']
 
@@ -289,13 +280,14 @@ def _panel(v, ani_l):
     v['fra'] = '{%s}'%',\n        '.join(fl)
     return Template(ANI).substitute(v)
 
-def _scale9(v, ani_l):
-    cl = list()
-    for one in v['scale9_l']:
-        cl.append('{id=%d}'%one['id'])
-    v['com'] = ',\n        '.join(cl)
-    v['fra'] = '{0,1,2,3,4,5,6,7,8}'
-    return Template(SCALE9).substitute(v)
+def _sprite(v, ani_l):
+    if v.get('scale9enable'):
+        cl = list()
+        for one in v['scale9_l']:
+            cl.append('{id=%d}'%one['id'])
+        v['com'] = ',\n        '.join(cl)
+        v['fra'] = '{0,1,2,3,4,5,6,7,8}'
+        return Template(SCALE9).substitute(v)
 
 TEMPLATES = {
     "picture":  _picture,
@@ -307,20 +299,15 @@ TEMPLATES = {
     "sliderbar":_sliderbar,
     "listview": _listview,
     "panel":_panel,
-    "scale9":   _scale9,
+    "sprite":_sprite,
 }
-UNEXPORT = ('sprite')
 
 def cfg_dump(node, level, t):
     uitype = node['uitype']
     tabp = level*'  '
     tab=tabp+'  '
     t1 = list()
-    if uitype == 'scale9':
-        uitype_export = 'sprite'
-    else:
-        uitype_export = uitype
-    t1.append('%suitype="%s"'%(tab,uitype_export))
+    t1.append('%suitype="%s"'%(tab,uitype))
     t1.append('%sexport="%s", --%d'%(tab,node['export'],_id(node)))
     if node.get('screen'):
         t1.append('%sscreen=true'%(tab))
@@ -330,7 +317,7 @@ def cfg_dump(node, level, t):
     t1.append('%sh=%d'%(tab,node['h']))
 
     t3 = list()
-    if uitype == 'scale9':
+    if node.get('scale9enable'):
         t3.append('reset_scale9={%d,%d}'%(node['w'],node['h']))
     t1.append('%sinit0={%s}'%(tab,(',\n%s  '%tab).join(t3)))
     t2 = list()
@@ -353,15 +340,12 @@ def combine(csd_l, img_l, outpath, packname):
     if not img_l or not csd_l:
         print "None to combine"
     
-    #dump_scale9(ani_l)
     diff = len(img_l)
     for ani_l in csd_l: 
         build_scale9(ani_l, img_l)
     diff = len(img_l)-diff
-    #dump_scale9(ani_l)
     for ani_l in csd_l:
         fix_aniid(ani_l, diff)
-    #dump_scale9(ani_l)
 
     fcfg = os.path.join(outpath, packname+"_uc.lua") 
     print '[=]'+fcfg
@@ -387,19 +371,18 @@ def combine(csd_l, img_l, outpath, packname):
         value = _picture(v, None)
         t.append(value)
 
-    #dump_scale9(ani_l)
     for ani_l in csd_l:
         for v in ani_l:
             if v.get('noexport'): continue
             uitype = v["uitype"]
-            if uitype in UNEXPORT: continue
             assert TEMPLATES.has_key(uitype), \
                     "Unknown uitype:%s(id=%d, export=%s)"%(uitype,v['id'],v['export'])
             f = TEMPLATES[uitype]
             if v.get('export'):
                 v['export'] = 'export="%s",'%v['export']
             value = f(v, ani_l)
-            t.append(value)
+            if value:
+                t.append(value)
     t.append('}')
 
     flua = os.path.join(outpath, packname+".lua") 
