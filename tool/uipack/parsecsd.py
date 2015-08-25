@@ -16,14 +16,14 @@ __all__ = [
 ]
 
 IMG_L = list()
-def calc_size(cs):
+def calc_size(*cs):
     global IMG_L
     wmax,hmax=0,0
     for c in cs:
-        img = imagefind(IMG_L, c)
-        w,h=imagerange(img)
-        if w>wmax: wmax=w
-        if h>hmax: hmax=h
+        if c.get('picture'):
+            w,h=imagerange(c['picture'])
+            if w>wmax: wmax=w
+            if h>hmax: hmax=h
     return wmax, hmax
 
 CONTROL = list()
@@ -42,7 +42,6 @@ def NEW(d, node, uitype, type):
     #assert(d['xscale'] == d['yscale'])
     d['xlayout'],d['ylayout'] = _LAYOUT(node)
     d['touch'] = _TOUCH(node)
-    _SCALE9(d,node)
     CONTROL.append(d)
 
 def _open(cfgfile):
@@ -66,15 +65,16 @@ def _open(cfgfile):
         exit(1)
     return dom
 
-ID = -1
+ID = 0
 def _GENID():
     global ID
+    i = ID
     ID+=1
-    return ID
+    return i
 
 def _ID():
     global ID
-    return ID
+    return ID-1
 
 def _AV(node, attr, default=""):
     if node.attributes.has_key(attr):
@@ -160,11 +160,11 @@ def _IMAGE(node, name):
 def _SCALE9(d,node):
     yes = _AV(node,'Scale9Enable')
     if yes == 'True':
-        d['scale9'] = True
         d['scale9x'] = _AI(node,'Scale9OriginX','') # use default '' to report error
         d['scale9y'] = _AI(node,'Scale9OriginY','')
         d['scale9w'] = _AI(node,'Scale9Width','')
         d['scale9h'] = _AI(node,'Scale9Height','')
+        return True
 
 ##################################################
 STACK = list()
@@ -187,20 +187,36 @@ def _LEAVE(node):
 
 #################################################
 def _panel(node, d):
-    w,h=_Size(node)
     d["export"] =_AV(node,'Name')
     #d["color"] = _ARGB(node,"CColor")
-    d['picture'] = _IMAGE(node, 'FileData')
     NEW(d, node, "panel", "animation")
+    d['x'], d['y'] = 0,0 # force pos to zero
+    sd = dict()
+    if _imagex(node, sd, 'FileData', '_bg'): # panel no background
+        sd['x'], sd['y'] = 0,0 # force pos to zero
+        _addchild(d, sd)
     return d
 
-def _image(node, d):
-    w,h=_Size(node)
-    d["export"] =_AV(node,'Name')
-    #d["color"] = _ARGB(node,"CColor")
-    d['picture'] = _IMAGE(node, 'FileData')
-    NEW(d, node, "sprite", "sprite")
+def _imagex(node, d, field='FileData',export=''):
+    d = _image(node, d, field)
+    if d: 
+        if export:
+            d['export'] += export
+        else:
+            d['export'] = ''
     return d
+
+def _image(node, d, field='FileData'):
+    global IMG_L
+    d["export"] =_AV(node,'Name')
+    pic = _IMAGE(node, field)
+    if pic:
+        d['picture'] = imagefind(IMG_L, pic)
+        if _SCALE9(d, node):
+            NEW(d, node, "scale9", "animation")
+        else:
+            NEW(d, node, 'sprite', 'sprite')
+        return d
 
 def _label(node, d):
     name = _AV(node,'Name')
@@ -213,7 +229,6 @@ def _label(node, d):
     d["color"] = _ARGB(node,"CColor")
     d["align"] = _ALIGN(node)
     d["size"] = _AI(node,"FontSize")
-    w,h=_Size(node)
     d["space_w"] = 0
     d["space_h"] = 0
     d["text"] = _AV(node,"LabelText")
@@ -224,7 +239,24 @@ def _editbox(node, d):
     pass
 
 def _button(node, d):
-    text_id = -1
+    NEW(d,node,"button","animation")
+
+    d["export"] = _AV(node,"Name")
+
+    sd = dict()
+    assert _imagex(node, sd, "NormalFileData")
+    _addchild(d, sd)
+
+    sd = dict()
+    assert _imagex(node, sd, "PressedFileData")
+    _addchild(d, sd)
+
+    sd = dict()
+    if _imagex(node, sd, "DisabledFileData"):
+        _addchild(d, sd)
+        state = 3
+    else:
+        state = 2
     text = _AV(node,"ButtonText")
     text = text.strip()
     if text:
@@ -240,116 +272,115 @@ def _button(node, d):
         NEW(sd, node, "label", "label")
         # label高度直接改为字体大小，否则会在点击中触发到此label
         sd['h'] = sd['size']
-        text_id = _ID()
-    
-    d["export"] = _AV(node,"Name")
-    l = list()
-    l.append(_IMAGE(node,"NormalFileData"))
-    l.append(_IMAGE(node,"PressedFileData"))
-    dis = _IMAGE(node,"DisabledFileData")
-    if dis != 'Button_Disable.png':
-        l.append(dis)
-    l.append(text_id)
-    d['component'] = l
-    d['text'] = text
-    NEW(d,node,"button","animation")
+        _addchild(d,sd)
+
+        d['text'] = text
+    d['state'] = state
     return d
 
 def _checkbox(node, d):
     d["export"] =_AV(node,"Name")
-    l = list()
-    l.append(_IMAGE(node,"NormalBackFileData"))
-    l.append(_IMAGE(node,"PressedBackFileData"))
-    dis = _IMAGE(node,"DisableBackFileData")
-    if dis == 'CheckBox_Disable.png':
-        dis = None
+   
+    sd = dict()
+    assert _imagex(node, sd, "NormalBackFileData")
+    _addchild(d, sd)
+
+    sd = dict()
+    assert _imagex(node, sd, "PressedBackFileData")
+    _addchild(d, sd)
+
+    sd = dict()
+    if _imagex(node, sd, "DisableBackFileData"):
+        _addchild(d, sd)
+        state = 3
     else:
-        l.append(dis)
-    l.append(_IMAGE(node,'NodeNormalFileData'))
-    if dis:
-        dis = _IMAGE(node,'NodeDisableFileData')
-        assert dis != 'CheckBoxNode_Disable.png', 'Not NodeDisableFileData'
-        l.append(dis)
-    d['component'] = l
+        state = 2
+  
+    sd = dict()
+    if _imagex(node, sd, "NodeNormalFileData"):
+        _addchild(d, sd)
+        if state == 3:
+            sd = dict()
+            assert _imagex(node, sd, "NodeDisableFileData")
+            _addchild(d, sd)
+        d['hasnode'] = True
+    d['state'] = state
     NEW(d,node,"checkbox","animation")
     return d
 
 def _progressbar(node, d):
+    NEW(d,node,"progressbar","animation")
+    
+    d["export"] = _AV(node,"Name")
+
+    sd = dict()
+    assert _imagex(node, sd, "ImageFileData")
+    _addchild(d, sd)
+
     sd = dict()
     sd["scissor"] = True
     NEW(sd,node,"pannel","pannel")
-    pannel_id = _ID()
-  
-    d["export"] = _AV(node,"Name")
-    l = list()
-    l.append(_IMAGE(node,"ImageFileData"))
-    l.append(pannel_id)
-    d['component'] = l
-    NEW(d,node,"progressbar","animation")
+    _addchild(d, sd)
     return d
 
 def _sliderbar(node, d):
+    NEW(d,node,"sliderbar","animation")
+    d["export"] = _AV(node,"Name")
+
+    # back
+    sd = dict()
+    assert _imagex(node, sd, 'BackGroundData')
+    _addchild(d, sd)
+ 
+    # progressbar: bar
+    sd1 = dict()
+    if _imagex(node, sd1, "ProgressBarData"):
+        sd = dict()
+        sd["export"] = ""#_AV(node,"Name")
+        
+        _addchild(sd, sd1)
+        w, h = imagerange(sd1['picture'])
+
+        sd2 = dict()
+        sd2["scissor"] = True
+        NEW(sd2,node,"pannel","pannel")
+        sd2['w'], sd2['h'] = w,h
+        _addchild(sd, sd2)
+
+        NEW(sd,node,"progressbar","animation")
+        sd['w'] = w
+        sd['h'] = h
+        _addchild(d, sd)
+
     # button: degree
     sd = dict()
     sd["export"] = ""
-    l = list()
-    l.append(_IMAGE(node,"BallNormalData"))
-    l.append(_IMAGE(node,"BallPressedData"))
-    dis = _IMAGE(node,"BallDisabledData")
-    if True: #dis != 'SliderNode_Disable.png':
-        l.append(dis)
-    w,h = calc_size(l)
-    l.append(-1) # text_id
-    sd['component'] = l
+    
+    sd1 = dict()
+    assert _imagex(node, sd1, "BallNormalData")
+    _addchild(sd, sd1)
+
+    sd2 = dict()
+    assert _imagex(node, sd2, "BallPressedData")
+    _addchild(sd, sd2)
+
+    sd3 = dict()
+    if _imagex(node, sd3, "BallDisabledData"):
+        _addchild(sd, sd3)
+        state = 3
+    else:
+        state = 2
+    sd['state'] = state
+    w,h = calc_size(sd1, sd2, sd3)
     NEW(sd,node,"button","animation")
     sd['w'] = w
     sd['h'] = h
-    degree_id = _ID()
-
-    # progressbar: bar
-    bar = _IMAGE(node,"ProgressBarData")
-    if False:#bar == 'Slider_PressBar.png':
-        bar_id = -1
-    else:
-        global IMG_L
-        img_bar = imagefind(IMG_L, bar)
-        w,h = imagerange(img_bar)
-
-        sd = dict()
-        sd["scissor"] = True
-        NEW(sd,node,"pannel","pannel")
-        sd['w'] = w
-        sd['h'] = h
-        pannel_id = _ID()
-
-        sd = dict()
-        sd["export"] = ""#_AV(node,"Name")
-        l = list()
-        l.append(bar)
-        l.append(pannel_id)
-        sd['component'] = l
-        NEW(sd,node,"progressbar","animation")
-        w,h = imagerange(img_bar)
-        sd['w'] = w
-        sd['h'] = h
-        bar_id = _ID()
-
-    #
-    d["export"] = _AV(node,"Name")
-    l = list()
-    l.append(_IMAGE(node,"BackGroundData"))
-    l.append(degree_id) 
-    if bar_id != -1:
-        l.append(bar_id)
-    d['component'] = l
-    NEW(d,node,"sliderbar","animation")
+    _addchild(d, sd)
     return d
 
 def _listview(node, d):
-    sd = dict()
-    sd["scissor"] = True
-    NEW(sd,node,"pannel","pannel")
-    pannel_id = _ID()
+    NEW(d,node,"listview","animation")
+
     name = _AV(node,"Name")
     if name[-1]==']':
         pos = name.rfind('[')
@@ -357,21 +388,20 @@ def _listview(node, d):
             d['nitem'] = int(name[pos+1:-1])
             name = name[:pos]
     d["export"] = name
-    l = list()
-    l.append(_IMAGE(node,"FileData"))
-    l.append(pannel_id) 
-    d['component'] = l
     if not d.has_key('nitem'):
         d['nitem']=10
-    NEW(d,node,"listview","animation")
+   
+    sd = dict()
+    assert _imagex(node, sd, 'FileData')
+    _addchild(d, sd)
+
+    sd = dict()
+    sd["scissor"] = True
+    NEW(sd,node,"pannel","pannel")
+    _addchild(d, sd)
     return d
 
-def _child(node,d, addself):
-    if addself:
-        sd = dict()
-        _image(node, sd)
-        _addchild(d, sd)
-        sd['x'], sd['y'] = 0,0
+def _child(node,d):
     _ENTER(node,d)
     for child in node.childNodes:
         if child.nodeType == child.ELEMENT_NODE and \
@@ -400,11 +430,12 @@ CONTROLS = {
 }
 def _control(node):
     d = dict()
-    _child(node, d, False)
     type = _AV(node, "ctype")
     assert CONTROLS.has_key(type), "Invalid control type:"+type
     f = CONTROLS[type]
-    return f(node,d)
+    f(node,d)
+    _child(node, d)
+    return d
 
 def _childnodecnt(node, name):
     i = 0
@@ -450,29 +481,29 @@ def parsecsd(cfgfile, startid, img_l):
     IMG_L = img_l
     print "[+]"+cfgfile
     csdname,_ = os.path.splitext(os.path.split(cfgfile)[-1])
-    global CONTROL, ID
+    global CONTROL,ID
     CONTROL = list()
-    ID = -1
+    ID=startid
     dom = _open(cfgfile)
     root, rtype = _root(dom)
     #print( 'root type:', rtype)
-    d = dict()
-    NEW(d, root, "panel", "animation")
-    ID = startid-1
-    CONTROL = list()
     if rtype == 1:
+        d = dict()
+        NEW(d, root, "panel", "animation")
         d['screen'] = True
-        _child(root,d,False)
+        d['export'] = csdname
+        _child(root,d)
     elif rtype == 2:
+        d = dict()
+        NEW(d, root, "panel", "animation")
         d["noexport"] = True
-        _child(root,d,False)
+        d['export'] = csdname
+        _child(root,d)
     elif rtype == 3:
-        _child(root,d,True)
+        d = _control(root)
     # export name add prefix csdname_
     for c in CONTROL:
         if c.get('export'):
             c['export'] = '%s_%s'%(csdname, c['export'])
-    d["id"] = _GENID()
-    d["export"] = csdname
-    CONTROL.append(d)
+    #d['export'] = csdname
     return CONTROL

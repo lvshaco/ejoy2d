@@ -1,307 +1,370 @@
 return {
 export="uiimage",
-layer={
+layer_layer={
   uitype="panel",
-  export="layer", --44,
+  export="layer_layer", --67,
   screen=true,
   xlayout="l",
   ylayout="t",
   w=200,
   h=400,
-  init={pos={0,0},
-    scalexy={1.000000,1.000000}},
+  init0={},
+  init={},
   {
     uitype="sprite",
-    export="layer_Image_1", --31,
+    export="layer_Image_1", --3,
     xlayout="l",
     ylayout="t",
     w=200,
     h=400,
-    init={pos={0,0},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={}
   },
   {
     uitype="button",
-    export="layer_Button_1", --33,
+    export="layer_Button_1", --69,
     xlayout="l",
     ylayout="t",
     w=46,
     h=36,
+    init0={},
     init={pos={10,10},
-      scalexy={1.000000,1.000000},
       text="Button"}
   },
   {
     uitype="checkbox",
-    export="layer_CheckBox_1", --34,
+    export="layer_CheckBox_1", --79,
     xlayout="l",
     ylayout="t",
     w=40,
     h=40,
-    init={pos={76,99},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={pos={76,99}}
   },
   {
     uitype="progressbar",
-    export="layer_LoadingBar_1", --36,
+    export="layer_LoadingBar_1", --80,
     xlayout="l",
     ylayout="t",
     w=200,
     h=14,
-    init={pos={-1,176},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={pos={-1,176}}
   },
   {
     uitype="sliderbar",
-    export="layer_Slider_1", --40,
+    export="layer_Slider_1", --83,
     xlayout="l",
     ylayout="t",
     w=200,
     h=14,
-    init={pos={0,219},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={pos={0,219}}
   },
   {
     uitype="label",
-    export="layer_Text_1", --41,
+    export="layer_Text_1", --92,
     xlayout="l",
     ylayout="t",
     w=91,
     h=23,
+    init0={},
     init={pos={30,255},
-      scalexy={1.000000,1.000000},
       text="Text Label"}
   },
   {
     uitype="button",
-    export="layer_Button_2", --43,
+    export="layer_Button_2", --93,
     xlayout="r",
     ylayout="t",
     w=46,
     h=36,
+    init0={},
     init={pos={144,10},
-      scalexy={1.000000,1.000000},
       text="Button"}
   }
 },
-node={
+node_node={
   uitype="panel",
-  export="node", --61,
+  export="node_node", --98,
   xlayout="l",
   ylayout="t",
   w=0,
   h=0,
-  init={pos={-244,117},
-    scalexy={1.000000,1.000000}},
+  init0={},
+  init={pos={-244,117}},
   {
     uitype="button",
-    export="node_Button_1", --46,
+    export="node_Button_1", --99,
     xlayout="l",
     ylayout="t",
     w=46,
     h=36,
+    init0={},
     init={pos={-290,-153},
-      scalexy={1.000000,1.000000},
       text="Button_1"}
   },
   {
     uitype="checkbox",
-    export="node_CheckBox_1", --47,
+    export="node_CheckBox_1", --109,
     xlayout="l",
     ylayout="t",
     w=40,
     h=40,
-    init={pos={-166,-157},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={pos={-166,-157}}
   },
   {
     uitype="button",
-    export="node_Button_2", --49,
+    export="node_Button_2", --110,
     xlayout="l",
     ylayout="t",
     w=46,
     h=36,
-    init={pos={-255,-78},
-      scalexy={1.000000,1.000000},
+    init0={},
+    init={pos={-255,-77},
       text="Button"}
   },
   {
     uitype="label",
-    export="node_Text_1", --50,
+    export="node_Text_1", --115,
     xlayout="l",
     ylayout="t",
     w=91,
     h=23,
+    init0={},
     init={pos={-176,-69},
-      scalexy={1.000000,1.000000},
       text="Text Label"}
   },
   {
     uitype="progressbar",
-    export="node_LoadingBar_1", --52,
+    export="node_LoadingBar_1", --116,
     xlayout="l",
     ylayout="t",
     w=200,
     h=14,
-    init={pos={-23,-75},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={pos={-23,-75}}
   },
   {
     uitype="sliderbar",
-    export="node_Slider_1", --56,
+    export="node_Slider_1", --119,
     xlayout="l",
     ylayout="t",
     w=200,
     h=14,
-    init={pos={-51,-137},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={pos={-51,-137}}
   },
   {
     uitype="button",
-    export="node_Button_3", --58,
+    export="node_Button_3", --128,
     xlayout="l",
     ylayout="t",
     w=46,
     h=36,
+    init0={},
     init={pos={-18,-29},
-      scalexy={1.000000,1.000000},
       text="Button"}
   },
   {
     uitype="listview",
-    export="node_ListView_1", --60,
+    export="node_ListView_1", --133,
     xlayout="l",
     ylayout="t",
     w=100,
     h=200,
-    init={pos={-227,80},
-      scalexy={1.000000,1.000000},
+    init0={},
+    init={pos={-226,80},
       nitem=10}
   }
 },
-win={
+nodescale9_nodescale9={
   uitype="panel",
-  export="win", --77,
+  export="nodescale9_nodescale9", --136,
+  xlayout="l",
+  ylayout="t",
+  w=0,
+  h=0,
+  init0={},
+  init={pos={2,-2}},
+  {
+    uitype="button",
+    export="nodescale9_Button_1", --137,
+    xlayout="l",
+    ylayout="t",
+    w=46,
+    h=36,
+    init0={},
+    init={pos={-21,-16},
+      text="Button"}
+  }
+},
+win_Panel_1={
+  uitype="panel",
+  export="win_Panel_1", --142,
   xlayout="l",
   ylayout="t",
   w=200,
   h=400,
-  init={pos={10,-10},
-    scalexy={1.000000,1.000000}},
+  init0={},
+  init={},
   {
     uitype="sprite",
-    export="win_Panel_1", --62,
+    export="win_Panel_1_bg", --3,
     xlayout="l",
     ylayout="t",
     w=200,
     h=400,
-    init={pos={0,0},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={}
   },
   {
     uitype="button",
-    export="win_Button_1", --64,
+    export="win_Button_1", --144,
     xlayout="l",
     ylayout="t",
     w=46,
     h=36,
+    init0={},
     init={pos={10,10},
-      scalexy={1.000000,1.000000},
-      text="Button"}
+      text="B1"}
   },
   {
     uitype="checkbox",
-    export="win_CheckBox_1", --65,
+    export="win_CheckBox_1", --154,
     xlayout="l",
     ylayout="t",
     w=40,
     h=40,
-    init={pos={14,64},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={pos={14,64}}
   },
   {
     uitype="progressbar",
-    export="win_LoadingBar_1", --67,
+    export="win_LoadingBar_1", --155,
     xlayout="l",
     ylayout="t",
     w=200,
     h=14,
-    init={pos={0,131},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={pos={0,131}}
   },
   {
     uitype="sliderbar",
-    export="win_Slider_1", --71,
+    export="win_Slider_1", --158,
     xlayout="l",
     ylayout="t",
     w=200,
     h=14,
-    init={pos={-1,176},
-      scalexy={1.000000,1.000000}}
+    init0={},
+    init={pos={-1,176}}
   },
   {
     uitype="label",
-    export="win_Text_1", --72,
+    export="win_Text_1", --167,
     xlayout="l",
     ylayout="t",
     w=91,
     h=23,
+    init0={},
     init={pos={77,73},
-      scalexy={1.000000,1.000000},
       text="Text Label"}
   },
   {
     uitype="button",
-    export="win_Button_2", --74,
+    export="win_Button_2", --168,
     xlayout="r",
     ylayout="t",
     w=46,
     h=36,
+    init0={},
     init={pos={144,10},
-      scalexy={1.000000,1.000000},
-      text="Button"}
+      text="B2"}
   },
   {
     uitype="button",
-    export="win_Button_3", --76,
+    export="win_Button_3", --173,
     xlayout="c",
     ylayout="t",
     w=46,
     h=36,
+    init0={},
     init={pos={77,10},
-      scalexy={1.000000,1.000000},
-      text="Button"}
+      text="B3"}
   }
 },
-win9scale={
+win9scale_Panel_2={
   uitype="panel",
-  export="win9scale", --80,
+  export="win9scale_Panel_2", --178,
   xlayout="l",
   ylayout="t",
   w=200,
   h=300,
-  init={pos={-27,70},
-    scalexy={1.000000,1.000000}},
+  init0={},
+  init={},
   {
     uitype="sprite",
-    export="win9scale_Panel_2", --78,
+    export="win9scale_Panel_2_bg", --134,
     xlayout="l",
     ylayout="t",
     w=200,
     h=300,
-    init={pos={0,0},
-      scalexy={1.000000,1.000000}}
+    init0={reset_scale9={200,300}},
+    init={}
+  }
+},
+winnoback_Panel_1={
+  uitype="panel",
+  export="winnoback_Panel_1", --180,
+  xlayout="l",
+  ylayout="t",
+  w=200,
+  h=200,
+  init0={},
+  init={},
+  {
+    uitype="button",
+    export="winnoback_Button_1", --181,
+    xlayout="l",
+    ylayout="b",
+    w=46,
+    h=36,
+    init0={},
+    init={pos={1,164},
+      text="B1"}
   },
   {
-    uitype="label",
-    export="win9scale_Text_1", --79,
+    uitype="button",
+    export="winnoback_Button_2", --186,
     xlayout="l",
     ylayout="t",
-    w=91,
-    h=23,
-    init={pos={27,68},
-      scalexy={1.000000,1.000000},
-      text="Text Label"}
+    w=46,
+    h=36,
+    init0={},
+    init={text="B2"}
+  },
+  {
+    uitype="button",
+    export="winnoback_Button_3", --191,
+    xlayout="r",
+    ylayout="t",
+    w=46,
+    h=36,
+    init0={},
+    init={pos={154,0},
+      text="B3"}
+  },
+  {
+    uitype="button",
+    export="winnoback_Button_4", --196,
+    xlayout="r",
+    ylayout="b",
+    w=46,
+    h=36,
+    init0={},
+    init={pos={154,164},
+      text="B4"}
   }
 }
 }

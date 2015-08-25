@@ -19,10 +19,16 @@ function panel.new(packname, spr)
 end
 
 local function __set_layout(c, cfg)
+    local pos = cfg.init.pos
     c.__layoutx = cfg.xlayout
     c.__layouty = cfg.ylayout
-    c.__layout_x = cfg.init.pos[1]
-    c.__layout_y = cfg.init.pos[2]
+    if pos then
+        c.__layout_x = pos[1]
+        c.__layout_y = pos[2]
+    else
+        c.__layout_x = 0
+        c.__layout_y = 0
+    end
     c.__layout_w = cfg.w
     c.__layout_h = cfg.h
     --c.__name = cfg.export -- just for debug
@@ -44,6 +50,9 @@ function panel:init(cfg)
         if sub.uitype == 'panel' then
             c:init(sub)
         else
+            if sub.init0 then
+                c:init(sub.init0)
+            end
             c:init(sub.init)
         end
         children[name] = c
@@ -59,7 +68,13 @@ function panel:init(cfg)
 end
 
 function panel:resize(w,h)
+    local scalex = w/self.__layout_w
+    local scaley = h/self.__layout_h
     for _, c in pairs(self.__children) do
+        if c.__scale9 then -- scale9 reset to fit size
+            c:reset_scale9(c.__layout_w*scalex,
+                           c.__layout_h*scaley) 
+        end
         if c.__layoutx == 'l' then
             x = c.__layout_x
         elseif c.__layoutx == 'r' then

@@ -32,7 +32,7 @@ function sliderbar.new(packname, spr, range)
     local self = control.construct(sliderbar, packname, spr)
     range = range or 100
     self.__range = range
-    local x1,_,x2,_ = self.__sprite.back:aabb()
+    local x1,_,x2,_ = self.__sprite.bg:aabb()
     self.__unit = (x2-x1)/self.__range
     if self.__sprite.bar then -- has degree bar
         self.__bar = progressbar.new(nil, self.__sprite.bar, range)
@@ -66,7 +66,7 @@ function sliderbar:touch_event(type, cb)
 end
 
 local function __click_degree(self,x)
-    local x1,_,x2,_ = self.__sprite.back:aabb(nil,true) 
+    local x1,_,x2,_ = self.__sprite.bg:aabb(nil,true) 
     self:degree((x-x1)*self.__range//(x2-x1))
 end
 

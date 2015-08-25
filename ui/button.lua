@@ -34,7 +34,9 @@ function button:__onenable(enable)
         end
     else
         if self.__sprite.frame ~= DISABLE then
-            __change_state(self, DISABLE)
+            if self.__sprite.frame_count == 3 then
+                __change_state(self, DISABLE)
+            end
         end
     end
 end
@@ -49,6 +51,15 @@ end
 
 function button:__touchout(x,y)
     __change_state(self, NORMAL)
+end
+
+function button:reset_scale9(w,h)
+    local p = self.__sprite
+    control.reset_scale9(self, w,h, p:fetch_by_index(0))
+    control.reset_scale9(self, w,h, p:fetch_by_index(1))
+    if self.__sprite.frame_count > 2 then
+        control.reset_scale9(self,w,h, p:fetch_by_index(2))
+    end
 end
 
 return button

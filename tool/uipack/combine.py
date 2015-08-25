@@ -22,167 +22,91 @@ def calc_mat(pw,ph, w, h):
         trany = (h-ph)/2 * SCREEN_SCALE
         return 'mat={1024,0,0,1024,%d,%d},'%(tranx,trany)
 
-def find_ani(ani_l, id):
-    for v in ani_l:
-        if v['id'] == id:
-            return v
-    assert False, "Cannot found ani:"+id
+#def find_ani(ani_l, id):
+#    for v in ani_l:
+#        if v['id'] == id:
+#            return v
+#    assert False, "Cannot found ani:"+id
 
-def pic_part(img_l, cs, i, v):
-    w,h=v['w'],v['h']
-    pic = imagefind(img_l, cs[i])
-    pw,ph = imagerange(pic)
+#def pic_part(img_l, cs, i, v):
+#    w,h=v['w'],v['h']
+#    pic = imagefind(img_l, cs[i])
+#    pw,ph = imagerange(pic)
+#    if pw==w and ph==h:
+#        s = '%d'%i
+#    else:
+#        tranx = (w-pw)/2 * SCREEN_SCALE
+#        trany = (h-ph)/2 * SCREEN_SCALE
+#        s = '{index=%d,mat={1024,0,0,1024,%d,%d}}'%(i,tranx,trany)
+#    cs[i] = pic['id']
+#    return s
+
+def image_part(c, i, w, h):
+    if c['picture'].get('scale9_id'):
+        return '%d'%i
+    pw,ph = imagerange(c['picture'])
     if pw==w and ph==h:
-        s = '%d'%i
+        return '%d'%i
     else:
         tranx = (w-pw)/2 * SCREEN_SCALE
         trany = (h-ph)/2 * SCREEN_SCALE
-        s = '{index=%d,mat={1024,0,0,1024,%d,%d}}'%(i,tranx,trany)
-    cs[i] = pic['id']
-    return s
+        return '{index=%d,mat={1024,0,0,1024,%d,%d}}'%(i,tranx,trany)
 
-def label_part(ani_l, textid, textidx, w, h):
-    if textid == -1:
-        return None
+def ani_part(c, i ,w, h, pw=0,ph=0):
+    if not pw: pw=c['w']
+    if not ph: ph=c['h']
+    if pw==w and ph==h:
+        return '%d'%i
     else:
-        label = find_ani(ani_l, textid)
-        trany = (h-label['size'])/2 * SCREEN_SCALE
-        return '{index=%d,mat={1024,0,0,1024,0,%d}}'%(textidx,trany)
-    
-def fill_id(ani_l, img_l):
-    for v in ani_l:
-        if v["type"] == "animation":
-            uitype = v['uitype']
-            # button checkbox各个帧的修复，顺带获取compenont id
-            if uitype == 'button':
-                cs = v['component']
-                w,h = v['w'],v['h']
-                parts = list() 
-                for i in range(len(cs)-1):
-                    part = pic_part(img_l, cs, i, v)
-                    parts.append(part)
-                l_part = label_part(ani_l, cs[-1], len(cs)-1, w, h)
-                l_part = l_part and ','+l_part or ''
-                frames = list()
-                frames.append('{%s%s}'%(parts[0],l_part))
-                frames.append('{%s%s}'%(parts[1],l_part))
-                if len(parts) == 3:
-                    frames.append('{%s%s}'%(parts[2],l_part))
-                v['frame'] = ',\n        '.join(frames)
-            elif uitype == 'checkbox':
-                cs = v['component']
-                w,h = v['w'],v['h']
-                parts = list() 
-                for i in range(len(cs)):
-                    part = pic_part(img_l, cs, i, v)
-                    parts.append(part)
-                frames = list()
-                if len(parts) == 3:
-                    frames.append('{%s,%s}'%(parts[0],parts[2]))
-                    frames.append('{%s,%s}'%(parts[0],parts[2]))
-                elif len(parts) == 5:
-                    frames.append('{%s,%s}'%(parts[0],parts[3]))
-                    frames.append('{%s,%s}'%(parts[1],parts[3]))
-                    frames.append('{%s,%s}'%(parts[2],parts[4]))
-                v['frame'] = ',\n        '.join(frames)
-            elif uitype == 'sliderbar':
-                cs = v["component"]
-                w,h = v['w'],v['h']
-                
-                back = imagefind(img_l, cs[0])
-                pw,ph = imagerange(back)
-                v['back_frame'] =  calc_mat(pw,ph,w,h)
-                
-                degree = find_ani(ani_l, cs[1])
-                v['degree_frame'] = calc_mat(w,degree['h'],w,h)
+        tranx = (w-pw)/2 * SCREEN_SCALE
+        trany = (h-ph)/2 * SCREEN_SCALE
+        return '{index=%d,mat={1024,0,0,1024,%d,%d}}'%(i,tranx,trany)
 
-                if len(cs) == 3:
-                    bar = find_ani(ani_l, cs[2])
-                    v['bar_frame'] = ',{index=2,%s}'%calc_mat(bar['w'], bar['h'], w,h)
-                else:
-                    v['bar_frame'] = ''
-            elif uitype == 'listview':
-                cs = v['component']
-                w,h = v['w'],v['h']
-                if cs[0]:
-                    pic = imagefind(img_l, cs[0]) 
-                    v['back'] = '{id=%d},'%pic['id']
-                    cs[0] = pic['id']
-                else:
-                    pic = None
-                    v['back'] = ''
-                    cs[0] = -1
-                frame = list()
-                start_index=0
-                if pic:
-                    screen = pic['screen']
-                    pw,ph = screen[0]*2+screen[2], screen[1]*2+screen[3]
-                    if pw==w and ph==h:
-                        line = '0'
-                    else:
-                        tranx = (w-pw)/2 * SCREEN_SCALE
-                        trany = (h-ph)/2 * SCREEN_SCALE
-                        #print (w,h,pw,ph, w-pw, h-ph, tranx,trany)
-                        # add color
-                        line = '{index=0,mat={1024,0,0,1024,%d,%d}}'%(tranx,trany)
-                    frame.append(line)
-                    start_index=1
-                for i in range(v['nitem']+1):
-                    frame.append('{index=%d,touch=true}'%(i+start_index))
-                item = list()
-                for i in range(v['nitem']):
-                    item.append('{name="item%d"}'%(i+1))
-                v['item'] = ',\n        '.join(item)
-                v['frame'] = ',\n        '.join(frame)
-            #panel 添加component, frame
-            elif uitype == 'panel':
-                assert v.has_key('children')
-                cs = v['children']
-                cl = list()
-                fl = list()
-                #print ("+++++++++", 'pannel:cs:', len(cs), v)
-                for i in range(len(cs)):
-                    c = cs[i]
-                    #tranx,trany = c['x']*SCREEN_SCALE, c['y']*SCREEN_SCALE
-                    tranx,trany = 0,0 # layout in run
-                    scalex,scaley = 1024,1024
-                    if c['uitype'] == 'sprite':
-                        pic = imagefind(img_l, c['picture'])
-                        sx = c['w']/float(pic['screen'][2])
-                        sy = c['h']/float(pic['screen'][3])
-                        tranx = int(tranx*sx)
-                        trany = int(trany*sy)
-                        scalex= int(scalex*sx) # layout in run
-                        scaley= int(scaley*sy) # layout in run
-                        id = pic['id']
-                    else:
-                        id = c['id']
-                    cl.append('{id=%d,name="%s"}'%(id,c['export']))
-                    touch = ""
-                    if c.get('touch'):
-                        touch = ',touch=true'
-                    if scalex==1024 and scaley==1024 and tranx==0 and trany==0:
-                        line = '{index=%d%s}'%(i,touch)
-                    else:
-                        line = '{index=%d%s,mat={%d,0,0,%d,%d,%d}}'%\
-                                (i,touch, scalex,scaley,tranx,trany)
-                    fl.append(line)
-                v['component'] = ',\n        '.join(cl)
-                v['frame'] = '{%s}'%',\n         '.join(fl)
-    # 修复动画中各个组件的ID 
+def label_part(c, i, w, h):
+    trany = (h-c['size'])/2 * SCREEN_SCALE
+    return '{index=%d,mat={1024,0,0,1024,0,%d}}'%(i,trany)
+  
+def c_is_image(c):
+    return c['uitype'] == 'scale9' or c['uitype'] == 'sprite'
+
+def _id(c):
+    if c_is_image(c):
+        pic = c['picture']
+        sid = pic.get('scale9_id')
+        if sid:
+            return sid
+        else:
+            return pic['id'] # use picture id
+    else:
+        return c['id']
+
+def dump_scale9(ani_l):
+    print ("-------------------------------")
     for v in ani_l:
-        if v["type"] == "animation":
-            uitype = v['uitype']
-            if uitype != "panel":
-                cs = v["component"]
-                for i in range(len(cs)):
-                    c = cs[i]
-                    if type(c) == int:
-                        continue
-                    elif type(c) == str or type(c)==unicode:
-                        cs[i] = cs[i] and imagefind(img_l, cs[i])['id'] or -1
-                    else:
-                        assert False, "Invalid animation component id:"+c
+        uitype = v['uitype']
+        if uitype == 'scale9':
+            print ("++", id(v), v)
+    print ("-------------------------------")
+
+def build_scale9(ani_l, img_l):
+    for v in ani_l:
+        uitype = v['uitype']
+        if uitype == 'scale9':
+            pic = v['picture']
+            if pic.get('scale9_id'):
+                v['noexport'] = True # don't export repeat
+            else:
+                pic['scale9_id'] = True
+                l = imagescale9(pic, v, len(img_l))
+                v['scale9_l'] = l # store scale9 to v
+                img_l+=l # append scale9 to img_l
+
+def fix_aniid(ani_l, diff):
+    for v in ani_l:
+        v['id'] = v['id']+diff
+        if v['uitype'] == 'scale9':
+            if not v.get('noexport'):
+                v['picture']['scale9_id'] = v['id']
 
 
 PICTURE = """
@@ -190,7 +114,7 @@ PICTURE = """
     type = "picture",
     id = $id,
     $export
-    { tex = $tex, src = {$src}, screen = {$screen} },
+    { tex = $tex, src = {$srcstr}, screen = {$screenstr} },
 },"""
 LABEL = """
 {
@@ -205,82 +129,27 @@ PANNEL = """
     id = $id,
     width=$w, height=$h, scissor=true,
 },"""
-BUTTON = """
+SCALE9 = """
 {
-    type = "animation", 
+    type = "animation",
     id = $id,
-    $export
     component = {
-        {id=$normal},
-        {id=$highlight}, $disable $label
+        $com
     },
     {
-        $frame
+        $fra
     },
 },"""
-CHECKBOX = """
+ANI = """
 {
     type = "animation",
     id = $id,
     $export
     component = {
-        {id=$normal},
-        {id=$highlight}, $disable
-        $node, $node_disable
+        $com
     },
     {
-        $frame
-    },
-},"""
-PROGRESSBAR = """
-{
-    type = "animation",
-    id = $id,
-    $export
-    component = {
-        {id=$bar},
-        {id=$pannel, name="pannel"}, 
-    },
-    {
-        {$pannel_frame,0},
-    },
-},"""
-SLIDERBAR = """
-{
-    type = "animation",
-    id = $id,
-    $export
-    component = {
-        {id=$back, name="back"}, 
-        {id=$degree, name="degree"}, $bar
-    },
-    {
-        {{index=0,$back_frame}$bar_frame,{index=1,$degree_frame},},
-    },
-},"""
-LISTVIEW = """
-{
-    type = "animation",
-    id = $id,
-    $export
-    component = {
-        $back{id=$pannel,name="pannel"},
-        $item
-    },
-    {
-        {$frame}
-    },
-},"""
-PANEL = """
-{
-    type = "animation",
-    id = $id,
-    $export
-    component = {
-        $component
-    },
-    {
-        $frame
+        $fra
     },
 },"""
 
@@ -291,62 +160,142 @@ def _range(v, scale):
     return "%d,%d,%d,%d,%d,%d,%d,%d"%(x,y, x+w,y, x+w,y+h, x,y+h)
 
 def _picture(v, ani_l):
-    v['src'] = _range(v['src'], 1)
-    v['screen'] = _range(v['screen'], SCREEN_SCALE)
+    v['srcstr'] = _range(v['src'], 1)
+    v['screenstr'] = _range(v['screen'], SCREEN_SCALE)
     return Template(PICTURE).substitute(v)
 def _pannel(v, ani_l):
     return Template(PANNEL).substitute(v)
 def _label(v, ani_l):
     return Template(LABEL).substitute(v)
 def _button(v, ani_l):
-    cs = v['component']
-    v['normal'] = cs[0]
-    v['highlight'] = cs[1]
-    if len(cs) == 4:
-        v['disable'] = "{id=%d},"%cs[2]
+    cs = v['children']
+    w,h = v['w'],v['h']
+    cl = list()
+    fl = list()
+    cl.append('{id=%d}'%_id(cs[0]))
+    cl.append('{id=%d}'%_id(cs[1]))
+    if v['state'] == 3:
+        cl.append('{id=%d}'%_id(cs[2]))
+    if v.get('text'):
+        cl.append('{id=%d,name="label"}'%_id(cs[-1]))
+         
+    if v.get('text'):
+        text_part = ','+label_part(cs[-1], len(cs)-1, w,h)
     else:
-        v['disable'] = ""
-    if cs[-1] >= 0:
-        v['label'] = '{id=%d,name="label"},'%cs[-1]
-    else:
-        v['label'] = ""
-    return Template(BUTTON).substitute(v)
+        text_part = ''
+
+    fl.append('{%s%s}'%(image_part(cs[0], 0, w,h), text_part))
+    fl.append('{%s%s}'%(image_part(cs[1], 1, w,h), text_part))
+    if v['state'] == 3:
+        fl.append('{%s%s}'%(image_part(cs[2], 2, w,h), text_part))
+    v['com'] = ',\n        '.join(cl)
+    v['fra'] = ',\n        '.join(fl)
+    return Template(ANI).substitute(v) 
 def _checkbox(v, ani_l):   
-    cs = v['component']
-    v['normal'] = cs[0]
-    v['highlight'] = cs[1]
-    if len(cs) == 3:
-        v['disable'] = ''
-        v['node'] = '{id=%d,name="tag"}'%cs[2]
-        v['node_disable'] = ''
-    elif len(cs) == 5:
-        v['disable'] = cs[2]
-        v['node'] = '{id=%d,name="tag"}'%cs[3]
-        v['node_disable'] = '{id=%d,name="disable_tag"}'%cs[4]
-    return Template(CHECKBOX).substitute(v)
-def _progressbar(v, ani_l):
-    cs = v['component']
-    v['bar'] = cs[0]
-    v['pannel'] = cs[1]
-    pannel = find_ani(ani_l, cs[1])
-    mat = calc_mat(pannel['w'], pannel['h'], v['w'], v['h'])
-    v['pannel_frame'] = mat and '{index=1,%s}'%mat or '1'
-    return Template(PROGRESSBAR).substitute(v)
-def _sliderbar(v, ani_l):
-    cs = v['component']
-    v['back'] = cs[0]
-    v['degree'] = cs[1]
-    if len(cs) == 3:
-        v['bar'] = '{id=%d,name="bar"}'%cs[2]
+    cs = v['children'] 
+    w,h = v['w'],v['h'] 
+
+    parts = list()
+    for i in range(len(cs)):
+        parts.append(image_part(cs[i],i,w,h))
+
+    cl = list()
+    fl = list()
+    cl.append('{id=%d}'%(_id(cs[0])))
+    cl.append('{id=%d}'%(_id(cs[1])))
+    if v['state'] == 3:
+        cl.append('{id=%d}'%(_id(cs[2])))
+        if v.get('hasnode'):
+            cl.append('{id=%d,name="tag"}'%(_id(cs[3])))
+            cl.append('{id=%d,name="disable_tag"}'%(_id(cs[4])))
+            fl.append('{%s,%s}'%(parts[0],parts[3]))
+            fl.append('{%s,%s}'%(parts[1],parts[3]))
+            fl.append('{%s,%s}'%(parts[2],parts[3]))
+        else:
+            fl.append('{%s}'%parts[0])
+            fl.append('{%s}'%parts[1])
+            fl.append('{%s}'%parts[2])
     else:
-        v['bar'] = ''
-    return Template(SLIDERBAR).substitute(v)
+        if v.get('hasnode'):
+            cl.append('{id=%d,name="tag"}'%(_id(cs[2])))
+            fl.append('{%s,%s}'%(parts[0],parts[2]))
+            fl.append('{%s,%s}'%(parts[1],parts[2]))
+        else:
+            fl.append('{%s}'%parts[0])
+            fl.append('{%s}'%parts[1])
+    v['com'] = ',\n        '.join(cl)
+    v['fra'] = ',\n        '.join(fl)
+    return Template(ANI).substitute(v)
+def _progressbar(v, ani_l):
+    cs = v['children']
+    w,h = v['w'],v['h']
+    cl = list()
+    cl.append('{id=%d}'%_id(cs[0]))
+    cl.append('{id=%d,name="pannel"}'%_id(cs[1]))
+    v['com'] = ',\n        '.join(cl)
+    v['fra'] = '{1,0}'
+    return Template(ANI).substitute(v)
+def _sliderbar(v, ani_l):
+    cs = v["children"]
+    w,h = v['w'],v['h']
+    cl = list()
+    fl = list()
+    cl.append('{id=%d,name="bg"}'%_id(cs[0]))
+    fl.append(image_part(cs[0],0,w,h))
+    if len(cs) == 2:
+        cl.append('{id=%d,name="degree"}'%_id(cs[1]))
+        fl.append(ani_part(cs[1],1,w,h, w))
+    else:
+        cl.append('{id=%d,name="bar"}'%_id(cs[1]))
+        cl.append('{id=%d,name="degree"}'%_id(cs[2]))
+        fl.append(ani_part(cs[1],1,w,h))
+        fl.append(ani_part(cs[2],2,w,h, w))
+    v['com'] = ',\n        '.join(cl)
+    v['fra'] = '{%s}'%','.join(fl)
+    return Template(ANI).substitute(v)
 def _listview(v, ani_l):
-    cs = v['component']
-    v['pannel'] = cs[1]
-    return Template(LISTVIEW).substitute(v)
+    cs = v['children']
+    w,h = v['w'],v['h']
+    cl = list()
+    fl = list()
+    if c_is_image(cs[0]):
+        cl.append('{id=%d,name="bg"}'%_id(cs[0]))
+        fl.append(image_part(cs[0], 0, w,h))
+        start_index=1
+    else:
+        start_index=0
+    cl.append('{id=%d,name="pannel"}'%_id(cs[start_index]))
+    for i in range(v['nitem']):
+        cl.append('{name="item%d"}'%(i+1))
+    for i in range(v['nitem']+1):
+        fl.append('{index=%d,touch=true}'%(i+start_index))
+    v['com'] = ',\n        '.join(cl)
+    v['fra'] = '{%s}'%',\n        '.join(fl)
+    return Template(ANI).substitute(v)
 def _panel(v, ani_l):
-    return Template(PANEL).substitute(v)
+    assert v.has_key('children')
+    cs = v['children']
+    cl = list()
+    fl = list()
+    for i in range(len(cs)):
+        c = cs[i]
+        cl.append('{id=%d,name="%s"}'%(_id(c),c['export']))
+        if c.get('touch'):
+            touch = ',touch=true'
+        else:
+            touch = ''
+        fl.append('{index=%d%s}'%(i,touch))
+    v['com'] = ',\n        '.join(cl)
+    v['fra'] = '{%s}'%',\n        '.join(fl)
+    return Template(ANI).substitute(v)
+
+def _scale9(v, ani_l):
+    cl = list()
+    for one in v['scale9_l']:
+        cl.append('{id=%d}'%one['id'])
+    v['com'] = ',\n        '.join(cl)
+    v['fra'] = '{0,1,2,3,4,5,6,7,8}'
+    return Template(SCALE9).substitute(v)
 
 TEMPLATES = {
     "picture":  _picture,
@@ -358,6 +307,7 @@ TEMPLATES = {
     "sliderbar":_sliderbar,
     "listview": _listview,
     "panel":_panel,
+    "scale9":   _scale9,
 }
 UNEXPORT = ('sprite')
 
@@ -366,47 +316,68 @@ def cfg_dump(node, level, t):
     tabp = level*'  '
     tab=tabp+'  '
     t1 = list()
-    t1.append('%suitype="%s"'%(tab,node['uitype']))
-    t1.append('%sexport="%s", --%d'%(tab,node['export'],node['id']))
+    if uitype == 'scale9':
+        uitype_export = 'sprite'
+    else:
+        uitype_export = uitype
+    t1.append('%suitype="%s"'%(tab,uitype_export))
+    t1.append('%sexport="%s", --%d'%(tab,node['export'],_id(node)))
     if node.get('screen'):
         t1.append('%sscreen=true'%(tab))
     t1.append('%sxlayout="%s"'%(tab,node['xlayout']))
     t1.append('%sylayout="%s"'%(tab,node['ylayout']))
     t1.append('%sw=%d'%(tab,node['w']))
     t1.append('%sh=%d'%(tab,node['h']))
+
+    t3 = list()
+    if uitype == 'scale9':
+        t3.append('reset_scale9={%d,%d}'%(node['w'],node['h']))
+    t1.append('%sinit0={%s}'%(tab,(',\n%s  '%tab).join(t3)))
     t2 = list()
-    t2.append('pos={%d,%d}'%(node['x'],node['y']))
-    t2.append('scalexy={%f,%f}'%(node['xscale'],node['yscale']))
+    if node['x']!=0 or node['y']!=0:
+        t2.append('pos={%d,%d}'%(node['x'],node['y']))
+    if node['xscale']!=1.0 or node['yscale']!=1.0:
+        t2.append('scalexy={%f,%f}'%(node['xscale'],node['yscale']))
     if node.get('text'):
         t2.append('text="%s"'%(node['text']))
     if node.get('nitem'):
         t2.append('nitem=%d'%(node['nitem']))
     t1.append('%sinit={%s}'%(tab,(',\n%s  '%tab).join(t2)))
-    if node.has_key('children'):
-        for c in node['children']:
-            cfg_dump(c,level+1,t1)
+    if uitype == 'panel': # now just need panel 
+        if node.has_key('children'):
+            for c in node['children']:
+                cfg_dump(c,level+1,t1)
     t.append('%s{\n%s\n%s}'%(tabp,',\n'.join(t1),tabp))
 
 def combine(csd_l, img_l, outpath, packname):
     if not img_l or not csd_l:
         print "None to combine"
+    
+    #dump_scale9(ani_l)
+    diff = len(img_l)
+    for ani_l in csd_l: 
+        build_scale9(ani_l, img_l)
+    diff = len(img_l)-diff
+    #dump_scale9(ani_l)
+    for ani_l in csd_l:
+        fix_aniid(ani_l, diff)
+    #dump_scale9(ani_l)
+
     fcfg = os.path.join(outpath, packname+"_uc.lua") 
     print '[=]'+fcfg
     t = list()
     for ani_l in csd_l:
-        com = ani_l[-1]
+        ani = ani_l[0]
         #if not com.get('noexport'):
-        cfg_dump(com,0,t)
-        t[-1] = "%s=%s"%(com['export'], t[-1])
+        assert ani['uitype'] == 'panel'
+        cfg_dump(ani,0,t)
+        t[-1] = "%s=%s"%(ani['export'], t[-1])
     f = open(fcfg, 'w')
     f.write('return {\n')
     f.write('export="%s",\n'%packname)
     f.write(',\n'.join(t))
     f.write('\n}')
     f.close()
-
-    for ani_l in csd_l:
-        fill_id(ani_l, img_l)
 
     t = list()
     t.append('return {')
@@ -415,6 +386,8 @@ def combine(csd_l, img_l, outpath, packname):
             v['export'] = 'export="%s",'%v['export']
         value = _picture(v, None)
         t.append(value)
+
+    #dump_scale9(ani_l)
     for ani_l in csd_l:
         for v in ani_l:
             if v.get('noexport'): continue

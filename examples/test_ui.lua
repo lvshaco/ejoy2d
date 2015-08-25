@@ -120,13 +120,50 @@ function T.panel()
     L:add(2,c1)
 end
 
-function T.test()
-    local s = spritex.new('image',0)
-    s:anchorpoint(0,0)
-    L:add(2,s)
+function T.panelnoback()
+    local c1 = panel.new('uiimage', uiimage_uc.winnoback)
+    --c1:pos(100,100)
+    --c1:scale(2)
+    c1:child('Button_1'):touch_event('up', function()
+        c1:resize(ej.screen())
+        c1:pos(0,0)
+    end)
+    L:add(2,c1)
 end
 
-for i=1,7 do
+function T.test()
+    local b = button.new('uiimage', 'nodescale9_Button_1')
+    b:anchorpoint(0,0)
+    b:reset_scale9(100,100)
+    L:add(2,b)
+end
+
+--{ tex = 1, src = {890,264,930,264,930,304,890,304}, screen = {0,0,640,0,640,640,0,640} },
+--{ tex = 1, src = {890,264,903,264,903,277,890,277}, screen = {0,0,208,0,208,208,0,208} },
+
+function T.scale9()
+    local s1 = panel.new('uiimage', uiimage_uc.win9scale_Panel_2)
+    --local s1 = spritex.new('uiimage', 41)
+    s1:anchorpoint(0,0)
+    s1:pos(150,100)
+    local scale =1
+    local w, h = 200,300
+    s1:touch_event('up', function()
+        w = w-10
+        h = h-10
+        s1:resize(w,h)
+    end)
+    --s1:child('bg'):touch_event('up', function()
+    --    s1:scale(scale)
+    --end)
+    local s = spritex.new('image',0)
+    s:anchorpoint(0,0)
+    s:pos(150,100)
+    L:add(2,s)
+    L:add(2,s1)
+end
+
+for i=1,6 do
     T['test'..i] = function() end
 end
 
@@ -136,7 +173,6 @@ local function init()
     L:bind(2, {}, ipairs, layer.UPDATE|layer.DRAW|layer.TOUCH)
     L:bind(3, coco:new(), ipairs, layer.UPDATE|layer.TOUCHLAST)
 
-    --T.button()
     local lv = listview.new('uiimage', 'node_ListView_1', 11)
     lv:anchorpoint(1,0.5)
     lv:pos(layout.pointx(1),layout.pointy(0.8))
@@ -168,7 +204,7 @@ function game.update()
 end
 
 function game.drawframe()
-	ej.clear(0xff000000)
+	ej.clear(0xffa0a0a0)
     L:draw()
 end
 

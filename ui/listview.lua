@@ -179,4 +179,10 @@ function listview:update()
     end
 end
 
+function listview:reset_scale9(w,h)
+    if self.__sprite.bg then
+        control.reset_scale9(self, w,h, self.__sprite.bg)
+    end
+end
+
 return listview
