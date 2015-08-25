@@ -79,13 +79,13 @@ function spritex:mount(...)
     end
 end
 
-function spritex:layout(xlayout, ylayout)
-    if xlayout ~= self.__xlayout or ylayout ~= self.__ylayout then
-        self.__xlayout = xlayout
-        self.__ylayout = ylayout
-        self.__matrix_dirty = true
-    end
-end
+--function spritex:layout(xlayout, ylayout)
+--    if xlayout ~= self.__xlayout or ylayout ~= self.__ylayout then
+--        self.__xlayout = xlayout
+--        self.__ylayout = ylayout
+--        self.__matrix_dirty = true
+--    end
+--end
 
 function spritex:anchorpoint(x, y)
     if x ~= self.__anchorx or y ~= self.__anchory then
@@ -137,11 +137,12 @@ local function __calculate_matrix(self)
     if not self.__matrix_dirty then
         return
     end
-    local x = self.__xlayout and 
-        layout.pointx(self.__x, self.__xlayout) or self.__x
-    local y = self.__ylayout and 
-        layout.pointy(self.__y, self.__ylayout) or self.__y
-    
+    --local x = self.__xlayout and 
+    --    layout.pointx(self.__x, self.__xlayout) or self.__x
+    --local y = self.__ylayout and 
+    --    layout.pointy(self.__y, self.__ylayout) or self.__y
+    local x = self.__x
+    local y = self.__y
     local lscale = layout.SCALE 
     self.__sprite:ps(x, y)
     if self.__rot then
@@ -357,7 +358,7 @@ end
 -- scale9
 function spritex:reset_scale9(w,h, spr)
     local p = spr or self.__sprite
-    local c
+    local c, change
     if not self.__scale9 then
         local _,x2,y2 
         _,_,x2,y2 = p:fetch_by_index(0):aabb()
@@ -370,8 +371,17 @@ function spritex:reset_scale9(w,h, spr)
         self.__scale9x2 = x2
         self.__scale9y2 = y2
         self.__scale9 = true
+        change = true
     end
-
+    if self.__w ~= w or self.__h ~= h then
+        self.__w = w
+        self.__h = h
+        self.__matrix_dirty = true
+        change = true
+    end
+    if not change then
+        return
+    end
     local scale9x = self.__scale9x
     local scale9y = self.__scale9y
     local cw = w - scale9x - self.__scale9x2

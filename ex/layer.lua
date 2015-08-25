@@ -83,14 +83,14 @@ function layer:clr(depth)
     l.items = {}
 end
 
-function layer:update()
+function layer:update(dt)
     local l
     for i=1,self.__max do
         l = self.__all[i]
         if l then
             if l.flag&UPDATE ~=0 then
                 for _, v in l.iter(l.items) do
-                    v:update()
+                    v:update(dt)
                 end
             end
         end

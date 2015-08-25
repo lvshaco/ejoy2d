@@ -2,24 +2,25 @@ local table = table
 local ipairs = ipairs
 local pairs = pairs
 local floor = math.floor
+--local tbl = require "ex.tbl"
 
 local action = {}
 
 -- action metatable
 local mt = {}
 
-function mt:__effect(v, sx)
+function mt.__effect(v, sx)
 end
 
 function mt:update(dt, sx)
-    if self.__tween:update(dt, sx) then
-        self:__effect(self.__tween.__value, sx)
+    if self.__tween:update(dt) then
+        self.__effect(self.__tween.__value, sx)
         return true
     end
 end
 
 function mt:prepare(sx)
-    self:__effect(sx)
+    self.__effect(self.__tween.__value, sx)
 end
 function mt:reverse()
     self.__tween:reverse()
@@ -35,10 +36,10 @@ end
 -- action group metatable
 local mt_group = {}
 
-function mt_group:update(sx)
+function mt_group:update(dt, sx)
     local up = false
     for _, a in ipairs(self.__list) do
-        if a:update(sx) then
+        if a:update(dt, sx) then
             up = true
         end
     end
@@ -77,10 +78,10 @@ end
 
 -- action sequence metatable
 local mt_sequence = {}
-function mt_sequence:update(sx)
+function mt_sequence:update(dt, sx)
     local i = self.__current
     while i<= #self.__list do
-        if self.__list[i]:update(sx) then
+        if self.__list[i]:update(dt, sx) then
             return true
         end
         i = i + 1
@@ -132,7 +133,7 @@ function action.sequence(...)
     return setmetatable({
         __list = {...},
         __current = 1
-    }, { __index == mt_sequence })
+    }, { __index = mt_sequence })
 end
 
 function action.wait(duration)
@@ -183,4 +184,4 @@ function action.additive(tw)
     return self
 end
 
-return 
+return action

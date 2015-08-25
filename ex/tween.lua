@@ -199,7 +199,7 @@ end
 
 local tween = {}
 
-tween.easing = {
+tween.f = {
   linear        = linear,
   inquad        = inquad,       outquad         = outquad, 
   inoutquad     = inoutquad,    outinquad       = outinquad,
@@ -225,11 +225,11 @@ tween.easing = {
 
 local mt = {}
 
-function mt:update(dt, sprite)
+function mt:update(dt)
     if self.__clock < self.__duration then
         self.__clock = self.__clock + dt 
-        if self.__clock > duration then
-            self.__clock = duration
+        if self.__clock > self.__duration then
+            self.__clock = self.__duration
         end
         if self.__easing then
             if type(self.__from) == "table" then
@@ -237,17 +237,19 @@ function mt:update(dt, sprite)
                 for k, v in pairs(self.__from) do
                     tov = self.__to[k]
                     if tov and tov ~= v then
-                        self.__easing(self.__clock, 
+                        self.__value[k] = 
+                            self.__easing(self.__clock, 
                             v, 
                             tov-v, 
                             self.__duration)
                     end
                 end
             else
-                self.__easing(self.__clock, 
+                self.__value = self.__easing(self.__clock, 
                     self.__from, 
                     self.__to-self.__from, 
                     self.__duration)
+                --print ("==", self.__clock, self.__duration, self.__from, self.__value)
             end
         end
         return true -- updated

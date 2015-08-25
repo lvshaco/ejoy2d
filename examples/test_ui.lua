@@ -33,28 +33,31 @@ layout.init(sw, sh, "H")
 local function frame2ms(x)
     return x*1000/30
 end
-local F = frame2ms
+--local F = frame2ms
+local F = function(x) return x end
 local L
 
 local T = {}
 function T.showui()
-    --local max = 0.8
-    --local min = 0.78
-    --sx = spritex.new('uiimage','effect_active_char.png')
-    --local x = layout.pointx(0.5)
-    --local y = layout.pointy(0.5)
-    --sx:ps(x,y)
-
-    ----sx:action(actionscale.new(0.5,1.0,6000,af.linear))
-    --sx:action(actionsequence.new(
-    --    actiongroup.new(
-    --        actioncolor.new(0x00ffffff,0xffffffff,F(6),af.linear),--af.linear),
-    --        actionscale.new(0.1,max,F(6),af.linear)--af.linear)
+    local max = 0.8
+    local min = 0.78
+    local sx = spritex.new('uiimage',103)
+    local x = layout.pointx(0.5)
+    local y = layout.pointy(0.5)
+    --sx:anchorpoint(0,0)
+    sx:pos(x,y)
+    sx:reset_scale9(600,400)
+    sx:action(action.scale(tween.new(0.1,1,F(6),tween.f.linear)))
+    --sx:action(action.sequence(
+    --    action.group(
+    --        action.color(tween.new({a=0,r=0xff,g=0xff,b=0xff},{a=0xff},F(6),tween.f.linear)),
+    --        action.scale(tween.new(0,1,max,F(6),tween.f.linear))
     --    ),
-    --    actionscale.new(max,min,F(3),af.linear),--af.linear),
-    --    actionscale.new(min,max,F(3),af.linear)
-    --))
-    --L:add(2, sx)
+    --    action.scale(tween.new(max,min,F(3),tween.f.linear)),
+    --    action.scale(tween.new(min,max,F(3),tween.f.linear))
+    --    )
+    --)
+    L:add(2, sx)
 end
 
 function T.button()
@@ -173,27 +176,27 @@ local function init()
     L:bind(2, {}, ipairs, layer.UPDATE|layer.DRAW|layer.TOUCH)
     L:bind(3, coco:new(), ipairs, layer.UPDATE|layer.TOUCHLAST)
 
-    T.panel()
-    --local lv = listview.new('uiimage', 'node_ListView_1', 11)
-    --lv:reset_scale9(100,200)
-    --lv:anchorpoint(1,0.5)
-    --lv:pos(layout.pointx(1),layout.pointy(0.8))
-    --lv:scale(1.5)
-    --lv:gap(3)
-    --local function __up(self,x,y)
-    --    L:clr(2)
-    --    local name = self:get_text()
-    --    T[name]()
-    --end
-    --local item 
-    --for k, v in pairs(T) do
-    --    item = button.new('uiimage', 'node_Button_1')
-    --    item:reset_scale9(80,36)
-    --    item:text(k)
-    --    item:touch_event('up', __up)
-    --    lv:insert(item)
-    --end
-    --L:add(1,lv)
+    --T.showui()
+    local lv = listview.new('uiimage', 'node_ListView_1', 11)
+    lv:reset_scale9(100,200)
+    lv:anchorpoint(1,0.5)
+    lv:pos(layout.pointx(1),layout.pointy(0.5))
+    lv:scale(1)
+    lv:gap(3)
+    local function __up(self,x,y)
+        L:clr(2)
+        local name = self:get_text()
+        T[name]()
+    end
+    local item 
+    for k, v in pairs(T) do
+        item = button.new('uiimage', 'node_Button_1')
+        item:reset_scale9(80,36)
+        item:text(k)
+        item:touch_event('up', __up)
+        lv:insert(item)
+    end
+    L:add(1,lv)
 end
 
 init()
@@ -203,7 +206,7 @@ local game = {}
 
 function game.update()
     ej.elapsed = ej.elapsed+1
-    L:update()
+    L:update(1)
 end
 
 function game.drawframe()

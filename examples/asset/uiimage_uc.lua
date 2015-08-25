@@ -155,7 +155,7 @@ win_Panel_1={
     w=46,
     h=36,
     init0={reset_scale9={46,36}},
-    init={pos={544,10},
+    init={pos={543,10},
       text="B2"}
   },
   {
@@ -177,7 +177,7 @@ win_Panel_1={
     w=200,
     h=200,
     init0={reset_scale9={200,200}},
-    init={pos={368,123}}
+    init={pos={368,125}}
   }
 },
 win9scale_Panel_2={

@@ -117,6 +117,7 @@ function panel:resize(w,h)
 end
 
 function panel:__touchdown(x,y,hit)
+    -- do not support nest panel
     if hit ~= self.__sprite then
         local child = self.__children[hit.name]
         self.__touch_current = child
