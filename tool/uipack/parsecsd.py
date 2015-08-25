@@ -198,6 +198,9 @@ def _panel(node, d):
     if _imagex(node, sd, 'FileData', '_bg'): # panel no background
         sd['x'], sd['y'] = 0,0 # force pos to zero
         _addchild(d, sd)
+        d['hasbg'] = True
+    if _scale9_enable(node):
+        d['scale9enable'] = True
     return d
 
 def _imagex(node, d, field='FileData',export=''):

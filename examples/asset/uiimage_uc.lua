@@ -97,16 +97,8 @@ win_Panel_1={
   ylayout="t",
   w=600,
   h=400,
+  init0={reset_scale9={600,400}},
   init={pos={10,-10}},
-  {
-    uitype="sprite",
-    export="Panel_1_bg", --103,
-    xlayout="l",
-    ylayout="t",
-    w=600,
-    h=400,
-    init0={reset_scale9={600,400}}
-  },
   {
     uitype="button",
     export="Button_1", --107,
@@ -184,16 +176,8 @@ win_Panel_1={
     ylayout="b",
     w=200,
     h=200,
-    init={pos={368,123}},
-    {
-      uitype="sprite",
-      export="Panel_2_bg", --103,
-      xlayout="r",
-      ylayout="b",
-      w=200,
-      h=200,
-      init0={reset_scale9={200,200}}
-    }
+    init0={reset_scale9={200,200}},
+    init={pos={368,123}}
   }
 },
 win9scale_Panel_2={
@@ -203,16 +187,8 @@ win9scale_Panel_2={
   ylayout="t",
   w=200,
   h=300,
-  init={pos={-100,-170}},
-  {
-    uitype="sprite",
-    export="Panel_2_bg", --103,
-    xlayout="l",
-    ylayout="t",
-    w=200,
-    h=300,
-    init0={reset_scale9={200,300}}
-  }
+  init0={reset_scale9={200,300}},
+  init={pos={-100,-170}}
 },
 winnoback_Panel_1={
   uitype="panel",

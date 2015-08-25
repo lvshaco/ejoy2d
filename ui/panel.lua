@@ -67,6 +67,9 @@ function panel:init(cfg)
     self.__export = cfg.export
     self.__children = children
 
+    if cfg.init0 then
+        control.init(self, cfg.init0)
+    end
     if cfg.init then
         control.init(self, cfg.init)
     end
@@ -74,14 +77,17 @@ function panel:init(cfg)
     self:anchorpoint(0,0) -- todo: it is suitable ?
 end
 
+function panel:reset_scale9(w,h)
+    if self.__sprite.bg then
+        control.reset_scale9(self, w,h, self.__sprite.bg)
+    end
+end
+
 function panel:resize(w,h)
+    self:reset_scale9(w,h)
     local scalex = w/self.__layout_w
     local scaley = h/self.__layout_h
     for _, c in pairs(self.__children) do
-        if c.__scale9 then -- scale9 reset to fit size
-            c:reset_scale9(c.__layout_w*scalex,
-                           c.__layout_h*scaley) 
-        end
         if c.__layoutx == 'l' then
             x = c.__layout_x
         elseif c.__layoutx == 'r' then

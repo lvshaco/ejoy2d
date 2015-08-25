@@ -238,7 +238,12 @@ def _panel(v, ani_l):
     cs = v['children']
     cl = list()
     fl = list()
-    for i in range(len(cs)):
+    startidx = 0
+    if v.get('hasbg'):
+        cl.append('{id=%d,name="bg"}'%(_id(cs[0])))
+        fl.append('0')
+        startidx=1
+    for i in range(startidx,len(cs)):
         c = cs[i]
         cl.append('{id=%d,name="%s"}'%(_id(c),c['export']))
         if c.get('touch'):
@@ -310,7 +315,12 @@ def cfg_dump(csd, node, level, t):
 
     if uitype == 'panel': # now just need panel 
         if node.has_key('children'):
-            for c in node['children']:
+            startidx=0
+            if node.get('hasbg'):
+                startidx=1
+            cs = node['children']
+            for i in range(startidx, len(cs)):
+                c = cs[i]
                 cfg_dump(csd, c,level+1,t1)
     t.append('%s{\n%s\n%s}'%(tabp,',\n'.join(t1),tabp))
 

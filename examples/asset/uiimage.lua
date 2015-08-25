@@ -667,7 +667,7 @@ return {
     id = 105,
     export="win_Panel_1",
     component = {
-        {id=103,name="Panel_1_bg"},
+        {id=103,name="bg"},
         {id=107,name="Button_1"},
         {id=117,name="CheckBox_1"},
         {id=118,name="LoadingBar_1"},
@@ -678,7 +678,7 @@ return {
         {id=141,name="Panel_2"}
     },
     {
-        {{index=0,touch=true},
+        {0,
         {index=1,touch=true},
         {index=2,touch=true},
         {index=3},
@@ -845,10 +845,10 @@ return {
     id = 141,
     export="win_Panel_2",
     component = {
-        {id=103,name="Panel_2_bg"}
+        {id=103,name="bg"}
     },
     {
-        {{index=0,touch=true}}
+        {0}
     },
 },
 {
@@ -856,10 +856,10 @@ return {
     id = 143,
     export="win9scale_Panel_2",
     component = {
-        {id=103,name="Panel_2_bg"}
+        {id=103,name="bg"}
     },
     {
-        {{index=0,touch=true}}
+        {0}
     },
 },
 {
