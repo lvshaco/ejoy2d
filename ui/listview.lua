@@ -180,7 +180,7 @@ function listview:update(dt)
     end
 end
 
-function listview:reset_scale9(w,h)
+function listview:__reset_scale9(w,h)
     local s = self.__sprite.bg
     if s then
         if not self.__scale9 then

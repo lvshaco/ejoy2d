@@ -78,7 +78,7 @@ function panel:init(cfg)
     self:anchorpoint(0,0) -- todo: it is suitable ?
 end
 
-function panel:reset_scale9(w,h)
+function panel:__reset_scale9(w,h)
     local s = self.__sprite.bg
     if s then
         if not self.__scale9 then

@@ -41,18 +41,18 @@ local T = {}
 function T.showui()
     local max = 0.8
     local min = 0.78
-    local sx = spritex.new('uiimage',3)--103)
-    sx.__name = '11'
+    local sx = spritex.new('uiimage',103)
     local x = layout.pointx(0.5)
     local y = layout.pointy(0.5)
-    --sx:anchorpoint(0,0)
+    sx:anchorpoint(0.5,0.5)
     sx:pos(x,y)
-    --sx:reset_scale9(600,400)
+    sx:reset_scale9(600,400)
+    sx:scale(0.8)
     --sx:action(action.scale(tween.new(0.1,1,F(6),tween.f.linear)))
     --sx:action(action.sequence(
     --    action.group(
     --        action.color(tween.new({a=0,r=0xff,g=0xff,b=0xff},{a=0xff},F(6),tween.f.linear)),
-    --        action.scale(tween.new(0,1,max,F(6),tween.f.linear))
+    --        action.scale(tween.new(0.1,max,F(6),tween.f.linear))
     --    ),
     --    action.scale(tween.new(max,min,F(3),tween.f.linear)),
     --    action.scale(tween.new(min,max,F(3),tween.f.linear))
@@ -67,6 +67,7 @@ function T.button()
     l1:pos(100, 50)
     
     local b1 = button.new('uiimage', 'node_Button_1')
+    b1:reset_scale9(80,36)
     b1:text('btn1')
     b1:pos(100,100)
     b1:scale(2)
@@ -98,10 +99,6 @@ function T.button()
     s1:scale(2)
     --s1:rot(180)
     s1:update()
-    --print ("==", s1.__sprite:aabb())
-    --print ("==", s1.__sprite.back:aabb())
-    --print ("==", s1.__sprite.back:world_pos())
-    --print (s1.__sprite.degree:aabb())
     s1:touch_event('degree', function()
         l1:text('s1 degree:'..s1.__degree)
     end)
@@ -177,7 +174,7 @@ local function init()
     L:bind(2, {}, ipairs, layer.UPDATE|layer.DRAW|layer.TOUCH)
     L:bind(3, coco:new(), ipairs, layer.UPDATE|layer.TOUCHLAST)
 
-    --T.showui()
+    T.showui()
     local lv = listview.new('uiimage', 'node_ListView_1', 11)
     lv:reset_scale9(100,200)
     lv:anchorpoint(1,0.5)

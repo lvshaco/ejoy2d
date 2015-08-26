@@ -157,11 +157,6 @@ function spritex:__transform()
                    y=-(self.__h*self.__anchory)})
     end
     self.__matrix_dirty = false
-
-    if self.__name == "11" then
-        print (self.__x, self.__y, self.__scalex, self.__scaley, self.__w, self.__h,
-        self.__anchorx, self.__anchory)
-    end
 end
 
 -- frame
@@ -368,17 +363,24 @@ function spritex:__reset_scale9(w,h)
     if not self.__scale9 then
         self.__scale9 = scale9.new(self.__sprite)
     end
-    self.__scale9.reset(self.__sprite, w, h)
+    self.__scale9:reset(self.__sprite, w, h)
 end
 
 function spritex:reset_scale9(w,h)
-    if self.__w == w and self.__h == h then
-        return
+    local reset
+    if not self.__scale9state then
+        self.__scale9state = true
+        reset = true
     end
-    self.__w = w
-    self.__h = h
-    self.__matrix_dirty = true
-    self:__reset_scale9(w,h)
+    if self.__w ~= w or self.__h ~= h then
+        self.__w = w
+        self.__h = h
+        self.__matrix_dirty = true
+        reset = true
+    end
+    if reset then
+        self:__reset_scale9(w,h)
+    end
 end
 
 return spritex
