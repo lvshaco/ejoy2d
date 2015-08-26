@@ -3,8 +3,9 @@ local scale9 = {}
 local function _reset(self, spr, w, h)
     local scale9x = self.__scale9x
     local scale9y = self.__scale9y
-    local cw = w - scale9x - self.__scale9x2
-    local ch = h - scale9y - self.__scale9y2
+    -- center more 1 pixel, to avoid the gap cause by scale
+    local cw = w - scale9x - self.__scale9x2+1
+    local ch = h - scale9y - self.__scale9y2+1
     local scalex = cw/self.__scale9w
     local scaley = ch/self.__scale9h
 
