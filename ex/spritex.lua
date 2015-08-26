@@ -134,7 +134,7 @@ function spritex:real_wh()
     return x2-x1, y2-y1
 end
 
-local function __calculate_matrix(self)
+function spritex:__transform()
     if not self.__matrix_dirty then
         return
     end
@@ -283,12 +283,12 @@ function spritex:__ontouchout(x,y)
     end
 end
 
--- subclass implement the under method to catch touch event
--- __touchdown
--- __touchup
--- __touchmove
--- __touchout
-
+--[[subclass implement the under method to catch touch event
+__touchdown
+__touchup
+__touchmove
+__touchout
+]]
 function spritex:__ontouch(what,x,y)
     if what == 'BEGIN' then
         local hit = self.__sprite:test(x,y)
@@ -353,15 +353,13 @@ function spritex:update(dt)
             self.__action = nil
         end
     end
-    __calculate_matrix(self)
+    self:__transform()
 end
 
 -- draw
 function spritex:draw()
-    __calculate_matrix(self)
-    --if self.__name == "11" then
-    --    print ("draw 11")
-    --end
+    -- perhaps no update yield
+    self:__transform()
     self.__sprite:draw()
 end
 

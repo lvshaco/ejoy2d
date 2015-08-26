@@ -156,8 +156,8 @@ function listview:__touchmove(x, y)
     end
 end
 
-function listview:update()
-    control.update(self)
+function listview:update(dt)
+    control.update(self,dt)
     if not self.__drag then
         if self.__draw_start == 1 and
             self.__dragoff > 0 then

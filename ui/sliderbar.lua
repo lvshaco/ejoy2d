@@ -23,9 +23,14 @@ local function __degree(self, x)
     return true
 end
 
-function sliderbar:update()
-    self.__degreebtn:update()
-    control.update(self)
+function sliderbar:__transform()
+    self.__degreebtn.__transform(self.__degreebtn)
+    control.__transform(self)
+end
+
+function sliderbar:update(dt)
+    self.__degreebtn:update(dt)
+    control.update(self,dt)
 end
 
 function sliderbar.new(packname, spr, range)
@@ -40,6 +45,7 @@ function sliderbar.new(packname, spr, range)
     self.__degreebtn = button.new(nil, self.__sprite.degree)
     self.__degreebtn:anchorpoint(0.5, 0)
     __degree(self, 0)
+    self:update()
     return self
 end
 

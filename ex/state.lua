@@ -16,9 +16,9 @@ function state.change(to,...)
     end
 end
 
-function state.update()
+function state.update(dt)
     if S and S.layer then
-        S.layer:update()
+        S.layer:update(dt)
     end
 end
 

@@ -115,7 +115,7 @@ end
 
 function T.panel()
     local c1 = panel.new('uiimage', uiimage_uc.win_Panel_1)
-    c1:pos(100,100)
+    c1:pos(0,0)
     --c1:scale(2)
     c1:child('Button_1'):touch_event('up', function()
         c1:resize(ej.screen())
@@ -126,7 +126,7 @@ end
 
 function T.panelnoback()
     local c1 = panel.new('uiimage', uiimage_uc.winnoback_Panel_1)
-    --c1:pos(100,100)
+    c1:pos(0,0)
     --c1:scale(2)
     c1:child('Button_1'):touch_event('up', function()
         c1:resize(ej.screen())

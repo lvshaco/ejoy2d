@@ -149,11 +149,18 @@ function panel:__touchout(x,y)
     end
 end
 
-function panel:update()
-    control.update(self)
+function panel:__transform()
     for _,c in pairs(self.__children) do
-        c:update()
+        c.__transform(c)
     end
+    control.__transform(self)
+end
+
+function panel:update(dt)
+    for _,c in pairs(self.__children) do
+        c:update(dt)
+    end
+    control.update(self,dt)
 end
 
 function panel:child(name)
