@@ -1,5 +1,6 @@
 local control = require "ui.control"
 local spritex = require "ex.spritex"
+local scale9 = require "ex.scale9"
 
 local panel = control.new()
 panel.__index = panel
@@ -78,8 +79,12 @@ function panel:init(cfg)
 end
 
 function panel:reset_scale9(w,h)
-    if self.__sprite.bg then
-        control.reset_scale9(self, w,h, self.__sprite.bg)
+    local s = self.__sprite.bg
+    if s then
+        if not self.__scale9 then
+            self.__scale9 = scale9.new(s)
+        end
+        self.__scale9:reset(s,w,h)
     end
 end
 

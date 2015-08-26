@@ -1,4 +1,5 @@
 local control = require "ui.control"
+local scale9 = require "ex.scale9"
 
 local button = control.new()
 button.__index = button
@@ -53,12 +54,18 @@ function button:__touchout(x,y)
     __change_state(self, NORMAL)
 end
 
-function button:reset_scale9(w,h)
+function button:__reset_scale9(w,h)
     local p = self.__sprite
-    control.reset_scale9(self, w,h, p:fetch_by_index(0))
-    control.reset_scale9(self, w,h, p:fetch_by_index(1))
+    local s = p:fetch_by_index(0)
+    if not self.__scale9 then
+        self.__scale9 = scale9.new(s)
+    end
+    self.__scale9:reset(s,w,h)
+    s = p:fetch_by_index(1)
+    self.__scale9:reset(s,w,h)
     if self.__sprite.frame_count > 2 then
-        control.reset_scale9(self,w,h, p:fetch_by_index(2))
+        s = p:fetch_by_index(2)
+        self.__scale9:reset(s,w,h)
     end
 end
 

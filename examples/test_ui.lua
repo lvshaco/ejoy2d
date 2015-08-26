@@ -41,13 +41,14 @@ local T = {}
 function T.showui()
     local max = 0.8
     local min = 0.78
-    local sx = spritex.new('uiimage',103)
+    local sx = spritex.new('uiimage',3)--103)
+    sx.__name = '11'
     local x = layout.pointx(0.5)
     local y = layout.pointy(0.5)
     --sx:anchorpoint(0,0)
     sx:pos(x,y)
-    sx:reset_scale9(600,400)
-    sx:action(action.scale(tween.new(0.1,1,F(6),tween.f.linear)))
+    --sx:reset_scale9(600,400)
+    --sx:action(action.scale(tween.new(0.1,1,F(6),tween.f.linear)))
     --sx:action(action.sequence(
     --    action.group(
     --        action.color(tween.new({a=0,r=0xff,g=0xff,b=0xff},{a=0xff},F(6),tween.f.linear)),
@@ -124,7 +125,7 @@ function T.panel()
 end
 
 function T.panelnoback()
-    local c1 = panel.new('uiimage', uiimage_uc.winnoback)
+    local c1 = panel.new('uiimage', uiimage_uc.winnoback_Panel_1)
     --c1:pos(100,100)
     --c1:scale(2)
     c1:child('Button_1'):touch_event('up', function()
@@ -135,10 +136,10 @@ function T.panelnoback()
 end
 
 function T.test()
-    local b = button.new('uiimage', 'nodescale9_Button_1')
-    b:anchorpoint(0,0)
-    b:reset_scale9(100,100)
-    L:add(2,b)
+    --local b = button.new('uiimage', 'nodescale9_Button_1')
+    --b:anchorpoint(0,0)
+    --b:reset_scale9(100,100)
+    --L:add(2,b)
 end
 
 --{ tex = 1, src = {890,264,930,264,930,304,890,304}, screen = {0,0,640,0,640,640,0,640} },
@@ -166,9 +167,9 @@ function T.scale9()
     L:add(2,s1)
 end
 
-for i=1,6 do
-    T['test'..i] = function() end
-end
+--for i=1,6 do
+--    T['test'..i] = function() end
+--end
 
 local function init()
     L = layer.new()
