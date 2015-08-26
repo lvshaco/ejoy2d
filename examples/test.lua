@@ -1,23 +1,28 @@
 local ej = require "ejoy2d"
-local audio = require "util.audio"
+local fw = require "ejoy2d.framework"
+local pack = require "ejoy2d.simplepackage"
 
-assert(audio.init())
+pack.load {
+	pattern = fw.WorkDir..[[examples/asset/?]],
+	"sample",
+}
 
-local a = audio.load("examples/asset/loginScene.mp3")
-local a2 = audio.load("examples/asset/beiji.wav")
-print (a.gain)
-a.gain = 0.5
-a.loop = true
-print (a.gain)
-print (a.loop)
---a:play()
+local obj = ej.sprite("sample","cannon")
+local turret = obj.turret
 
-a2.loop = true
---a2:play()
+-- set position (-100,0) scale (0.5)
+obj:ps(-100,0,0.5)
 
-local turnon = false
+local obj2 = ej.sprite("sample","mine")
+obj2.resource.frame = 70
+-- set position(100,0) scale(1.2) separately
+obj2:ps(100,0)
+obj2:ps(1.2)
 
 local game = {}
+local screencoord = { x = 512, y = 384, scale = 1.2 }
+local x1,y1,x2,y2 = obj2:aabb(screencoord)
+obj2.label.text = string.format("AABB\n%d x %d", x2-x1, y2-y1)
 
 function game.update()
 end
@@ -27,16 +32,6 @@ function game.drawframe()
 end
 
 function game.touch(what, x, y)
-    if what == "END" then
-        turnon = not turnon
-        if turnon then
-            a:play()
-            a2:play()
-        else
-            a:pause()
-            a2:pause()
-        end
-    end
 end
 
 function game.message(...)
@@ -52,4 +47,3 @@ function game.on_pause()
 end
 
 ej.start(game)
-

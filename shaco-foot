@@ -67,6 +67,7 @@ android) shift; an "$@";;
 tool) shift; tool "$@";;
 imagepack) shift; imagepack "$@";;
 testui) shift; tool uipack path=../../../ui; cp ../ui/asset/uiimage* examples/asset;;
-test) shift; ./ej2d examples/test_ui.lua;;
-*) printf "$USAGE";;
+h) printf "$USAGE";;
+help) printf "$USAGE";;
+*) ./ej2d examples/$1.lua;;
 esac

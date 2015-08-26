@@ -46,7 +46,7 @@ _gettime(void) {
 
 static void
 update_frame() {
-	ejoy2d_win_frame();
+    ejoy2d_win_frame();
     glXSwapBuffers(g_X.display, g_X.wnd);
 }
 
@@ -100,7 +100,7 @@ init_x() {
 
     
     win=XCreateSimpleWindow(dis,DefaultRootWindow(dis),0,0,
-                            WIDTH, HEIGHT, 5,white, black);
+                            WIDTH, HEIGHT, 0,white, black);
 
     XMapWindow(dis, win);
     wm_delete_window = XInternAtom(dis, "WM_DELETE_WINDOW", False);
