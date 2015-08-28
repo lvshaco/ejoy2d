@@ -47,17 +47,17 @@ function T.showui()
     sx:anchorpoint(0.5,0.5)
     sx:pos(x,y)
     sx:reset_scale9(600,400)
-    sx:scale(0.8)
+    --sx:scale(0.8)--0.68333333333333)
     --sx:action(action.scale(tween.new(0.1,1,F(6),tween.f.linear)))
-    --sx:action(action.sequence(
-    --    action.group(
-    --        action.color(tween.new({a=0,r=0xff,g=0xff,b=0xff},{a=0xff},F(6),tween.f.linear)),
-    --        action.scale(tween.new(0.1,max,F(6),tween.f.linear))
-    --    ),
-    --    action.scale(tween.new(max,min,F(3),tween.f.linear)),
-    --    action.scale(tween.new(min,max,F(3),tween.f.linear))
-    --    )
-    --)
+    sx:action(action.sequence(
+        action.group(
+            action.color(tween.new({a=0,r=0xff,g=0xff,b=0xff},{a=0xff},F(6),tween.f.linear)),
+            action.scale(tween.new(0.1,max,F(6),tween.f.linear))
+        ),
+        action.scale(tween.new(max,min,F(3),tween.f.linear)),
+        action.scale(tween.new(min,max,F(3),tween.f.linear))
+        )
+    )
     L:add(2, sx)
 end
 

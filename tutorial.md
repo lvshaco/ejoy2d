@@ -26,7 +26,7 @@
 #### pack ui
 `./shaco-foot tool uipack`, it will generate:
 
-- project/asset/image.*.ppm
-- project/asset/image.*.pgm
-- project/asset/image.lua
-- project/asset/image_uc.lua
+- project/asset/uiimage.*.ppm
+- project/asset/uiimage.*.pgm
+- project/asset/uiimage.lua
+- project/asset/uiimage_uc.lua
