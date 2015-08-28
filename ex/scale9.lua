@@ -4,6 +4,7 @@ local function _reset(self, spr, w, h)
     local scale9x = self.__scale9x
     local scale9y = self.__scale9y
     -- center more 2 pixel, to avoid the gap cause by scale
+    -- todo: actually shoud be get the parent scale to calculate the center length
     local cw = w - scale9x - self.__scale9x2+2
     local ch = h - scale9y - self.__scale9y2+2
     local scalex = cw/self.__scale9w
