@@ -3,12 +3,17 @@ local scale9 = {}
 local function _reset(self, spr, w, h)
     local scale9x = self.__scale9x
     local scale9y = self.__scale9y
-    -- center more 1 pixel, to avoid the gap cause by scale
-    local cw = w - scale9x - self.__scale9x2+1
-    local ch = h - scale9y - self.__scale9y2+1
+    -- center more 2 pixel, to avoid the gap cause by scale
+    local cw = w - scale9x - self.__scale9x2+2
+    local ch = h - scale9y - self.__scale9y2+2
     local scalex = cw/self.__scale9w
     local scaley = ch/self.__scale9h
 
+    --if w==600 then
+    --    print (w, scale9x, scalex*self.__scale9w)
+    --    local f = 0.68333333333333
+    --    print (w*f, scale9x*f, scalex*self.__scale9w*f)
+    --end
     c = spr:fetch_by_index(1)
     c:sr(scalex, 1)
     c:ps(scale9x, 0)
