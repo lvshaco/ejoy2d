@@ -38,8 +38,8 @@ function spritex.construct(class, packname, name)
         __anchorx = 0.5,
         __anchory = 0.5,
         __matrix_dirty = true, 
-        __xlayout = nil,
-        __ylayout = nil,
+        __xlayout = 'l',
+        __ylayout = 't',
         __maxloop = nil,
         __curloop = nil,
         __frame_run = nil,
@@ -80,13 +80,13 @@ function spritex:mount(...)
     end
 end
 
---function spritex:layout(xlayout, ylayout)
---    if xlayout ~= self.__xlayout or ylayout ~= self.__ylayout then
---        self.__xlayout = xlayout
---        self.__ylayout = ylayout
---        self.__matrix_dirty = true
---    end
---end
+function spritex:layout(xlayout, ylayout)
+    if xlayout ~= self.__xlayout or ylayout ~= self.__ylayout then
+        self.__xlayout = xlayout
+        self.__ylayout = ylayout
+        self.__matrix_dirty = true
+    end
+end
 
 function spritex:anchorpoint(x, y)
     if x ~= self.__anchorx or y ~= self.__anchory then
@@ -138,13 +138,16 @@ function spritex:__transform()
     if not self.__matrix_dirty then
         return
     end
-    --local x = self.__xlayout and 
-    --    layout.pointx(self.__x, self.__xlayout) or self.__x
-    --local y = self.__ylayout and 
-    --    layout.pointy(self.__y, self.__ylayout) or self.__y
-    local x = self.__x
-    local y = self.__y
-    local lscale = layout.SCALE 
+    local x, y, lscale
+    --if self.__xlayout then
+    --    x = layout.pointx(self.__x, self.__xlayout)
+    --    y = layout.pointy(self.__y, self.__ylayout)
+    --    lscale = layout.SCALE 
+    --else
+        x = self.__x
+        y = self.__y
+        lscale = 1
+    --end
     self.__sprite:ps(x, y)
     if self.__rot then
         self.__sprite:sr(self.__scalex*lscale, self.__scaley*lscale, self.__rot)

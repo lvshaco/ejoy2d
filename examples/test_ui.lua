@@ -27,8 +27,8 @@ local t2 = os.time()
 logger.log("pack.load use time:"..(t2-t1))
 logger.log(fw.WorkDir)
 
-local sw, sh = ej.screen()
-layout.init(sw, sh, "H")
+--local sw, sh = ej.screen()
+--layout.adapt(1024,768, "H")
 
 local function frame2ms(x)
     return x*1000/30
@@ -113,9 +113,10 @@ end
 function T.panel()
     local c1 = panel.new('uiimage', uiimage_uc.win_Panel_1)
     c1:pos(0,0)
+    c1:layout()
     --c1:scale(2)
     c1:child('Button_1'):touch_event('up', function()
-        c1:resize(ej.screen())
+        c1:resize(layout.wh())
         c1:pos(0,0)
     end)
     L:add(2,c1)
@@ -124,23 +125,26 @@ end
 function T.panelnoback()
     local c1 = panel.new('uiimage', uiimage_uc.winnoback_Panel_1)
     c1:pos(0,0)
+    c1:layout()
     --c1:scale(2)
     c1:child('Button_1'):touch_event('up', function()
-        c1:resize(ej.screen())
+        c1:resize(ej.screen())--layout.wh())
         c1:pos(0,0)
     end)
     L:add(2,c1)
 end
 
 function T.test()
-    --local b = button.new('uiimage', 'nodescale9_Button_1')
-    --b:anchorpoint(0,0)
-    --b:reset_scale9(100,100)
-    --L:add(2,b)
+    local s = spritex.new('uiimage', 23)
+    s:pos(20,20)
+    s:layout()
+    local s2 = spritex.new('uiimage', 23)
+    s2:pos(60,20)
+    s2:layout(ej.screen())--layout.wh()
+    s2.__name ='110'
+    L:add(2,s)
+    L:add(2,s2)
 end
-
---{ tex = 1, src = {890,264,930,264,930,304,890,304}, screen = {0,0,640,0,640,640,0,640} },
---{ tex = 1, src = {890,264,903,264,903,277,890,277}, screen = {0,0,208,0,208,208,0,208} },
 
 function T.scale9()
     local s1 = panel.new('uiimage', uiimage_uc.win9scale_Panel_2)
@@ -178,6 +182,7 @@ local function init()
     local lv = listview.new('uiimage', 'node_ListView_1', 11)
     lv:reset_scale9(100,200)
     lv:anchorpoint(1,0.5)
+    print (layout.pointx(1), layout.pointy(0.5))
     lv:pos(layout.pointx(1),layout.pointy(0.5))
     lv:scale(1)
     lv:gap(3)
