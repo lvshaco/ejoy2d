@@ -2,11 +2,11 @@ local ej = require "ejoy2d"
 local fw = require "ejoy2d.framework"
 local pack = require "ejoy2d.simplepackage"
 local geo = require "ejoy2d.geometry"
-local tbl = require "util.tbl"
+local tbl = require "ex.tbl"
 
 pack.load {
     pattern = fw.WorkDir..[[examples/asset/?]],
-    "tilebase",
+    "image",
 }
 
 local W, H = fw.screen()
@@ -36,7 +36,7 @@ local light =  {
 }
 
 function light:init()
-    self.__spr = ej.sprite("tilebase", "light.png")
+    self.__spr = ej.sprite("image", "light.png")
     self.__x = 13
     self.__y = 2 
 end
@@ -55,7 +55,7 @@ tile.__index = tile
     
 function tile.new()
     self = {
-        __spr = ej.sprite("tilebase", "block.png"),
+        __spr = ej.sprite("image", "tile.png"),
         __x = false,
         __y = false,
     }

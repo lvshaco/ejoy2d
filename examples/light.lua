@@ -8,10 +8,10 @@ local ppm = require "ejoy2d.ppm"
 
 pack.load {
     pattern = fw.WorkDir..[[examples/asset/?]],
-    "ren", "ren_normal"
+    "diffuse", "normal"
 }
-local obj = ej.sprite("ren", 0)
-local obj2 = ej.sprite("ren_normal", 0)
+local obj = ej.sprite("diffuse", 0)
+local obj2 = ej.sprite("diffuse",0)
 
 -- define a shader
 local s = ej.define_shader {
@@ -25,30 +25,49 @@ uniform vec3 lightpos;
 uniform vec3 falloff;
 uniform vec3 ambient;
 uniform vec2 resolution;
-
+uniform vec2 content;
 void main() {
-    vec4 DiffuseColor = texture2D(texture0, v_texcoord);
+    vec4 texcolor = texture2D(texture0, v_texcoord);
     
     // 法线贴图的法线数据
     vec3 normal = texture2D(tex_normal, v_texcoord).rgb;
     // 将法线贴图里的rgb数据转换成真正的法线数据，并归一化
-    vec3 N = normalize(normal * 2.0 - 1.0);
-     
+     vec3 N = normalize(normal * 2.0 - 1.0);
+     N.y = -N.y;
+    // vec3 N = normal; // todo: ?? need normalize
     //2d游戏中计算这个光的方向比较简单，直接算屏幕里的位置就行了
-    vec3 ldir = vec3(lightpos.xy - (gl_FragCoord.xy / resolution.xy), lightpos.z);
-    //计算光的长度，用于计算光的衰减
+    //vec3 ldir = vec3(lightpos.xy - (gl_FragCoord.xy / resolution.xy), lightpos.z);
+    //vec3 ldir = vec3(lightpos.xy - v_texcoord, lightpos.z);
+    //vec3 curpixel = vec3(content.x*v_texcoord.x, (1.0-v_texcoord.y)*content.y,0.0);
+    vec3 curpixel = vec3(gl_FragCoord.x, 600.0-gl_FragCoord.y, 0);
+    vec3 ldir = lightpos-curpixel;
     float D = length(ldir);
+    ldir = normalize(ldir);
+    //计算光的长度，用于计算光的衰减
     //归一化光的方向
     vec3 L = normalize(ldir);
     //计算光的衰减参数
-    float Attenuation = 1.0 / ( falloff.x + (falloff.y*D) + (falloff.z*D*D) );
-     
+    //float falloffTerm = 1.0 / ( falloff.x + (falloff.y*D) + (falloff.z*D*D) );
     //计算法线对于光照的影响
-    vec3 Diffuse = (lightcolor.rgb * lightcolor.a) * max(dot(N, L), 0.0);
+    vec3 Diffuse =  max(dot(N, L), 0.0) * (lightcolor.rgb * lightcolor.a);
     //计算环境光加上光线的衰减
-    vec3 Intensity = ambient + Diffuse * Attenuation;
+
+    float u_cutoffRadius = 200.0;
+    float u_halfRadius = 0.5;
+    float intercept = u_cutoffRadius * u_halfRadius;
+    float dx_1 = 0.5 / intercept;
+    float dx_2 = 0.5 / (u_cutoffRadius - intercept);
+    float offset = 0.5 + intercept * dx_2;
+    float lightDist = D;
+    float falloffTermNear = clamp((1.0 - lightDist * dx_1), 0.0, 1.0);
+    float falloffTermFar  = clamp((offset - lightDist * dx_2), 0.0, 1.0);
+    float falloffSelect = step(intercept, lightDist);
+    //float falloffTerm = (1.0 - falloffSelect) * falloffTermNear + falloffSelect * falloffTermFar;
+    float falloffTerm = 1.0-(D-lightpos.z)/u_cutoffRadius;
+    float brightness=3.0;
+    vec3 Intensity = ambient + Diffuse*brightness *falloffTerm;
     //和原始贴图数据进行计算混合
-    gl_FragColor = vec4(DiffuseColor.rgb * Intensity, DiffuseColor.a);
+    gl_FragColor = vec4(texcolor.rgb * Intensity, texcolor.a);
 }
 	]],
 	uniform = {
@@ -72,22 +91,43 @@ void main() {
             name = "resolution",
             type = "float2";
         },
+        {
+            name = "content",
+            type = "float2";
+        },
 	},
 	texture = {
 		"texture0",
         "tex_normal",
 	}
 }
-s.resolution(800,600)
-s.lightcolor(0,1,0,1)	-- set shader color
-s.lightpos(0.5,0.5,0)
-s.falloff(1.0,2.1,2.1)
-s.ambient(0.0,0.0,0.0)
-
 obj.program = "NORMAL1"
+obj.material:resolution(800,600)
+obj.material:lightcolor(1,1,1,1)	-- set shader color
+obj.material:lightpos(0,0,50)
+obj.material:falloff(0.5,0.5,0.5)--(1.0,2.1,2.1)
+obj.material:ambient(0.0,0.0,0.0)
+local x,y,x2,y2=obj:aabb()
+obj.material:content(x2-x,y2-y)
+print (x,y,x2-x,y2-y)
 shader.texture(1, 1)
-local game = {}
+obj:ps(100, 100)
+--obj:sr(2,2)
 
+obj2.program = "NORMAL1"
+obj2.material:resolution(800,600)
+obj2.material:lightcolor(1,1,1,1)	-- set shader color
+obj2.material:lightpos(0,0,50)
+obj2.material:falloff(0.5,0.5,0.5)--(1.0,2.1,2.1)
+obj2.material:ambient(0.0,0.0,0.0)--(1.0,1.0,1.0)
+local x,y,x2,y2=obj2:aabb()
+obj2.material:content(x2-x,y2-y)
+print (x,y,x2-x,y2-y)
+shader.texture(1, 1)
+obj2:ps(250, 250)
+--obj2:sr(2,2)
+
+local game = {}
 local time = 0
 function game.update()
     time = time + 0.01
@@ -98,9 +138,8 @@ function game.update()
 end
 
 function game.drawframe()
-	ej.clear(0xff808080)	-- clear (0.5,0.5,0.5,1) gray
+	ej.clear(0xff000000)	-- clear (0.5,0.5,0.5,1) gray
     
-
     --shader.draw(TEXID, {
         ----0,0,0,175,287,175,287,0,
         --0,0,0,386, 272,386, 272,0,
@@ -108,15 +147,29 @@ function game.drawframe()
     --})
 
     obj:draw()
-    --obj2:draw()
+    obj2:draw()
+    for i=0,10 do
+        --obj:ps(i*10,i*100)
+        --obj:draw()
+    end
 end
 
 function game.touch(what, x, y)
-    if what == "MOVE" then
-        px = x/800
-        py = 1-y/600 
-        s.lightpos(px,py,0)
-    end
+--    if what == "MOVE" then
+        local px = x/800
+        local py = 1-y/600 
+        local px,py,_,_ = obj:aabb()
+        px = x-px
+        py = y-py
+        --obj.material:lightpos(px,py,50)
+        obj.material:lightpos(x,y,50)
+        local px,py,_,_ = obj2:aabb()
+        px = x-px
+        py = y-py
+        --obj2.material:lightpos(px,py,50)
+        obj2.material:lightpos(x,y,50)
+        --s.lightpos(px,py,50)
+ --   end
 end
 
 function game.message(...)

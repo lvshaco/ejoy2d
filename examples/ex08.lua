@@ -63,8 +63,8 @@ end
 function game.drawframe()
 	ej.clear(0xff808080)	-- clear (0.5,0.5,0.5,1) gray
 	obj:draw()
-	obj2:draw()
-	obj3:draw()
+	--obj2:draw()
+	--obj3:draw()
 end
 
 function game.touch(what, x, y)

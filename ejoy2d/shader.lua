@@ -6,7 +6,8 @@ local PRECISION_HIGH = ""
 if s.version() == 2 then
 	-- Opengl ES 2.0 need float precision specifiers
 	PRECISION = "precision lowp float;\n"
-	PRECISION_HIGH = "precision highp float;\n"
+	--PRECISION_HIGH = "precision highp float;\n"
+	PRECISION_HIGH = "precision mediump float;\n"
 end
 
 local sprite_fs = [[

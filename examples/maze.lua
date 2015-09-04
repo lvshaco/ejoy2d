@@ -225,8 +225,8 @@ function gtree()
     map[start].visited = true
 
     while #st>0 do
-        --local index = #st -- newest [ recursive backtracking]
-        local index = math.random(#st) -- random [prim]
+        local index = #st -- newest [ recursive backtracking]
+        --local index = math.random(#st) -- random [prim]
         --local index = 1 -- oldest, or middle, or mix, etc
         
         local i = st[index]
@@ -353,14 +353,14 @@ function sidewinder(w,h)
 end
 
 W,H = 15,15
-print "Eller"
-Eller(W,H)
+--print "Eller"
+--Eller(W,H)
 print "backtracking"
 r_bt(W,H)
 print "glow tree"
 gtree()
-print "division"
-r_division()
+--print "division"
+--r_division()
 --+--+--+--+
 --|  |  |  |
 --+--+--+--+

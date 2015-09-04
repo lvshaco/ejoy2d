@@ -67,6 +67,7 @@ android) shift; an "$@";;
 tool) shift; tool "$@";;
 imagepack) shift; imagepack "$@";;
 testui) shift; tool uipack path=../../../ui; cp ../ui/asset/uiimage* examples/asset;;
+testnormal) shift; imagepack ~/ejoy2d/normal_map/diffuse ~/ejoy2d/ejoy2d/examples/asset; imagepack ~/ejoy2d/normal_map/normal ~/ejoy2d/ejoy2d/examples/asset;;
 h) printf "$USAGE";;
 help) printf "$USAGE";;
 *) ./ej2d examples/$1.lua;;
