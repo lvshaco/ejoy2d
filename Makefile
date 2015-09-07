@@ -134,10 +134,12 @@ macosx : $(SRC) ej2d png.so
 ej2d :
 	gcc $(CFLAGS) -o $(TARGET) $(SRC) $(LUASRC) $(ASSETSRC) $(SOCKETSRC) $(AUDIOSRC) $(LDFLAGS)
 
-png.so : $(PNGSRC)
-	gcc -g -Wall -DHAVE_CONFIG_H $(SHARED) -o $@ $^ -I3rd/libpng -Ilua -lz
+png.so :
+	cd 3rd/lpng && make && cp png.so ../../
 
 clean :
 	-rm -f ej2d.exe
 	-rm -f ej2d
-	-rm -f png.so
+	-rm -rf ej2d.dSYM
+	-rm -f *.so
+	cd 3rd/lpng && make clean
