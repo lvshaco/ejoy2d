@@ -56,10 +56,11 @@ LOCAL_SRC_FILES := \
 	../jni-javabridge/javabridge.c \
 	javabridge-jni.c
 
-LOCAL_STATIC_LIBRARIES := lua ft lsocket laudio 
+LOCAL_STATIC_LIBRARIES := lua ft lsocket laudio lpng
 include $(BUILD_SHARED_LIBRARY)
 
 $(call import-module,jni-lua)
 $(call import-module,jni-ft)
 $(call import-module,jni-lsocket)
 $(call import-module,jni-laudio)
+$(call import-module,jni-lpng)
