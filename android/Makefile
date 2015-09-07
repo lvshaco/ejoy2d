@@ -28,7 +28,7 @@ pack:
 	rm -rf assets/files/*
 	mkdir -pv assets
 	cp -r ../ejoy2d assets/files
-	cp -r ../util assets/files
+	cp -r ../ex assets/files
 	cp ../../*.lua assets/files
 	cp -r ../../asset assets/files
 	ant debug
