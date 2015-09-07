@@ -1,49 +1,9 @@
-local ej = require "ejoy2d"
-local fw = require "ejoy2d.framework"
-local pack = require "ejoy2d.simplepackage"
+local png = require "png"
 
-pack.load {
-	pattern = fw.WorkDir..[[examples/asset/?]],
-	"sample",
-}
+local path = "/Users/lvshaco"
+local type, width, height, data = png.load(path.."/ejoy2d/normal_map/diffuse/head.png")
 
-local obj = ej.sprite("sample","cannon")
-local turret = obj.turret
+print (type, width, height, data)
 
--- set position (-100,0) scale (0.5)
-obj:ps(-100,0,0.5)
+png.save(path.."/ejoy2d/normal_map/diffuse/head_.png", type, width, height, data)
 
-local obj2 = ej.sprite("sample","mine")
-obj2.resource.frame = 70
--- set position(100,0) scale(1.2) separately
-obj2:ps(100,0)
-obj2:ps(1.2)
-
-local game = {}
-local screencoord = { x = 512, y = 384, scale = 1.2 }
-local x1,y1,x2,y2 = obj2:aabb(screencoord)
-obj2.label.text = string.format("AABB\n%d x %d", x2-x1, y2-y1)
-
-function game.update()
-end
-
-function game.drawframe()
-	ej.clear(0xff808080)	-- clear (0.5,0.5,0.5,1) gray
-end
-
-function game.touch(what, x, y)
-end
-
-function game.message(...)
-end
-
-function game.handle_error(...)
-end
-
-function game.on_resume()
-end
-
-function game.on_pause()
-end
-
-ej.start(game)

@@ -1,6 +1,6 @@
 .PHONY : mingw ej2d linux undefined
 
-CFLAGS = -g -Wall -Ilib -Ilib/render -Ilua -I3rd/freetype/include -I3rd/laudio/depinc -D EJOY2D_OS=$(OS) -D LUA_COMPAT_APIINTCASTS
+CFLAGS = -g -Wall -Ilib -Ilib/render -Ilua -I3rd/freetype/include -I3rd/laudio/depinc -D EJOY2D_OS=$(OS) -D LUA_COMPAT_APIINTCASTS 
 LDFLAGS :=
 
 RENDER := \
@@ -117,6 +117,7 @@ linux : OS := LINUX
 linux : TARGET := ej2d
 linux : CFLAGS += -I/usr/include $(shell freetype-config --cflags)
 linux : LDFLAGS +=  -lGLEW -lGL -lX11 -lfreetype -lm
+linux : SHARED:=-fPIC -shared
 linux : SRC += posix/window.c posix/winfw.c posix/winfont.c
 
 linux : $(SRC) ej2d
@@ -125,14 +126,18 @@ macosx : OS := MACOSX
 macosx : TARGET := ej2d
 macosx : CFLAGS += -I/usr/X11R6/include -I/usr/include -I/usr/local/include $(shell freetype-config --cflags) -D __MACOSX
 macosx : LDFLAGS += -L/usr/X11R6/lib -L/usr/local/lib -lGLEW -lGL -lX11 -lfreetype -lm -ldl -lalut -lmpg123 -Wl,-undefined,dynamic_lookup
-
+macosx : SHARED:=-fPIC -dynamiclib -Wl,-undefined,dynamic_lookup
 macosx : SRC += posix/window.c posix/winfw.c posix/winfont.c
 
-macosx : $(SRC) ej2d
+macosx : $(SRC) ej2d png.so
 
 ej2d :
 	gcc $(CFLAGS) -o $(TARGET) $(SRC) $(LUASRC) $(ASSETSRC) $(SOCKETSRC) $(AUDIOSRC) $(LDFLAGS)
 
+png.so : $(PNGSRC)
+	gcc -g -Wall -DHAVE_CONFIG_H $(SHARED) -o $@ $^ -I3rd/libpng -Ilua -lz
+
 clean :
 	-rm -f ej2d.exe
 	-rm -f ej2d
+	-rm -f png.so

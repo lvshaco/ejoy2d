@@ -10,8 +10,8 @@ pack.load {
     pattern = fw.WorkDir..[[examples/asset/?]],
     "diffuse", "normal"
 }
-local obj = ej.sprite("diffuse", 0)
-local obj2 = ej.sprite("diffuse",0)
+local obj = ej.sprite("diffuse", 2)
+local obj2 = ej.sprite("diffuse",2)
 
 -- define a shader
 local s = ej.define_shader {

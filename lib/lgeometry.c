@@ -9,6 +9,10 @@
 #include "spritepack.h"
 #include "array.h"
 
+#ifdef __APPLE__
+#define abs fabsf
+#endif
+
 static int PROGRAM = 0;
 
 static int

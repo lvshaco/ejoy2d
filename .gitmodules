@@ -4,3 +4,6 @@
 [submodule "3rd/lsocket"]
 	path = 3rd/lsocket
 	url = git@github.com:lvshaco/lsocket.git
+[submodule "3rd/lpng"]
+	path = 3rd/lpng
+	url = git@github.com:lvshaco/lpng.git
