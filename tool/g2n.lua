@@ -62,21 +62,21 @@ local function tocolor(fx, fy, fz)
     return o
 end
 
-local args, opts = argparse({...}, 1,
-    {{'-l', dest='left'},
-    {'-r', dest='right'},
-    {'-t', dest='top'},
-    {'-b', dest='bottom'},
-    {'-d', dest='depth', default=0.5}},
-    "usage: h2n.lua left right top bottom normal_file")
+local args = argparse({...},
+    {l={dest='left'},
+    r={dest='right'},
+    t={dest='top'},
+    b={dest='bottom'},
+    o={dest='normalmap', required=true},
+    d={dest='depth', default=0.5}})
 
-g_depth = opts.depth
+g_depth = args.depth
 local t1 = os.clock()
 local inputs = {{},{},{},{}}
-inputs[1].file = opts.left
-inputs[2].file = opts.right
-inputs[3].file = opts.top
-inputs[4].file = opts.bottom
+inputs[1].file = args.left
+inputs[2].file = args.right
+inputs[3].file = args.top
+inputs[4].file = args.bottom
 
 local ninputs = 0
 for _, v in ipairs(inputs) do
@@ -125,7 +125,6 @@ rangefix(y_N)
 rangez(z_N)
 
 local o = tocolor(x_N, y_N, z_N)
-local nfile = args[1]
-png.save(nfile, 'RGB8', g_w, g_h, o) 
+png.save(args.normalmap, 'RGB8', g_w, g_h, o) 
 local t2 = os.clock()
 print ('use time:'..(t2-t1))

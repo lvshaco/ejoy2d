@@ -5,10 +5,7 @@ local tbl = require "tbl"
 local msqrt = math.sqrt
 local mfloor = math.floor
 
-local args, opts = argparse({...}, 2, nil, 
-    "usage: h2n.lua left right top bottom normal_file")
-
-local g_strength = 2
+local g_strength
 local g_t, g_w, g_h, g_p ,g_step
 local g_o = {}
 
@@ -34,53 +31,46 @@ local function tocolor(x)
 end
 
 local function pixel(x, y, r, g, b)
-    local i = (y *g_w + x) * g_step
+    local i = (y *g_w + x) * 3
     g_o[i+1] = r 
     g_o[i+2] = g 
     g_o[i+3] = b
-    if g_step == 4 then
-        g_o[i+4] = g_p[i+4]
-    end
 end
 
-local hfile = args[1]
-local nfile = args[2]
+local t1 = os.clock()
+local args = argparse({...},
+    {i={dest='heightmap', required=true},
+     o={dest='normalmap', required=true},
+     s={dest='strength',default=5}})
 
-g_t, g_w, g_h, g_p = png.load(hfile)
+g_dz = 1/args.strength
+g_t, g_w, g_h, g_p = png.load(args.heightmap)
 g_step = #g_p/(g_w*g_h)
-print (g_t, g_w, g_h, g_p, g_step)
-print (g_p[1], g_p[2], g_p[3], g_p[4])
+--print (g_t, g_w, g_h, g_p, g_step)
 for y=0, g_h-1 do
     for x=0, g_w-1 do
         local tl = intensity(x-1,y-1)
-        local t  = intensity(x,y-1)
+        local t  = intensity(x,  y-1)
         local tr = intensity(x+1,y-1)
         local r  = intensity(x+1,y)
         local br = intensity(x+1,y+1)
-        local b  = intensity(x,y+1)
+        local b  = intensity(x,  y+1)
         local bl = intensity(x-1,y+1)
         local l  = intensity(x-1,y)
         
         -- sobel filter
-        local dx = (tr + 2 * r + br) - (tl + 2 * l + bl);
-        local dy = (bl + 2 * b + br) - (tl + 2 * t + tr);
-        local dz = 1 / g_strength;
+        local dx = (tr + 2 * r + br) - (tl + 2 * l + bl)
+        local dy = (bl + 2 * b + br) - (tl + 2 * t + tr)
+        local dz = g_dz
 
-        local i = (y*g_w + x) + g_step
-        if g_p[i+1] ~= 127 or
-           g_p[i+2] ~= 127 or
-           g_p[i+3] ~= 127 then
-            print (dx, dy, dz, g_p[i+1], g_p[i+2], g_p[i+3])
-        end
         dx,dy,dz = normalize(dx,dy,dz)
-        if g_p[i+1] ~= 127 or
-           g_p[i+2] ~= 127 or
-           g_p[i+3] ~= 127 then
-            print (dx, dy, dz, tocolor(dx), tocolor(dy), tocolor(dz), g_p[i+4])
-        end
-
-        pixel(x,y, tocolor(dx), tocolor(dy), tocolor(dz))
+        local i = (y*g_w + x) * 3
+        g_o[i+1] = tocolor(dx)
+        g_o[i+2] = tocolor(dy)
+        g_o[i+3] = tocolor(dz)
     end
 end
 
-png.save(nfile, g_t, g_w, g_h, g_o) 
+png.save(args.normalmap, 'RGB8', g_w, g_h, g_o) 
+local t2 = os.clock()
+print ('use time:'..(t2-t1))
