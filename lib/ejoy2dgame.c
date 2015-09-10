@@ -26,6 +26,7 @@
 #define EJOY_UPDATE "EJOY2D_UPDATE"
 #define EJOY_DRAWFRAME "EJOY2D_DRAWFRAME"
 #define EJOY_TOUCH "EJOY2D_TOUCH"
+#define EJOY_KEY "EJOY2D_KEY"
 #define EJOY_GESTURE "EJOY2D_GESTURE"
 #define EJOY_MESSAGE "EJOY2D_MESSAGE"
 #define EJOY_HANDLE_ERROR "EJOY2D_HANDLE_ERROR"
@@ -54,6 +55,7 @@ linject(lua_State *L) {
 		EJOY_UPDATE,
 		EJOY_DRAWFRAME,
 		EJOY_TOUCH,
+		EJOY_KEY,
 		EJOY_GESTURE,
 		EJOY_MESSAGE,
 		EJOY_HANDLE_ERROR,
@@ -363,6 +365,15 @@ ejoy2d_game_touch(struct game *G, int id, float x, float y, int status) {
   }
   lua_settop(G->L, TOP_FUNCTION);
   return disable_gesture;
+}
+
+void
+ejoy2d_game_key(struct game *G, int key, int type) {
+	lua_getfield(G->L, LUA_REGISTRYINDEX, EJOY_KEY);
+	lua_pushinteger(G->L, key);
+    lua_pushinteger(G->L, type);
+	call(G->L, 2, 0);
+  lua_settop(G->L, TOP_FUNCTION);
 }
 
 void

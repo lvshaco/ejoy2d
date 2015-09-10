@@ -147,3 +147,8 @@ ejoy2d_win_resize(int w, int h) {
         ejoy2d_game_resize(G->game, w, h);
     }
 }
+
+void
+ejoy2d_win_key(int key, int type) {
+    ejoy2d_game_key(G->game, key, type);
+}

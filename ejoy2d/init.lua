@@ -31,6 +31,9 @@ function ejoy2d.start(callback)
 	fw.EJOY2D_TOUCH = function(x,y,what,id)
 		return callback.touch(touch[what],x,y,id)
 	end
+    fw.EJOY2D_KEY = function(key,type)
+        return callback.key(key,type)
+    end
     fw.EJOY2D_GESTURE = function(what, x1, y1, x2, y2, state)
 		return callback.gesture(gesture[what], x1, y1, x2, y2, state)
 	end

@@ -115,7 +115,7 @@ init_x() {
     XSetForeground(dis,gc,black);
     XClearWindow(dis, win);
     XMapRaised(dis, win);
-
+    XAutoRepeatOff(dis);
     g_X.display = dis;
     g_X.screen_num = screen;
     g_X.wnd = win;
@@ -162,9 +162,14 @@ main(int argc, char *argv[]) {
                 break;
             case KeyPress:
                 XLookupString(&event.xkey, keychar, 255, &keysym, 0);
+                ejoy2d_win_key(keychar[0], 0);
                 if (keychar[0] == 'q' || keychar[0] == 'Q') {
                     close_x();
                 }
+                break;
+            case KeyRelease:
+                XLookupString(&event.xkey, keychar, 255, &keysym, 0);
+                ejoy2d_win_key(keychar[0], 1);
                 break;
             case ButtonPress: 
                 ejoy2d_win_touch(event.xbutton.x, event.xbutton.y, TOUCH_BEGIN); 

@@ -21,6 +21,7 @@ void ejoy2d_game_start(struct game *);
 void ejoy2d_game_update(struct game *, float dt);
 void ejoy2d_game_drawframe(struct game *);
 int ejoy2d_game_touch(struct game *, int id, float x, float y, int status);
+void ejoy2d_game_key(struct game *G, int key, int type);
 void ejoy2d_game_gesture(struct game *, int type,
                          double x1, double y1, double x2, double y2, int s);
 void
