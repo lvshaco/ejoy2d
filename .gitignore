@@ -13,4 +13,6 @@ cscope.*
 tags
 .*.swp
 *.pyc
-tool/uipack/__tmp_image
+tool/uipack/__tmp*
+android/AndroidManifest.xml
+android/MyActivity.java
