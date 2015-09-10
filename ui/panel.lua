@@ -98,7 +98,6 @@ function panel:resize(w,h)
         elseif c.__layoutx == 'r' then
             x = self.__layout_w-c.__layout_x-c.__layout_w
             x = w - c.__layout_w - x
-            print ("======",x)
         elseif c.__layoutx == 'c' then
             x = self.__layout_w//2 - c.__layout_x - c.__layout_w//2
             x = w//2 - c.__layout_w//2 - x
@@ -119,7 +118,6 @@ function panel:resize(w,h)
         -- todo: will reset pos to initialize layout
         c:anchorpoint(0,0)
         c:pos(x,y) 
-        print (c.__name, x,y)
     end
 end
 
