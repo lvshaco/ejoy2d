@@ -42,6 +42,8 @@ function spritex.construct(class, packname, name)
         __ylayout = 't',
         __maxloop = nil,
         __curloop = nil,
+        __ani = spr,
+        __frame = nil,
         __frame_run = nil,
         __frame_reverse = nil,
         __action = nil,
@@ -64,20 +66,23 @@ function spritex:init(cfg)
 end
 
 -- matrix
+local function __resetwh(self, w, h)
+    if w ~= self.__w or h ~= self.__h then
+        self.__w, self.__h = w,h
+        if self.__anchorx ~= 0 or self.__anchory ~= 0 then
+            self.__matrix_dirty = true
+        end
+        return true
+    end
+end
+
 function spritex:mount(...)
     local t = {...}
     for i=1,#t//2 do
         self.__sprite[t[i]] = t[i+1]
     end
     local x,y,x2,y2 = self.__sprite:aabb()
-    local w,h = x2-x, y2-y
-    if w ~= self.__w or h ~= self.__h then
-        self.__w = w
-        self.__h = h
-        if self.__anchorx ~= 0 or self.__anchory ~= 0 then
-            self.__matrix_dirty = true
-        end
-    end
+    __resetwh(self, x2-x, y2-y)
 end
 
 function spritex:layout(xlayout, ylayout)
@@ -163,16 +168,31 @@ function spritex:__transform()
 end
 
 -- frame
+function spritex:ani(name, component, n)
+    if name then
+        self.__sprite.action = name
+    end
+    if component then
+        self.__ani = self.__sprite[component]
+    else
+        self.__ani = self.__sprite
+    end
+    self:frame_run(n)
+    local x1,y1,x2,y2 = self.__sprite:aabb()
+    __resetwh(self, x2-x1, y2-y1)
+end
+
 function spritex:loop(n)
     self.__maxloop = n or 0 -- zero for endless loop
     self.__curloop = 0
 end
 
 function spritex:frame_run(n)
-    if self.__sprite.frame_count > 0 then
+    if self.__ani.frame_count > 0 then
         self.__frame_run = true 
-        n = n or 1 -- loop one time by default
-        self:loop(1)
+        self.__frame = 0
+        n = n or 0 
+        self:loop(n)
     end
 end
 
@@ -320,25 +340,31 @@ end
 -- update
 function spritex:update(dt)
     if self.__frame_run then
-        local spr = self.__sprite
-        local end_frame = false
-        if self.__frame_reverse then
-            spr.frame = spr.frame-1
-            if spr.frame < 0 then
-                spr.frame = 0
-                end_frame = true
+        local nframe
+        self.__frame = self.__frame + dt*24
+        if self.__frame >= 1 then
+            nframe = self.__frame//1
+            self.__frame = self.__frame - nframe
+            local spr = self.__ani
+            local end_frame = false
+            if self.__frame_reverse then
+                spr.frame = spr.frame-nframe
+                if spr.frame < 0 then
+                    spr.frame = spr.frame_count-1--0
+                    end_frame = true
+                end
+            else
+                spr.frame = spr.frame + nframe
+                if spr.frame >= spr.frame_count then
+                    spr.frame = 0--spr.frame_count-1
+                    end_frame = true
+                end
             end
-        else
-            spr.frame = spr.frame + 1
-            if spr.frame >= spr.frame_count then
-                spr.frame = spr.frame_count-1
-                end_frame = true
-            end
-        end
-        if end_frame and self.__maxloop > 0 then
-            self.__curloop = self.__curloop + 1
-            if self.__curloop >= self.__maxloop then
-                self.__frame_run = false
+            if end_frame and self.__maxloop > 0 then
+                self.__curloop = self.__curloop + 1
+                if self.__curloop >= self.__maxloop then
+                    self.__frame_run = false
+                end
             end
         end
     end
@@ -375,10 +401,7 @@ function spritex:reset_scale9(w,h)
         self.__scale9state = true
         reset = true
     end
-    if self.__w ~= w or self.__h ~= h then
-        self.__w = w
-        self.__h = h
-        self.__matrix_dirty = true
+    if __resetwh(w, h) then
         reset = true
     end
     if reset then

@@ -54,7 +54,8 @@ function ejoy2d.define_shader(args)
 end
 
 ejoy2d.screen = fw.screen
-ejoy2d.elapsed = 0
+ejoy2d.tick = 0
+ejoy2d.tick_last = 0
 --if OS=='ANDROID' then
     --fw.AssetDir = "files/"
 --else

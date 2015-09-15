@@ -1605,6 +1605,30 @@ ldfont_mothod(lua_State *L) {
 	luaL_newlib(L, l);
 }
 
+static int
+lupdate_texture(lua_State *L) {
+    int id = luaL_checkinteger(L,1);
+    int width = luaL_checkinteger(L,2);
+    int height = luaL_checkinteger(L,3);
+    int step = luaL_checkinteger(L,4);
+    luaL_checktype(L,5,LUA_TTABLE);
+    int size = width*height*step;
+    int len = lua_rawlen(L,5);
+    if (size != len) {
+        return luaL_error(L, "no match pixels size:%d, should be %d*%d*%d=%d", len, width, height, step, size);
+    }
+    uint8_t *buffer = (uint8_t*)malloc(size);
+    int i;
+    for (i=0; i<size; ++i) {
+        lua_rawgeti(L,-1,i+1);
+        buffer[i] = (uint8_t)lua_tointeger(L,-1);
+        lua_pop(L,1);
+    }
+    texture_update(id, width, height, buffer);
+    free(buffer);
+    return 0;
+}
+
 int
 ejoy2d_sprite(lua_State *L) {
 	luaL_Reg l[] ={
@@ -1615,6 +1639,7 @@ ejoy2d_sprite(lua_State *L) {
 		{ "delete_dfont", ldeldfont },
 		{ "new_material", lnewmaterial },
 		{ "enable_visible_test", lenable_visible_test },
+        { "update_texture", lupdate_texture },
 		{ NULL, NULL },
 	};
 	luaL_newlib(L,l);

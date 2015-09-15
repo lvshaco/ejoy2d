@@ -160,4 +160,8 @@ function sprite.dfont(width, height, fmt, tid)
 	return debug.setmetatable(cobj, dfont_meta)
 end
 
+function sprite.update_texture(tid, width, height, step, pixels)
+    return c.update_texture(tid, width, height, step, pixels)
+end
+
 return sprite

@@ -37,7 +37,6 @@ function layout.resize(w, h)
     end
     __w = w
     __h = h
-    print ("----", w,h)
 end
 
 function layout.pointx(v, type)

@@ -70,6 +70,7 @@ read_exepath(char * buf, int bufsz) {
 extern int luaopen_socket_c(lua_State *L);
 extern int luaopen_socketbuffer_c(lua_State *L);
 extern int luaopen_audio_c(lua_State *L);
+extern int luaopen_png(lua_State *L);
 
 void
 ejoy2d_win_init(int argc, char *argv[]) {
@@ -79,6 +80,7 @@ ejoy2d_win_init(int argc, char *argv[]) {
     luaL_requiref(L, "socket.c", luaopen_socket_c, 0);
     luaL_requiref(L, "socketbuffer.c", luaopen_socketbuffer_c, 0);
     luaL_requiref(L, "audio.c", luaopen_audio_c, 0);
+    luaL_requiref(L, "png", luaopen_png, 0);
     lua_settop(L, top);
 
     lua_pushcfunction(L, traceback);

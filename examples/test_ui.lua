@@ -208,7 +208,7 @@ init()
 local game = {}
 
 function game.update()
-    ej.elapsed = ej.elapsed+1
+    ej.tick = ej.tick +1
     L:update(1)
 end
 

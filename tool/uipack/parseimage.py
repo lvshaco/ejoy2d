@@ -37,7 +37,7 @@ def packimage(inpath, outname):
         '--extrude 2',
         '--data '+fjson,
         '--format json',
-        #'--trim-mode Trim', # 这种模式normal map打包后和原始图不能保证对应, 因为normal和diffuse毕竟不是同一张图片，trim的范围会不一致
+        #'--trim-mode Trim', # 这种模式normal map打包后和原始图不能保证对应, 因为normal和diffuse毕竟不是同一张图片，trim的范围会不一致, 一般normal的边缘也是有色的
         '--trim-mode None',
         '--disable-rotation',
         '--size-constraints AnySize',

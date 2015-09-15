@@ -1,6 +1,6 @@
 .PHONY : mingw ej2d linux undefined
 
-CFLAGS = -g -Wall -Ilib -Ilib/render -Ilua -I3rd/freetype/include -I3rd/laudio/depinc -D EJOY2D_OS=$(OS) -D LUA_COMPAT_APIINTCASTS 
+CFLAGS = -g -Wall -Ilib -Ilib/render -Ilua -I3rd/freetype/include -I3rd/laudio/depinc -I3rd/lpng/libpng -D EJOY2D_OS=$(OS) -D LUA_COMPAT_APIINTCASTS
 LDFLAGS :=
 
 RENDER := \
@@ -80,6 +80,24 @@ AUDIOSRC := \
 3rd/laudio/src/laudio.c \
 3rd/laudio/src/audio_decoder.c
 
+PNGSRC := \
+3rd/lpng/lpng.c \
+3rd/lpng/libpng/png.c \
+3rd/lpng/libpng/pngerror.c \
+3rd/lpng/libpng/pngget.c \
+3rd/lpng/libpng/pngmem.c \
+3rd/lpng/libpng/pngpread.c \
+3rd/lpng/libpng/pngread.c \
+3rd/lpng/libpng/pngrio.c \
+3rd/lpng/libpng/pngrtran.c \
+3rd/lpng/libpng/pngrutil.c \
+3rd/lpng/libpng/pngset.c \
+3rd/lpng/libpng/pngtrans.c \
+3rd/lpng/libpng/pngwio.c \
+3rd/lpng/libpng/pngwrite.c \
+3rd/lpng/libpng/pngwtran.c \
+3rd/lpng/libpng/pngwutil.c
+
 UNAME=$(shell uname)
 SYS=$(if $(filter Linux%,$(UNAME)),linux,\
 	    $(if $(filter MINGW%,$(UNAME)),mingw,\
@@ -125,14 +143,14 @@ linux : $(SRC) ej2d
 macosx : OS := MACOSX
 macosx : TARGET := ej2d
 macosx : CFLAGS += -I/usr/X11R6/include -I/usr/include -I/usr/local/include $(shell freetype-config --cflags) -D __MACOSX
-macosx : LDFLAGS += -L/usr/X11R6/lib -L/usr/local/lib -lGLEW -lGL -lX11 -lfreetype -lm -ldl -lalut -lmpg123 -Wl,-undefined,dynamic_lookup
+macosx : LDFLAGS += -L/usr/X11R6/lib -L/usr/local/lib -lGLEW -lGL -lX11 -lfreetype -lm -ldl -lalut -lmpg123 -lz -Wl,-undefined,dynamic_lookup
 macosx : SHARED:=-fPIC -dynamiclib -Wl,-undefined,dynamic_lookup
 macosx : SRC += posix/window.c posix/winfw.c posix/winfont.c
 
 macosx : $(SRC) ej2d png.so
 
 ej2d :
-	gcc $(CFLAGS) -o $(TARGET) $(SRC) $(LUASRC) $(ASSETSRC) $(SOCKETSRC) $(AUDIOSRC) $(LDFLAGS)
+	gcc $(CFLAGS) -o $(TARGET) $(SRC) $(LUASRC) $(ASSETSRC) $(SOCKETSRC) $(AUDIOSRC) $(PNGSRC) $(LDFLAGS)
 
 png.so :
 	cd 3rd/lpng && make && cp png.so ../../

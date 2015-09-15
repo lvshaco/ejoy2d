@@ -22,4 +22,8 @@ function control:enable(b)
     end
 end
 
+function control:set_focus(isfocus)
+    self.__focus = isfocus
+end
+
 return control
