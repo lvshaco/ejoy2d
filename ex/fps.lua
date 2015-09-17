@@ -1,11 +1,11 @@
 local sprite = require "ejoy2d.sprite"
-local layout = require "ex.layout"
+local ej = require "ejoy2d"
 local fps = {}
 local label, time, tick
 function fps.init()
     label = sprite.label{width=100, height=18,color=0xffffffff,align='left'}
     time, tick = 0,0
-    local _,sh = layout.wh()
+    local sh = ej.screen()
     label:ps(0, sh-18)
 end
 function fps.update(elapsed)
