@@ -645,9 +645,9 @@ render_texture_update(struct render *R, RID id, int width, int height, const voi
 	if (tex->mipmap) {
 		glTexParameteri( type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
 	} else {
-		glTexParameteri( type, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+		glTexParameteri( type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);//, GL_LINEAR );
 	}
-	glTexParameteri( type, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	glTexParameteri( type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);//, GL_LINEAR );
 	glTexParameteri( type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glTexParameteri( type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
