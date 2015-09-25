@@ -43,6 +43,7 @@ function spritex.construct(class, packname, name)
         __maxloop = nil,
         __curloop = nil,
         __ani = spr,
+        __aniname = nil,
         __frame = nil,
         __frame_run = nil,
         __frame_reverse = nil,
@@ -102,14 +103,11 @@ function spritex:anchorpoint(x, y)
 end
 
 function spritex:pos(x, y)
-    if x and x ~= self.__x then
+    if x ~= self.__x or y ~= self.__y then
         self.__x = x
-        self.__matrix_dirty = true
-    end
-    if y and y ~= self.__y then
         self.__y = y
         self.__matrix_dirty = true
-    end 
+    end
 end
 
 function spritex:rot(rot)
@@ -124,11 +122,8 @@ function spritex:scale(scale)
 end
 
 function spritex:scalexy(scalex, scaley)
-    if scalex and scalex ~= self.__scalex then
+    if scalex ~= self.__scalex or scaley ~= self.__scaley then
         self.__scalex = scalex
-        self.__matrix_dirty = true
-    end
-    if scaley and scaley ~= self.__scaley then
         self.__scaley = scaley
         self.__matrix_dirty = true
     end
@@ -171,6 +166,7 @@ end
 function spritex:ani(name, component, n)
     if name then
         self.__sprite.action = name
+        self.__aniname = name
     end
     if component then
         self.__ani = self.__sprite[component]
