@@ -42,7 +42,6 @@ function spritex.construct(class, packname, name)
         __ylayout = 't',
         __maxloop = nil,
         __curloop = nil,
-        __ani = spr,
         __aniname = nil,
         __frame = nil,
         __frame_run = nil,
@@ -164,15 +163,11 @@ end
 
 -- frame
 function spritex:ani(name, component, n)
-    if name then
-        self.__sprite.action = name
-        self.__aniname = name
+    if self.__aniname == name then
+        return
     end
-    if component then
-        self.__ani = self.__sprite[component]
-    else
-        self.__ani = self.__sprite
-    end
+    self.__sprite.action = name
+    self.__aniname = name
     self:frame_run(n)
     local x1,y1,x2,y2 = self.__sprite:aabb()
     __resetwh(self, x2-x1, y2-y1)
@@ -184,7 +179,7 @@ function spritex:loop(n)
 end
 
 function spritex:frame_run(n)
-    if self.__ani.frame_count > 0 then
+    if self.__sprite.frame_count > 0 then
         self.__frame_run = true 
         self.__frame = 0
         n = n or 0 
@@ -341,7 +336,7 @@ function spritex:update(dt)
         if self.__frame >= 1 then
             nframe = self.__frame//1
             self.__frame = self.__frame - nframe
-            local spr = self.__ani
+            local spr = self.__sprite
             local end_frame = false
             if self.__frame_reverse then
                 spr.frame = spr.frame-nframe

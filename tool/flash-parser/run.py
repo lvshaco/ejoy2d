@@ -334,8 +334,9 @@ class MainTree():
                 '--format json',
                 #trim模式被去掉边缘pad无法程序自动计算sprite的脚底中心点（宽度／2)
                 #如果要开启trim，则需要由外部指定脚底中心点偏移
-                #'--trim-mode Trim', 
-                '--trim-mode None',
+                #!!上面的问题已经修正，flash中编辑动画的时候脚底中心放在原点即可
+                '--trim-mode Trim', 
+                #'--trim-mode None',
                 '--disable-rotation',
                 '--size-constraints AnySize',
                 '--max-width 2048',
