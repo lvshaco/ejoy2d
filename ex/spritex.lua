@@ -46,6 +46,7 @@ function spritex.construct(class, packname, name)
         __frame = nil,
         __frame_run = nil,
         __frame_reverse = nil,
+        __frame_speed = nil,
         __action = nil,
         __action_cb = nil,
         __touch_enable = nil,
@@ -162,9 +163,9 @@ function spritex:__transform()
 end
 
 -- frame
-function spritex:ani(name, component, n)
-    if self.__aniname == name then
-        return
+function spritex:ani(name, n)
+    if self.name then
+        print ('switch action:' ,name, self.name)
     end
     self.__sprite.action = name
     self.__aniname = name
@@ -182,6 +183,9 @@ function spritex:frame_run(n)
     if self.__sprite.frame_count > 0 then
         self.__frame_run = true 
         self.__frame = 0
+        if not self.__frame_speed then
+            self.__frame_speed = 1
+        end
         n = n or 0 
         self:loop(n)
     end
@@ -189,6 +193,10 @@ end
 
 function spritex:frame_stop()
     self.__frame_run = false
+end
+
+function spritex:frame_speed(n)
+    self.__frame_speed = n
 end
 
 function spritex:frame_reverse(b)
@@ -332,7 +340,7 @@ end
 function spritex:update(dt)
     if self.__frame_run then
         local nframe
-        self.__frame = self.__frame + dt*24
+        self.__frame = self.__frame + dt*24*self.__frame_speed
         if self.__frame >= 1 then
             nframe = self.__frame//1
             self.__frame = self.__frame - nframe
