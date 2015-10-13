@@ -9,8 +9,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include "winfw.h"
+#include "ejoy2dgame.h"
 
-#define UPDATE_INTERVAL 1       /* 10ms */
+#define UPDATE_INTERVAL 10       /* 10ms */
 
 void font_init();
 
@@ -33,12 +34,12 @@ _gettime(void) {
 	struct timespec ti;
 	clock_gettime(CLOCK_MONOTONIC, &ti);
 	t = (uint32_t)(ti.tv_sec & 0xffffff) * 100;
-	t += ti.tv_nsec / 10000000;
+	t += ti.tv_nsec / 1000000;
 #else
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	t = (uint32_t)(tv.tv_sec & 0xffffff) * 100;
-	t += tv.tv_usec / 10000;
+	t += tv.tv_usec / 1000;
 #endif
 
 	return t;
@@ -149,6 +150,7 @@ main(int argc, char *argv[]) {
     font_init();
 
     ejoy2d_win_init(argc, argv);
+    ejoy2d_game_logicframe(60);
 
     for (;;) {
         while(XPending(g_X.display) > 0) {  
@@ -197,7 +199,7 @@ main(int argc, char *argv[]) {
             if (elapsed > UPDATE_INTERVAL*10)
                 elapsed = UPDATE_INTERVAL*10;
             timestamp = current;
-            ejoy2d_win_update(elapsed*0.01f);
+            ejoy2d_win_update(elapsed*0.001f);
             update_frame();
         } else {
             usleep(1000);

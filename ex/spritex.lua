@@ -165,13 +165,21 @@ end
 -- frame
 function spritex:ani(name, n)
     if self.name then
-        print ('switch action:' ,name, self.name)
+        print ('[switch action]:' ,name, self.name, n)
     end
     self.__sprite.action = name
     self.__aniname = name
-    self:frame_run(n)
+    if name then
+        self:frame_run(n)
+    else
+        self:frame_stop()
+    end
     local x1,y1,x2,y2 = self.__sprite:aabb()
     __resetwh(self, x2-x1, y2-y1)
+end
+
+function spritex:ani_stoped()
+    return self.__maxloop > 0 and self.__curloop >= self.__maxloop
 end
 
 function spritex:loop(n)

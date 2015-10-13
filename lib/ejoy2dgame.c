@@ -326,19 +326,16 @@ logic_frame(lua_State *L, float s) {
 
 void
 ejoy2d_game_update(struct game *G, float time) {
-	//if (G->logic_time == 0) {
-	//	G->real_time = 1.0f/LOGIC_FRAME;
-	//} else {
-	//	G->real_time += time;
-	//}
-    //static int i=0;
-	//while (G->logic_time < G->real_time) {
-    //    //fprintf(stderr, "-----%d\n",i%30);
-    //    i++;
-	//	logic_frame(G->L);
-	//	G->logic_time += 1.0f/LOGIC_FRAME;
-	//}
-    logic_frame(G->L, time);
+	if (G->logic_time == 0) {
+		G->real_time = 1.0f/LOGIC_FRAME;
+	} else {
+		G->real_time += time;
+	}
+	while (G->logic_time < G->real_time) {
+		logic_frame(G->L, 1.0f/LOGIC_FRAME);
+		G->logic_time += 1.0f/LOGIC_FRAME;
+	}
+    //logic_frame(G->L, time);
 }
 
 void
