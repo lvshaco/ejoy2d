@@ -10,8 +10,8 @@ pack.load {
     pattern = fw.WorkDir..[[examples/asset/?]],
     "diffuse", "normal"
 }
-local obj = ej.sprite("diffuse", 2)
-local obj2 = ej.sprite("diffuse",2)
+local obj = ej.sprite("diffuse", 0)
+local obj2 = ej.sprite("diffuse",0)
 
 -- define a shader
 local s = ej.define_shader {
@@ -31,6 +31,7 @@ void main() {
     
     // 法线贴图的法线数据
     vec3 normal = texture2D(tex_normal, v_texcoord).rgb;
+    //vec3 normal = vec3(0.4921875,0.4921875,0.984375);//texture2D(tex_normal, v_texcoord).rgb;
     // 将法线贴图里的rgb数据转换成真正的法线数据，并归一化
      vec3 N = normalize(normal * 2.0 - 1.0);
      N.y = -N.y;
@@ -65,7 +66,7 @@ void main() {
     //float falloffTerm = (1.0 - falloffSelect) * falloffTermNear + falloffSelect * falloffTermFar;
     float falloffTerm = 1.0-(D-lightpos.z)/u_cutoffRadius;
     float brightness=3.0;
-    vec3 Intensity = ambient + Diffuse*brightness *falloffTerm;
+    vec3 Intensity = ambient + Diffuse*brightness ;//*falloffTerm;
     //和原始贴图数据进行计算混合
     gl_FragColor = vec4(texcolor.rgb * Intensity, texcolor.a);
 }
@@ -167,7 +168,7 @@ function game.touch(what, x, y)
         px = x-px
         py = y-py
         --obj2.material:lightpos(px,py,50)
-        obj2.material:lightpos(x,y,50)
+        obj2.material:lightpos(x,y, 500)
         --s.lightpos(px,py,50)
  --   end
 end
